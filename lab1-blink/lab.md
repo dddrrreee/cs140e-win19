@@ -65,7 +65,7 @@ Pick up:
 
 #### 2.  Make sure you're able to install firmware, etc:
 
-  Copy the precompiled `blink.bin` in `lab1/part1/` to the SD card as
+  Copy the precompiled program `lab1/part1/blink.bin` to the SD card as
   `kernel.img`, put the card in the pi, hook up the LED to pin 20, connect
   the TTY-USB.  After it boots, the pi will jump to whatever code is 
   in `kernel.img` --- in our case, code to turn pin 20 on and off.
@@ -78,7 +78,7 @@ Pick up:
   Mechanically:
   1. Unplug the USB-TTY.
   2. Plug SD card into your computer and figure out where it's mounted.
-  3. Copy all the files from the 'firmware/' directory onto the SD card.
+  3. Copy all the files from the `firmware/` directory onto the SD card.
   4. copy `lab1/part1/blink.bin` to the SD card as `kernel.img`.
   5. unmount the SD card (don't just pull it out!  data may not be written out.)
   6. connect the LED to GPIO20 and ground. 
@@ -95,29 +95,32 @@ Troubleshooting:
    3. If that doesn't work, try your card in their rpi.  
 
 
-#### 3.  Use bootloader.
+#### 3.  Send a new pi program from your computer rather than SD card.
 
   As you've noticed, running new programs on the pi using the SD card
   method is tedious.  This step shows makes it so you can send programs
   directly from your computer to a plugged-in pi.
 
   Method: install a program (which we somewhat inaccurately call a
-  "bootloader") that waits on the pi for
-  a program sent by your computer, copies it into pi memory, and then
-  jumps to it.  We currently give you a pre-compiled version (
-	`bootloader.bin` in `firmware/`). 
+  "bootloader").   This program will wait on the pi for
+  a program sent by your computer, copy it into pi memory, and then
+  jump to it.  We currently give you a pre-compiled version (
+	`firmware/bootloader.bin`). 
 	Our first homework next week will be to write your own.
 
-
-  1. Copy bootloader.bin on your SD card to kernel.img.
+  Mechanically:
+  1. Copy `firmware/bootloader.bin' on your SD card as `kernel.img` (see a 
+	pattern?).
   2. Hook the white wire from the TTL to pin 14, and the green to 15.
 	(Why is TX/RX reversed?)
-  3. If you have a mac, first download and install the drivers for an:
-   CP210x USB to UART driver as described in the cs107e docs:
+  3. If you have a mac, first download and install the drivers for a
+   CP210x USB-to-UART driver as described in the cs107e docs:
 	(http://cs107e.github.io/guides/mac_toolchain/).
 	(It's a mac, so make sure you reboot after doing so.)
-  3. Run ../bin/rpi-install.py blink.bin
-	(If you have problems, you may need to force the use of python3.)
+  3. Add the `19wi-cs140e/cs140e-win19/bin/` directory to your path.
+  4. Run `rpi-install.py part1/blink.bin`
+	(If the command fails, you may need to force the use of python3
+  	or refresh your shell's PATH variable).
 
 Things should be blinking.
 
@@ -131,7 +134,7 @@ Troubleshooting:
 #### 4.  make sure your toolchain is working.
 
 Install the toolchain:
-   -  For a mac: http://cs107e.github.io/guides/mac_toolchain/
+   -  For a mac: (http://cs107e.github.io/guides/mac_toolchain/)
    - For ubuntu/linux:
 
            sudo add-apt-repository ppa:team-gcc-arm-embedded/ppa
