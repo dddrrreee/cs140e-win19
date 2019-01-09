@@ -6,7 +6,12 @@ show_on_index: true
 
 ### Lab: make sure R/pi hardware and its toolchain works.
 
-We'll use different variations of a blinky light using GPIO 20:
+There's a lot of fiddly little details in getting a pi working, and this
+is many people's first time working with this kind of hardware, so we
+break this down into many (perhaps too-many) small steps.  Please help
+make this document better!
+
+We'll use different variations of a blinky light using GPIO pin 20:
 
   1. you'll make the code blink manually;
   2. then use a pre-compiled program (why not skip 1?);
@@ -16,26 +21,25 @@ We'll use different variations of a blinky light using GPIO 20:
   5. then write your own and compile: this is the fun part.  It's also
 	the longest (why not skip 4?).
 
-The final test for the lab: make sure you can blink using pin 1, then
-try pin 10, then try pin 18.   Finally, blink 19 and 20 simultaneously
-(this will point out a subtle mistake people make reading the docs).
-This is the sign off for the lab.
+The final sign off for the lab, show the TA/me your code and run three 
+  programs: 
+  1. one that blinks pin 20; 
+  2. pin 21;
+  3. pin 5;
+  4. Finally, blink 20 and 21 simultaneously.
+  (This will point out a subtle mistake people make reading the docs).
 
-Also, PLEASE KEEP TRACK OF ANY PROBLEMS YOU HIT, how you diagnosed them,
+Also, write out any problems you hit, how you diagnosed them,
 what the solution was.  This will be useful later.
-
-(There's a lot of fiddly little details, and this is many people's first
-time working with this kind of hardware, so we break this down into many,
-perhaps too-many, small steps.  Please help make this document better!)
 
 #### 0. Make sure you have everything.
 
 Pick up:
-  1. a R/PI A+.
-  2. microSD card and adapter.
-  3. CP2102 USB-TTL adapter.
-  4. however many led's you need.
-  5. some female-female jumpers.
+  1. a R/PI A+;
+  2. a microSD card and adapter;
+  3. a CP2102 USB-TTL adapter;
+  4. however many led's you want;
+  5. some female-female jumpers;
   6. printout of the pi's pins.
 
 #### 1. Make sure hardware is working:
@@ -45,9 +49,11 @@ Pick up:
 
   Mechanically:
   1. Connect the USB-to-TTL Serial cable's power (red) and ground  (black)
-     wires to the pi 5v and ground pins of the pi.
-  2. Plug into your USB port.
-  3. Hook your LED up to ground and power to make sure it's wired correctly.
+     wires to the two 5v and ground pins on the pi that are next to each other
+	(see your printout).
+  2. Plug the USB-TTY into your USB port.
+  3. Connect  your LED up to another ground pin and a power pin to 
+   make sure it works, and you know how to to.
   If it doesn't go on, reverse it.  If still doesn't go on, plug someone
   else's working version into your computer.  If that doesn't work, ask.
 
@@ -57,8 +63,10 @@ Pick up:
 
 #### 2.  Make sure you're able to install firmware, etc:
 
-  Copy the precompiled blink.bin in part1/ to the SD card as kernel.img,
-  hook up the LED to pin 20 and run it.
+  Copy the precompiled 'blink.bin' in 'lab1/part1/' to the SD card as
+  'kernel.img', put the card in the pi, hook up the LED to pin 20, connect
+  the TTY-USB.  After it boots, the pi will jump to whatever code is 
+  in 'kernel.img' --- in our case, code to turn pin 20 on and off.
 
   Note: in the next assignment  when you develop your own remote
   bootloader (see next step), if your code is broken you'll need to use
@@ -66,13 +74,13 @@ Pick up:
   on your computer.
 
   Mechanically:
-  1. Unplug the USB-to-pi.
-  2. Plug SD card into computer.
-  3. Copy the files from firmware/ onto it.
-  4. copy part1/blink.bin in this directory to the SD card as kernel.img.
+  1. Unplug the USB-TTY.
+  2. Plug SD card into your computer and figure out where it's mounted.
+  3. Copy all the files from the 'firmware/' directory onto the SD card.
+  4. copy 'lab1/part1/blink.bin' to the SD card as 'kernel.img'.
   5. unmount the SD card (don't just pull it out!  data may not be written out.)
   6. connect the LED to GPIO20 and ground. 
-     Use docs/gpio.png to figure out which this is.
+     Use 'docs/gpio.png' to figure out which this is.
   7. Plug the SD card into your pi
   8. plug in the USB-to-PI to your USB to power the pi.
 
