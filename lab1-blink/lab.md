@@ -72,7 +72,7 @@ Pick up:
 
   Note: in the next assignment  when you develop your own remote
   bootloader (see next step), if your code is broken you'll need to use
-  this method to load a new version, so pay attention to how you do it
+  this SD card method to load a new version, so pay attention to how you do it
   on your computer.
 
   Mechanically:
@@ -109,7 +109,8 @@ Troubleshooting:
 	Our first homework next week will be to write your own.
 
   Mechanically:
-  1. Copy `firmware/bootloader.bin' on your SD card as `kernel.img` (see a 
+  0. Don't touch the wiring for the LED.
+  1. Copy `firmware/bootloader.bin` on your SD card as `kernel.img` (see a 
 	pattern?).
   2. Hook the white wire from the TTL to pin 14, and the green to 15.
 	(Why is TX/RX reversed?)
@@ -117,51 +118,59 @@ Troubleshooting:
    CP210x USB-to-UART driver as described in the cs107e docs:
 	(http://cs107e.github.io/guides/mac_toolchain/).
 	(It's a mac, so make sure you reboot after doing so.)
-  3. Add the `19wi-cs140e/cs140e-win19/bin/` directory to your path.
+  3. Add the absolute path to the `cs140e-win19/bin/` directory to your path.
   4. Run `rpi-install.py part1/blink.bin`
 	(If the command fails, you may need to force the use of python3
   	or refresh your shell's PATH variable).
 
-Things should be blinking.
+Your LED should be blinking.
 
 Troubleshooting: 
-  1. sudo pip install {pyserial,xmodem,serial}
-  2. If it doesn't find the serial, run "ls -lrt /dev/" after plugging the
+  1. `sudo pip install {pyserial,xmodem,serial}`
+  2. If it doesn't find the serial, run `ls -lrt /dev/` after plugging the
    usb-serial in and see what the last device is.
   3. If you use a different serial adaptor, you will have to change the 
-   code in rpi-install.py to recognize it.   
+   code in rpi-install.py to recognize it.    There are some comments to help.
 
-#### 4.  make sure your toolchain is working.
+#### 4.  Make sure your r/pi toolchain is working.
+
+You need to compile bare-metal r/pi programs on your computer, which most likely
+is not a bare-metal r/pi itself.  Thus we need to set up the tools needed to
+``cross-compiler'' r/pi programs on your compiler and produce a r/pi binary.
 
 Install the toolchain:
    -  For a mac: (http://cs107e.github.io/guides/mac_toolchain/)
-   - For ubuntu/linux:
+   - For ubuntu/linux (from: 
+   (https://github.com/eistec/mulle/wiki/Installing-toolchain-%28GCC%29)):
 
            sudo add-apt-repository ppa:team-gcc-arm-embedded/ppa
            sudo apt-get update
            sudo apt-get install gcc-arm-none-eabi
 
-   [via https://github.com/eistec/mulle/wiki/Installing-toolchain-%28GCC%29]
 
-Compile blink.s in part2/
+Compile `part2/blink.s`
 
-   1. Run make.sh
-   2. reset pi (unplug, plugin USB cable to your laptop), 
-	and use the bootloader to load blink.bin
+   1. `cd part2`.   Run `make.sh`.
+   2. reset your pi: unplug the TTY-USB then plug it back in to your laptop.
+   3.  `rpi-install.py blink.bin` (in part2) as above.
 
-#### 5. write your own!
+#### 5. write your own blink!
 
-You'll have to write some code by filling in blink.c in part3/.
+Now we get to the fun part.  You'll read the Broadcom docs to see how to 
+turn the GPIO pins on yourself and then filling in the code in `part3/blink.c`.
+
 First test that the code will blink using GPIO16 (it's the pin above GPI20).  
 Change the code to work with GPIO20.
 
-   1. look at the broadcom document: docs/BCM2835-ARM-Peripherals.pdf
+   1. look at the broadcom document: `docs/BCM2835-ARM-Peripherals.pdf`
    pages 90--96.  NOTE: where the broadcom document uses
-   addresses 0x7420xxxx, you'll use 0x2020xxxx.
+   addresses `0x7420xxxx`, you'll use `0x2020xxxx`.
 
-   2. Adapt the code in part3/blink.c to (1) set GPIO pin 20 to output,
+   2. Adapt the code in `part3/blink.c` to (1) set GPIO pin 20 to output,
    and then in a loop repeatedly set it on and off ("clear").  
-   3. Reset the pi, use the bootloader to load the code.
+
+   3. After each change, power-cycle the pi, and use the bootloader to
+   load the code.
 
 Hint:
   0.  Be very careful to read the descriptions in the broadcom document to
@@ -176,14 +185,12 @@ Hint:
                x |= (v << 7);     // or in the new bits
                           
 
-The code at the bottom of the page gives a simple program you can play with.
-
-  1. You write GPFSELn register (pages 91 and 92) to set up a pin as an
+  1. You write `GPFSELn` register (pages 91 and 92) to set up a pin as an
   output or input. You'll have to set GPIO 20 in GPFSEL2 to output.
 
-  2. You'll turn it off and on by writing to the GPSET0 and GPCLR0
-  registers on page 95.  We write to GPSET0 to set a pin (turn it on)
-  and write to GPCLR0 to clear a pin (turn it off).
+  2. You'll turn it off and on by writing to the `GPSET0` and `GPCLR0`
+  registers on page 95.  We write to `GPSET0` to set a pin (turn it on)
+  and write to `GPCLR0` to clear a pin (turn it off).
 
 Troubleshoot as before.
 
@@ -192,10 +199,11 @@ Troubleshoot as before.
 Generalize your code to work with any pin from 0 to 30 (note, not all of these
 are defined, but ignore that):  
 
-   1. Note that the different GPFSELn registers handle group of 10, so you 
-	can divide the pin number to compute the right GPFSEL register.
+   1. Note that the different `GPFSELn` registers handle group of 10, so you 
+	can divide the pin number to compute the right `GPFSEL` register.
    2. You will be using this code later!   Make sure you test the code by 
 	rewiring your pi to use pins in each group.
+
 
 #### 6. Break and tweak stuff.
 
