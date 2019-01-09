@@ -65,7 +65,7 @@ Pick up:
 
 #### 2.  Make sure you're able to install firmware, etc:
 
-  Copy the precompiled program `lab1/part1/blink.bin` to the SD card as
+  Copy the precompiled program `lab1/part1/blink-pin20.bin` to the SD card as
   `kernel.img`, put the card in the pi, hook up the LED to pin 20, connect
   the TTY-USB.  After it boots, the pi will jump to whatever code is 
   in `kernel.img` --- in our case, code to turn pin 20 on and off.
@@ -79,7 +79,7 @@ Pick up:
   1. Unplug the USB-TTY.
   2. Plug SD card into your computer and figure out where it's mounted.
   3. Copy all the files from the `firmware/` directory onto the SD card.
-  4. copy `lab1/part1/blink.bin` to the SD card as `kernel.img`.
+  4. copy `lab1/part1/blink-pin20.bin` to the SD card as `kernel.img`.
   5. unmount the SD card (don't just pull it out!  data may not be written out.)
   6. connect the LED to GPIO20 and ground. 
      Use `docs/gpio.png` to figure out which this is.
@@ -119,7 +119,7 @@ Troubleshooting:
 	(http://cs107e.github.io/guides/mac_toolchain/).
 	(It's a mac, so make sure you reboot after doing so.)
   3. Add the absolute path to the `cs140e-win19/bin/` directory to your path.
-  4. Run `rpi-install.py part1/blink.bin`
+  4. Run `rpi-install.py part1/blink-pin20.bin`
 	(If the command fails, you may need to force the use of python3
   	or refresh your shell's PATH variable).
 
@@ -250,7 +250,12 @@ wrong and to make it somewhat better:
 #### Additional information
 
 More links:
-	1. useful baremetal information: (http://www.raspberrypi.org/forums/viewtopic.php?t=16851)
-	2. more baremetalpi: (https://github.com/brianwiddas/pi-baremetal)
 
-	3. And even more bare metal pi: (http://www.valvers.com/embedded-linux/raspberry-pi/step01-bare-metal-programming-in-cpt1)
+  1. useful baremetal information: (http://www.raspberrypi.org/forums/viewtopic.php?t=16851)
+
+  2. more baremetalpi: (https://github.com/brianwiddas/pi-baremetal)
+
+  3. And even more bare metal pi: (http://www.valvers.com/embedded-linux/raspberry-pi/step01-bare-metal-programming-in-cpt1)
+
+  4. Finally: it's worth running through all of dwelch's examples:
+  (https://github.com/dwelch67/raspberrypi).
