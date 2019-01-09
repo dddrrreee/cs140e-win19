@@ -1,17 +1,19 @@
 ---
 layout: page
 title: Quick overview.
+show_on_index: true
 ---
 
-### Lab: make sure hardware and toolchain is working.
+### Lab: make sure R/pi hardware and its toolchain works.
 
 We'll use different variations of a blinky light using GPIO 20:
-	1. you'll make the code blink manually;
-	2. then use a pre-compiled program (why not skip 1?);
-	3. then use a bootloader (why not skip 2?);
-	4. then install the r/pi tool chain, compile a given assembly
+
+  1. you'll make the code blink manually;
+  2. then use a pre-compiled program (why not skip 1?);
+  3. then use a bootloader (why not skip 2?);
+  4. then install the r/pi tool chain, compile a given assembly
 	   version and use it (why not skip 3?);
-	5. then write your own and compile: this is the fun part.  It's also
+  5. then write your own and compile: this is the fun part.  It's also
 	the longest (why not skip 4?).
 
 The final test for the lab: make sure you can blink using pin 1, then
@@ -29,12 +31,12 @@ perhaps too-many, small steps.  Please help make this document better!)
 #### 0. Make sure you have everything.
 
 Pick up:
-	1. a R/PI A+.
-	2. microSD card and adapter.
-	3. CP2102 USB-TTL adapter.
-	4. however many led's you need.
-	5. some female-female jumpers.
-	6. printout of the pi's pins.
+  1. a R/PI A+.
+  2. microSD card and adapter.
+  3. CP2102 USB-TTL adapter.
+  4. however many led's you need.
+  5. some female-female jumpers.
+  6. printout of the pi's pins.
 
 #### 1. Make sure hardware is working:
   Use the USB-TTY to power the pi, and use the pi's power to directly
