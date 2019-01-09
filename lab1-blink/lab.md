@@ -1,33 +1,69 @@
 ---
 layout: page
 title: Quick overview.
-show_on_index: true
 ---
 
 ### Lab: make sure hardware and toolchain is working.
 
 We'll use different variations of a blinky light using GPIO 20:
 	1. you'll make the code blink manually;
-	2. then use a pre-compiled program;
-	3. then use a bootloader;
+	2. then use a pre-compiled program (why not skip 1?);
+	3. then use a bootloader (why not skip 2?);
 	4. then install the r/pi tool chain, compile a given assembly
-	   version and use it.
+	   version and use it (why not skip 3?);
 	5. then write your own and compile: this is the fun part.  It's also
-	the longest.
+	the longest (why not skip 4?).
 
-The final test for the lab: blink using pin 1, pin 10, pin 18
-and blink 19 and 20 simultaneously.
+The final test for the lab: make sure you can blink using pin 1, then
+try pin 10, then try pin 18.   Finally, blink 19 and 20 simultaneously
+(this will point out a subtle mistake people make reading the docs).
+This is the sign off for the lab.
+
+Also, PLEASE KEEP TRACK OF ANY PROBLEMS YOU HIT, how you diagnosed them,
+what the solution was.  This will be useful later.
+
+(There's a lot of fiddly little details, and this is many people's first
+time working with this kind of hardware, so we break this down into many,
+perhaps too-many, small steps.  Please help make this document better!)
+
+#### 0. Make sure you have everything.
+
+Pick up:
+	1. a R/PI A+.
+	2. microSD card and adapter.
+	3. CP2102 USB-TTL adapter.
+	4. however many led's you need.
+	5. some female-female jumpers.
+	6. printout of the pi's pins.
 
 #### 1. Make sure hardware is working:
+  Use the USB-TTY to power the pi, and use the pi's power to directly
+  turn on an LED.  This tests some basic hardware and that you know how to
+  wire.
+
+  Mechanically:
   1. Connect the USB-to-TTL Serial cable's power (red) and ground  (black)
-     wires to the pi.
+     wires to the pi 5v and ground pins of the pi.
   2. Plug into your USB port.
   3. Hook your LED up to ground and power to make sure it's wired correctly.
   If it doesn't go on, reverse it.  If still doesn't go on, plug someone
   else's working version into your computer.  If that doesn't work, ask.
 
+  (EE folks:
+  We don't use a breadboard b/c it's bulky; we don't use resistors for the
+  same reason + the LED is big enough we generally don't fry it.)
+
 #### 2.  Make sure you're able to install firmware, etc:
 
+  Copy the precompiled blink.bin in part1/ to the SD card as kernel.img,
+  hook up the LED to pin 20 and run it.
+
+  Note: in the next assignment  when you develop your own remote
+  bootloader (see next step), if your code is broken you'll need to use
+  this method to load a new version, so pay attention to how you do it
+  on your computer.
+
+  Mechanically:
   1. Unplug the USB-to-pi.
   2. Plug SD card into computer.
   3. Copy the files from firmware/ onto it.
@@ -36,25 +72,39 @@ and blink 19 and 20 simultaneously.
   6. connect the LED to GPIO20 and ground. 
      Use docs/gpio.png to figure out which this is.
   7. Plug the SD card into your pi
-  8. plug in the USB-to-PI to your USB
+  8. plug in the USB-to-PI to your USB to power the pi.
 
-It should be blinking.  If you get this working, help anyone else that
-is stuck.
+It should be blinking.  If you get this working, please help anyone else that
+is stuck so we all kind of stay about the same speed.  
 
 Troubleshooting:
    1. If it's not blinking, swap in someone else's card that is working.
    2. If that works, compare their SD card to yours.
    3. If that doesn't work, try your card in their rpi.  
 
+
 #### 3.  Use bootloader.
 
-NOTE: If you have a mac, first download and install the drivers for an:
-LGDehome PL2303TA USB to TTL.  (Search for PL2303TA, download, reboot.)
+  As you've noticed, running new programs on the pi using the SD card
+  method is tedious.  This step shows makes it so you can send programs
+  directly from your computer to a plugged-in pi.
+
+  Method: install a program (which we somewhat inaccurately call a
+  "bootloader") that waits on the pi for
+  a program sent by your computer, copies it into pi memory, and then
+  jumps to it.  We currently give you a pre-compiled version (
+	`bootloader.bin` in `firmware/`). 
+	Our first homework next week will be to write your own.
+
 
   1. Copy bootloader.bin on your SD card to kernel.img.
   2. Hook the white wire from the TTL to pin 14, and the green to 15.
-  3. On linux: Run cs49n/bin/rpi-install.py /dev/ttyUSB0 blink.bin
-  On mac: Run cs49n/bin/rpi-install.py /dev/usb.serial blink.bin
+	(Why is TX/RX reversed?)
+  3. If you have a mac, first download and install the drivers for an:
+   CP210x USB to UART driver as described in the cs107e docs:
+	(http://cs107e.github.io/guides/mac_toolchain/).
+	(It's a mac, so make sure you reboot after doing so.)
+  3. Run ../bin/rpi-install.py blink.bin
 	(If you have problems, you may need to force the use of python3.)
 
 Things should be blinking.
@@ -155,12 +205,9 @@ wrong and to make it somewhat better:
 
            gcc -S -O2 foo.c
            cat foo.s
-		
 
    4. Add the reboot code below (we'll go into what different things mean)
    so that you don't have to unplug, plug your rpi each time:
-
-
 
          // define: dummy to immediately return and PUT32 as above.
          void reboot(void) {
@@ -189,36 +236,3 @@ More links:
 	2. more baremetalpi: (https://github.com/brianwiddas/pi-baremetal)
 
 	3. And even more bare metal pi: (http://www.valvers.com/embedded-linux/raspberry-pi/step01-bare-metal-programming-in-cpt1)
-
-
-Code to play with bitwise manipulations
-
-             #include <stdio.h>
-
-             void printbits(const char *msg, unsigned x) {
-	             printf("%s\n", msg);
-             
-	             putchar('\t');
-	             for(int i = 31; i >= 0; i--)
-		             putchar("0123456789"[i%10]);
-	             putchar('\n');
-             	
-	             putchar('\t');
-	             for(int i = 31; i >= 0; i--)
-		             putchar("01"[(x >>i) & 1]);
-	             putchar('\n');
-             
-             }
-             
-             int main() {
-	             // set the high and low bits to 1 for easy checking
-	             unsigned x = 1 << 31 | 1;
-	             unsigned v = 0b101;
-             
-	             // set 7,8,9 to 0b101 to show bitwise shift, mask, and, or
-	             printbits("before", x);
-	             x &= ~(0b111 << 7);
-	             x |= v << 7;
-	             printbits("after", x);
-             }
-
