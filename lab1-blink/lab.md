@@ -147,12 +147,12 @@ Install the toolchain:
            sudo apt-get update
            sudo apt-get install gcc-arm-none-eabi
 
-
-Compile `part2/blink.s`
+Compile `part2/blink-pin20.s`
 
    1. `cd part2`.   Run `make.sh`.
    2. reset your pi: unplug the TTY-USB then plug it back in to your laptop.
-   3.  `rpi-install.py blink.bin` (in part2) as above.
+   3.  `rpi-install.py blink-pin20.bin` (in `part2/`).  Should blink.  If 
+	not isolate the problem by trying the blink-pin20.bin in `part1/`, your lab partner's, etc.
 
 #### 5. write your own blink!
 
@@ -165,13 +165,18 @@ Change the code to work with GPIO20.
    1. look at the broadcom document: `docs/BCM2835-ARM-Peripherals.pdf`
    pages 90--96.  NOTE: where the broadcom document uses
    addresses `0x7420xxxx`, you'll use `0x2020xxxx`.
-
    2. Adapt the code in `part3/blink.c` to (1) set GPIO pin 20 to output,
    and then in a loop repeatedly set it on and off ("clear").  
-
    3. After each change, power-cycle the pi, and use the bootloader to
    load the code.
 
+Generalize your code to work with any pin from 0 to 30 (note, not all of these
+are defined, but ignore that):  
+
+   1. Note that the different `GPFSELn` registers handle group of 10, so you 
+	can divide the pin number to compute the right `GPFSEL` register.
+   2. You will be using this code later!   Make sure you test the code by 
+	rewiring your pi to use pins in each group.
 
 Hint:
 
@@ -194,20 +199,7 @@ Hint:
   registers on page 95.  We write to `GPSET0` to set a pin (turn it on)
   and write to `GPCLR0` to clear a pin (turn it off).
 
-Troubleshoot as before.
-
-#### 5. Generalize your code to set/unset any pin.
-
-Generalize your code to work with any pin from 0 to 30 (note, not all of these
-are defined, but ignore that):  
-
-   1. Note that the different `GPFSELn` registers handle group of 10, so you 
-	can divide the pin number to compute the right `GPFSEL` register.
-   2. You will be using this code later!   Make sure you test the code by 
-	rewiring your pi to use pins in each group.
-
-
-#### 6. Break and tweak stuff.
+#### 6. Extra: Break and tweak stuff.
 
 You're going to break and change your code to see effects of things going 
 wrong and to make it somewhat better:
@@ -246,6 +238,10 @@ wrong and to make it somewhat better:
            }
    Change your code to just loop for a small fixed number of times and make
    sure reboot() works.
+
+   5. Force the blink loop to be at different code alignments mod 64.   Do 
+   you notice any difference in timing?  (You may have to make your 
+   delay longer.)  What is going on?  
 
 #### Additional information
 
