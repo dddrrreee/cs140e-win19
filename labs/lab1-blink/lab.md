@@ -29,8 +29,9 @@ The final sign off for the lab, show the TA/me your code and run four
   4. Finally, blink 20 and 21 simultaneously.
   (This will point out a subtle mistake people make reading the docs).
 
-Also, write out any problems you hit, how you diagnosed them,
-what the solution was.  This will be useful later.
+Also, with your partner: write out any problems you hit, how you diagnosed
+them, what the solution was, and post to the newsgroup.  This will be
+useful later.
 
 #### 0. Make sure you have everything.
 
@@ -65,7 +66,7 @@ Pick up:
 
 #### 2.  Make sure you're able to install firmware, etc:
 
-  Copy the precompiled program `lab1/part1/blink-pin20.bin` to the SD card as
+  Copy the precompiled program `part1/blink-pin20.bin` to the SD card as
   `kernel.img`, put the card in the pi, hook up the LED to pin 20, connect
   the TTY-USB.  After it boots, the pi will jump to whatever code is 
   in `kernel.img` --- in our case, code to turn pin 20 on and off.
@@ -79,7 +80,7 @@ Pick up:
   1. Unplug the USB-TTY.
   2. Plug SD card into your computer and figure out where it's mounted.
   3. Copy all the files from the `firmware/` directory onto the SD card.
-  4. copy `lab1/part1/blink-pin20.bin` to the SD card as `kernel.img`.
+  4. copy `part1/blink-pin20.bin` to the SD card as `kernel.img`.
   5. unmount the SD card (don't just pull it out!  data may not be written out.)
   6. connect the LED to GPIO20 and ground. 
      Use `docs/gpio.png` to figure out which this is.
@@ -112,13 +113,15 @@ Troubleshooting:
   0. Don't touch the wiring for the LED.
   1. Copy `firmware/bootloader.bin` on your SD card as `kernel.img` (see a 
 	pattern?).
-  2. Hook the white wire from the TTL to pin 14, and the green to 15.
-	(Why is TX/RX reversed?)
+  2. Hook the TX and RX wires up to the pi.  Do you TX/TX and RX/RX or
+     switch them?  (Hint: Think about the
+     semantics of TX (transmit) and RX (receive).)
   3. If you have a mac, first download and install the drivers for a
    CP210x USB-to-UART driver as described in the cs107e docs:
 	(http://cs107e.github.io/guides/mac_toolchain/).
 	(It's a mac, so make sure you reboot after doing so.)
-  3. Add the absolute path to the `cs140e-win19/bin/` directory to your path.
+  3. Either copy `bin/rpi-install.py` to your local `bin/` directory or
+    add the absolute path to `cs140e-win19/bin/` to your path.
   4. Run `rpi-install.py part1/blink-pin20.bin`
 	(If the command fails, you may need to force the use of python3
   	or refresh your shell's PATH variable).
@@ -127,16 +130,16 @@ Your LED should be blinking.
 
 Troubleshooting: 
   1. `sudo pip install {pyserial,xmodem,serial}`
-  2. If it doesn't find the serial, run `ls -lrt /dev/` after plugging the
-   usb-serial in and see what the last device is.
-  3. If you use a different serial adaptor, you will have to change the 
+  2. If you use a different serial adaptor, you will have to change the 
    code in rpi-install.py to recognize it.    There are some comments to help.
 
 #### 4.  Make sure your r/pi toolchain is working.
 
-You need to compile bare-metal r/pi programs on your computer, which most likely
-is not a bare-metal r/pi itself.  Thus we need to set up the tools needed to
-``cross-compiler'' r/pi programs on your compiler and produce a r/pi binary.
+For this class
+you need to compile bare-metal r/pi programs on your computer, which is 
+most likely
+not a bare-metal r/pi itself.  Thus we need to set up the tools needed to
+``cross-compile'' r/pi programs on your computer and to r/pi binaries.
 
 Install the toolchain:
    -  For a mac: (http://cs107e.github.io/guides/mac_toolchain/)
@@ -156,11 +159,10 @@ Compile `part2/blink-pin20.s`
 
 #### 5. write your own blink!
 
-Now we get to the fun part.  You'll read the Broadcom docs to see how to 
+Now we get to the fun part.  You'll read the Broadcom document to see how to 
 turn the GPIO pins on yourself and then filling in the code in `part3/blink.c`.
 
-First test that the code will blink using GPIO16 (it's the pin above GPI20).  
-Change the code to work with GPIO20.
+Change the code to first work with GPIO20.
 
    1. look at the broadcom document: `docs/BCM2835-ARM-Peripherals.pdf`
    pages 90--96.  NOTE: where the broadcom document uses
@@ -181,9 +183,11 @@ are defined, but ignore that):
 Hint:
 
   0.  Be very careful to read the descriptions in the broadcom document to
-  see when you are supposed to preserve old values or ignore them.
-   If you overwrite old values, the code in this assignment may
-   work, but later when you use other pins, your code will reset them.
+   see when you are supposed to preserve old values or ignore them.
+   If you don't ignore them when you should, you can write back
+   indeterminant values, causing weird behavior.  If you overwrite old
+   values when you should not, the code in this assignment may work,
+   but later when you use other pins, your code will reset them.
  
                // assume: we want to set the bits 7,8,9 in <x> to <v> and
                // leave everything else undisturbed.

@@ -1,5 +1,10 @@
 /*
- * blink for GPIO16.  Change for GPIO20.
+ * blink for arbitrary pins.    
+ * Implement:
+ *	- gpio_set_output;
+ *	- gpio_set_on;
+ * 	- gpio_set_off.
+ *
  *
  * - try deleting volatile.
  * - change makefile to use -O3
@@ -13,18 +18,16 @@ volatile unsigned *gpio_fsel1 = (volatile unsigned *)(GPIO_BASE + 0x04);
 volatile unsigned *gpio_set0  = (volatile unsigned *)(GPIO_BASE + 0x1C);
 volatile unsigned *gpio_clr0  = (volatile unsigned *)(GPIO_BASE + 0x28);
 
-// i think we need memory barriers.
+// XXX might need memory barriers.
 void gpio_set_output(unsigned pin) {
-        unsigned slot = (pin - 10) * 3;
-        *gpio_fsel1 &= ~(0b111 << slot);
-        *gpio_fsel1 |= (1 << slot);
+	// gpio_fsel1  --- set 'pin' to output.
 }
 
 void gpio_set_on(unsigned pin) {
-        *gpio_set0 |= (1 << pin);
+	// use gpio_set0
 }
 void gpio_set_off(unsigned pin) {
-        *gpio_clr0 |= (1 << pin);
+	// use gpio_clr0
 }
 
 // countdown 'ticks' cycles; the asm probably isn't necessary.
