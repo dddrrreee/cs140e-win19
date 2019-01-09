@@ -175,14 +175,14 @@ Change the code to work with GPIO20.
 Hint:
   0.  Be very careful to read the descriptions in the broadcom document to
   see when you are supposed to preserve old values or ignore them.
-	If you overwrite old values, the code in this assignment may
-	work, but later when you use other pins, your code will reset them.
+   If you overwrite old values, the code in this assignment may
+   work, but later when you use other pins, your code will reset them.
  
-               // assume: we want to set the bits 7,8,9 in <x> to <v> and
-               // leave everything else undisturbed.
-               
-               x &=  ~(0b111 << 7); // clear the bits 7, 8, 9  in x
-               x |= (v << 7);     // or in the new bits
+	// assume: we want to set the bits 7,8,9 in <x> to <v> and
+	// leave everything else undisturbed.
+	
+	x &=  ~(0b111 << 7); // clear the bits 7, 8, 9  in x
+	x |= (v << 7);     // or in the new bits
                           
 
   1. You write `GPFSELn` register (pages 91 and 92) to set up a pin as an
