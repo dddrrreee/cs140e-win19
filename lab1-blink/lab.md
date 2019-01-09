@@ -6,7 +6,17 @@ show_on_index: true
 
 ### Lab: make sure hardware and toolchain is working.
 
-We'll use different variations of a blinky light using GPIO 20.
+We'll use different variations of a blinky light using GPIO 20:
+	1. you'll make the code blink manually;
+	2. then use a pre-compiled program;
+	3. then use a bootloader;
+	4. then install the r/pi tool chain, compile a given assembly
+	   version and use it.
+	5. then write your own and compile: this is the fun part.  It's also
+	the longest.
+
+The final test for the lab: blink using pin 1, pin 10, pin 18
+and blink 19 and 20 simultaneously.
 
 #### 1. Make sure hardware is working:
   1. Connect the USB-to-TTL Serial cable's power (red) and ground  (black)
@@ -32,11 +42,11 @@ It should be blinking.  If you get this working, help anyone else that
 is stuck.
 
 Troubleshooting:
-   1.  If it's not blinking, swap in someone else's card that is working.
+   1. If it's not blinking, swap in someone else's card that is working.
    2. If that works, compare their SD card to yours.
    3. If that doesn't work, try your card in their rpi.  
 
-#### 2.  Use bootloader.
+#### 3.  Use bootloader.
 
 NOTE: If you have a mac, first download and install the drivers for an:
 LGDehome PL2303TA USB to TTL.  (Search for PL2303TA, download, reboot.)
@@ -45,6 +55,7 @@ LGDehome PL2303TA USB to TTL.  (Search for PL2303TA, download, reboot.)
   2. Hook the white wire from the TTL to pin 14, and the green to 15.
   3. On linux: Run cs49n/bin/rpi-install.py /dev/ttyUSB0 blink.bin
   On mac: Run cs49n/bin/rpi-install.py /dev/usb.serial blink.bin
+	(If you have problems, you may need to force the use of python3.)
 
 Things should be blinking.
 
@@ -55,7 +66,7 @@ Troubleshooting:
   3. If you use a different serial adaptor, you will have to change the 
    code in rpi-install.py to recognize it.   
 
-#### 3.  make sure your toolchain is working.
+#### 4.  make sure your toolchain is working.
 
 Install the toolchain:
    -  For a mac: http://cs107e.github.io/guides/mac_toolchain/
@@ -73,7 +84,7 @@ Compile blink.s in part2/
    2. reset pi (unplug, plugin USB cable to your laptop), 
 	and use the bootloader to load blink.bin
 
-#### 4. make sure you can read and write GPIO memory.
+#### 5. write your own!
 
 You'll have to write some code by filling in blink.c in part3/.
 First test that the code will blink using GPIO16 (it's the pin above GPI20).  
@@ -88,12 +99,10 @@ Change the code to work with GPIO20.
    3. Reset the pi, use the bootloader to load the code.
 
 Hint:
-  0.  When you set values in the pi registers, DO NOT OVERWRITE OLD
-  VALUES!   You'll need to read, clear, and logically or in the bits
-  you want to set.  If you just assign them the code for this assignment
-  will in fact work, but later when you set other pins, this code will
-  reset them.
-
+  0.  Be very careful to read the descriptions in the broadcom document to
+  see when you are supposed to preserve old values or ignore them.
+	If you overwrite old values, the code in this assignment may
+	work, but later when you use other pins, your code will reset them.
  
                // assume: we want to set the bits 7,8,9 in <x> to <v> and
                // leave everything else undisturbed.
