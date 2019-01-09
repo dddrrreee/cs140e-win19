@@ -172,17 +172,19 @@ Change the code to work with GPIO20.
    3. After each change, power-cycle the pi, and use the bootloader to
    load the code.
 
+
 Hint:
+
   0.  Be very careful to read the descriptions in the broadcom document to
   see when you are supposed to preserve old values or ignore them.
    If you overwrite old values, the code in this assignment may
    work, but later when you use other pins, your code will reset them.
  
-	// assume: we want to set the bits 7,8,9 in <x> to <v> and
-	// leave everything else undisturbed.
-	
-	x &=  ~(0b111 << 7); // clear the bits 7, 8, 9  in x
-	x |= (v << 7);     // or in the new bits
+               // assume: we want to set the bits 7,8,9 in <x> to <v> and
+               // leave everything else undisturbed.
+               
+               x &=  ~(0b111 << 7); // clear the bits 7, 8, 9  in x
+               x |= (v << 7);     // or in the new bits
                           
 
   1. You write `GPFSELn` register (pages 91 and 92) to set up a pin as an
@@ -214,8 +216,7 @@ wrong and to make it somewhat better:
 
 	#define volatile
   
-	at the top of your file.  Recompile using "-O2".  What 
-	happens?  Why?   
+   at the top of your file.  Recompile using `-O2`.  What happens?  Why?   
 
    2. Change your delay to increasingly smaller amounts.   What is going on?
 
@@ -232,21 +233,21 @@ wrong and to make it somewhat better:
    4. Add the reboot code below (we'll go into what different things mean)
    so that you don't have to unplug, plug your rpi each time:
 
-         // define: dummy to immediately return and PUT32 as above.
-         void reboot(void) {
-                 const int PM_RSTC = 0x2010001c;
-                 const int PM_WDOG = 0x20100024;
-                 const int PM_PASSWORD = 0x5a000000;
-                 const int PM_RSTC_WRCFG_FULL_RESET = 0x00000020;
-         
-                 int i;
-                 for(i = 0; i < 100000; i++)
-                         dummy(i);
-         
-                 PUT32(PM_WDOG, PM_PASSWORD | 1);
-                 PUT32(PM_RSTC, PM_PASSWORD | PM_RSTC_WRCFG_FULL_RESET);
-                 while(1);
-         }
+	// define: dummy to immediately return and PUT32 as above.
+	void reboot(void) {
+		const int PM_RSTC = 0x2010001c;
+		const int PM_WDOG = 0x20100024;
+		const int PM_PASSWORD = 0x5a000000;
+		const int PM_RSTC_WRCFG_FULL_RESET = 0x00000020;
+
+		int i;
+		for(i = 0; i < 100000; i++)
+			dummy(i);
+
+		PUT32(PM_WDOG, PM_PASSWORD | 1);
+		PUT32(PM_RSTC, PM_PASSWORD | PM_RSTC_WRCFG_FULL_RESET);
+		while(1);
+	}
 
 
    Change your code to just loop for a small fixed number of times and make
