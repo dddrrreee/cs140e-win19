@@ -13,7 +13,7 @@ make this document better!
 
 We'll use different variations of a blinky light using GPIO pin 20:
 
-  1. you'll make the code blink manually;
+  1. you'll make the LED turn on manually;
   2. then use a pre-compiled program (why not skip 1?);
   3. then use a bootloader (why not skip 2?);
   4. then install the r/pi tool chain, compile a given assembly
@@ -21,7 +21,7 @@ We'll use different variations of a blinky light using GPIO pin 20:
   5. then write your own and compile: this is the fun part.  It's also
 	the longest (why not skip 4?).
 
-The final sign off for the lab, show the TA/me your code and run three 
+The final sign off for the lab, show the TA/me your code and run four
   programs: 
   1. one that blinks pin 20; 
   2. pin 21;
@@ -54,7 +54,7 @@ Pick up:
   2. Plug the USB-TTY into your USB port.
   3. Connect  your LED up to another ground pin and a power pin (there are
   several) to 
-   make sure the hardware compents work, and you know how get them to.
+   make sure the hardware components work, and you know how get them to.
   If the LED doesn't go on, reverse its connections.  
 	If still doesn't go on, plug someone
   else's working version into your computer.  If that doesn't work, ask.
