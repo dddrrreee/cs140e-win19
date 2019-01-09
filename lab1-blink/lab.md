@@ -212,19 +212,17 @@ are defined, but ignore that):
 You're going to break and change your code to see effects of things going 
 wrong and to make it somewhat better:
 
-   1. Eliminate volatile from your code (easiest way: just put 
-
-	#define volatile
-  
-   at the top of your file.  Recompile using `-O2`.  What happens?  Why?   
+   1. Eliminate volatile from your code.  The easiest way: just put
+   `#define volatile` at the top of your file.  Recompile using `-O2`.
+   What happens?  Why?
 
    2. Change your delay to increasingly smaller amounts.   What is going on?
 
-   3. Change from using "volatile" pointer read/writes to using an 
+   3. Change from using `volatile` pointer read/writes to using an 
 	external function.
-	The easiest way to see how:  make a simple file "foo.c" with routines
-	that take in a pointer "p" and either read it by returning "*p" or 
-	write it via "*p = v".  You can see the assembly gcc generates
+	The easiest way to see how:  make a simple file `foo.c` with routines
+	that take in a pointer "p" and either read it by returning `*p` or 
+	write it via `*p = v`.  You can see the assembly gcc generates
 	by using the command:
 
            gcc -S -O2 foo.c
@@ -233,22 +231,19 @@ wrong and to make it somewhat better:
    4. Add the reboot code below (we'll go into what different things mean)
    so that you don't have to unplug, plug your rpi each time:
 
-	// define: dummy to immediately return and PUT32 as above.
-	void reboot(void) {
-		const int PM_RSTC = 0x2010001c;
-		const int PM_WDOG = 0x20100024;
-		const int PM_PASSWORD = 0x5a000000;
-		const int PM_RSTC_WRCFG_FULL_RESET = 0x00000020;
-
-		int i;
-		for(i = 0; i < 100000; i++)
-			dummy(i);
-
-		PUT32(PM_WDOG, PM_PASSWORD | 1);
-		PUT32(PM_RSTC, PM_PASSWORD | PM_RSTC_WRCFG_FULL_RESET);
-		while(1);
-	}
-
+           // define: dummy to immediately return and PUT32 as above.
+           void reboot(void) {
+                const int PM_RSTC = 0x2010001c;
+                const int PM_WDOG = 0x20100024;
+                const int PM_PASSWORD = 0x5a000000;
+                const int PM_RSTC_WRCFG_FULL_RESET = 0x00000020;
+                int i;
+                for(i = 0; i < 100000; i++)
+                     dummy(i);
+                PUT32(PM_WDOG, PM_PASSWORD | 1);
+                PUT32(PM_RSTC, PM_PASSWORD | PM_RSTC_WRCFG_FULL_RESET);
+                while(1);
+           }
 
    Change your code to just loop for a small fixed number of times and make
    sure reboot() works.
