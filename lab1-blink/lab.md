@@ -244,7 +244,6 @@ wrong and to make it somewhat better:
                 PUT32(PM_RSTC, PM_PASSWORD | PM_RSTC_WRCFG_FULL_RESET);
                 while(1);
            }
-
    Change your code to just loop for a small fixed number of times and make
    sure reboot() works.
 
