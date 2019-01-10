@@ -96,6 +96,7 @@ if __name__ == "__main__":
             portname = next(list_ports.grep(r'(?i)VID:PID=10C4:EA60'))[0]
             # # printq('Found serial port:', bcolors.OKBLUE + portname + bcolors.ENDC)
 
+
 	    # DRE: This is our code for cs49n.
 	    #
 	    # PL2303TA: you can see this on linux by plugging it in and
