@@ -170,7 +170,7 @@ Change the code to first work with GPIO20.
    2. Adapt the code in `part3/blink.c` to (1) set GPIO pin 20 to output,
    and then in a loop repeatedly set it on and off ("clear").  
    3. After each change, power-cycle the pi, and use the bootloader to
-   load the code.
+   load the code. `rpi-install.py kernel.img`
 
 Generalize your code to work with any pin from 0 to 30 (note, not all of these
 are defined, but ignore that):  
