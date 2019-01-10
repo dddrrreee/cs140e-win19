@@ -86,9 +86,9 @@ if __name__ == "__main__":
         # The CP2102 units from winter 2014-15 and spring 2016-17 both have
         # vendor ID 0x10C4 and product ID 0xEA60.
         try:
-	    # DRE: This is the original code for cs107e.  If you use a
-	    # different tty-USB you will need a different vendor/dev ID
-	    # in the grep.
+            # DRE: This is the original code for cs107e.  If you use a
+            # different tty-USB you will need a different vendor/dev ID
+            # in the grep.
 
             # # pyserial 2.6 in the VM has a bug where grep is case-sensitive.
             # # It also requires us to use [0] instead of .device on the result
@@ -97,11 +97,11 @@ if __name__ == "__main__":
             # # printq('Found serial port:', bcolors.OKBLUE + portname + bcolors.ENDC)
 
 
-	    # DRE: This is our code for cs49n.
-	    #
-	    # PL2303TA: you can see this on linux by plugging it in and
-	    # running "lsusb" which returns:
-	    #   Bus 002 Device 010: ID 067b:2303 Prolific Technology, Inc. [...]
+            # DRE: This is our code for cs49n.
+            #
+            # PL2303TA: you can see this on linux by plugging it in and
+            # running "lsusb" which returns:
+            #   Bus 002 Device 010: ID 067b:2303 Prolific Technology, Inc. [...]
             # portname = next(list_ports.grep(r'(?i)VID:PID=067B:2303'))[0]
 
             printq('Found serial port:', bcolors.OKBLUE + portname + bcolors.ENDC)
