@@ -149,11 +149,11 @@ your Pi plugged in?
 
 
     if args.e : # exec the command locally.
-	import subprocess
-	subprocess.call([stream.name, portname, '1' if args.p else '0'])
-	printq('Success: ran `%s`.' % stream.name)
-    	sys.exit(0)
-   
+        import subprocess
+        subprocess.call([stream.name, portname, '1' if args.p else '0'])
+        printq('Success: ran `%s`.' % stream.name)
+        sys.exit(0)
+
     success = False
     def getc(size, timeout=1):
         ch = port.read(size)
