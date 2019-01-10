@@ -1,2 +1,0 @@
-    arm-none-eabi-as blink.s -o blink.o
-    arm-none-eabi-objcopy blink.o -O binary blink.bin

@@ -29,8 +29,9 @@ The final sign off for the lab, show the TA/me your code and run four
   4. Finally, blink 20 and 21 simultaneously.
   (This will point out a subtle mistake people make reading the docs).
 
-Also, write out any problems you hit, how you diagnosed them,
-what the solution was.  This will be useful later.
+Also, with your partner: write out any problems you hit, how you diagnosed
+them, what the solution was, and post to the newsgroup.  This will be
+useful later.
 
 #### 0. Make sure you have everything.
 
@@ -65,7 +66,7 @@ Pick up:
 
 #### 2.  Make sure you're able to install firmware, etc:
 
-  Copy the precompiled program `lab1/part1/blink.bin` to the SD card as
+  Copy the precompiled program `part1/blink-pin20.bin` to the SD card as
   `kernel.img`, put the card in the pi, hook up the LED to pin 20, connect
   the TTY-USB.  After it boots, the pi will jump to whatever code is 
   in `kernel.img` --- in our case, code to turn pin 20 on and off.
@@ -79,7 +80,7 @@ Pick up:
   1. Unplug the USB-TTY.
   2. Plug SD card into your computer and figure out where it's mounted.
   3. Copy all the files from the `firmware/` directory onto the SD card.
-  4. copy `lab1/part1/blink.bin` to the SD card as `kernel.img`.
+  4. copy `part1/blink-pin20.bin` to the SD card as `kernel.img`.
   5. unmount the SD card (don't just pull it out!  data may not be written out.)
   6. connect the LED to GPIO20 and ground. 
      Use `docs/gpio.png` to figure out which this is.
@@ -112,14 +113,16 @@ Troubleshooting:
   0. Don't touch the wiring for the LED.
   1. Copy `firmware/bootloader.bin` on your SD card as `kernel.img` (see a 
 	pattern?).
-  2. Hook the white wire from the TTL to pin 14, and the green to 15.
-	(Why is TX/RX reversed?)
+  2. Hook the TX and RX wires up to the pi.  Do you TX/TX and RX/RX or
+     switch them?  (Hint: Think about the
+     semantics of TX (transmit) and RX (receive).)
   3. If you have a mac, first download and install the drivers for a
    CP210x USB-to-UART driver as described in the cs107e docs:
 	(http://cs107e.github.io/guides/mac_toolchain/).
 	(It's a mac, so make sure you reboot after doing so.)
-  3. Add the absolute path to the `cs140e-win19/bin/` directory to your path.
-  4. Run `rpi-install.py part1/blink.bin`
+  3. Either copy `bin/rpi-install.py` to your local `bin/` directory or
+    add the absolute path to `cs140e-win19/bin/` to your path.
+  4. Run `rpi-install.py part1/blink-pin20.bin`
 	(If the command fails, you may need to force the use of python3
   	or refresh your shell's PATH variable).
 
@@ -127,16 +130,16 @@ Your LED should be blinking.
 
 Troubleshooting: 
   1. `sudo pip install {pyserial,xmodem,serial}`
-  2. If it doesn't find the serial, run `ls -lrt /dev/` after plugging the
-   usb-serial in and see what the last device is.
-  3. If you use a different serial adaptor, you will have to change the 
+  2. If you use a different serial adaptor, you will have to change the 
    code in rpi-install.py to recognize it.    There are some comments to help.
 
 #### 4.  Make sure your r/pi toolchain is working.
 
-You need to compile bare-metal r/pi programs on your computer, which most likely
-is not a bare-metal r/pi itself.  Thus we need to set up the tools needed to
-``cross-compiler'' r/pi programs on your compiler and produce a r/pi binary.
+For this class
+you need to compile bare-metal r/pi programs on your computer, which is 
+most likely
+not a bare-metal r/pi itself.  Thus we need to set up the tools needed to
+``cross-compile'' r/pi programs on your computer and to r/pi binaries.
 
 Install the toolchain:
    -  For a mac: (http://cs107e.github.io/guides/mac_toolchain/)
@@ -147,38 +150,44 @@ Install the toolchain:
            sudo apt-get update
            sudo apt-get install gcc-arm-none-eabi
 
-
-Compile `part2/blink.s`
+Compile `part2/blink-pin20.s`
 
    1. `cd part2`.   Run `make.sh`.
    2. reset your pi: unplug the TTY-USB then plug it back in to your laptop.
-   3.  `rpi-install.py blink.bin` (in part2) as above.
+   3.  `rpi-install.py blink-pin20.bin` (in `part2/`).  Should blink.  If 
+	not isolate the problem by trying the blink-pin20.bin in `part1/`, your lab partner's, etc.
 
 #### 5. write your own blink!
 
-Now we get to the fun part.  You'll read the Broadcom docs to see how to 
+Now we get to the fun part.  You'll read the Broadcom document to see how to 
 turn the GPIO pins on yourself and then filling in the code in `part3/blink.c`.
 
-First test that the code will blink using GPIO16 (it's the pin above GPI20).  
-Change the code to work with GPIO20.
+Change the code to first work with GPIO20.
 
    1. look at the broadcom document: `docs/BCM2835-ARM-Peripherals.pdf`
    pages 90--96.  NOTE: where the broadcom document uses
    addresses `0x7420xxxx`, you'll use `0x2020xxxx`.
-
    2. Adapt the code in `part3/blink.c` to (1) set GPIO pin 20 to output,
    and then in a loop repeatedly set it on and off ("clear").  
-
    3. After each change, power-cycle the pi, and use the bootloader to
    load the code.
 
+Generalize your code to work with any pin from 0 to 30 (note, not all of these
+are defined, but ignore that):  
+
+   1. Note that the different `GPFSELn` registers handle group of 10, so you 
+	can divide the pin number to compute the right `GPFSEL` register.
+   2. You will be using this code later!   Make sure you test the code by 
+	rewiring your pi to use pins in each group.
 
 Hint:
 
   0.  Be very careful to read the descriptions in the broadcom document to
-  see when you are supposed to preserve old values or ignore them.
-   If you overwrite old values, the code in this assignment may
-   work, but later when you use other pins, your code will reset them.
+   see when you are supposed to preserve old values or ignore them.
+   If you don't ignore them when you should, you can write back
+   indeterminant values, causing weird behavior.  If you overwrite old
+   values when you should not, the code in this assignment may work,
+   but later when you use other pins, your code will reset them.
  
                // assume: we want to set the bits 7,8,9 in <x> to <v> and
                // leave everything else undisturbed.
@@ -194,20 +203,7 @@ Hint:
   registers on page 95.  We write to `GPSET0` to set a pin (turn it on)
   and write to `GPCLR0` to clear a pin (turn it off).
 
-Troubleshoot as before.
-
-#### 5. Generalize your code to set/unset any pin.
-
-Generalize your code to work with any pin from 0 to 30 (note, not all of these
-are defined, but ignore that):  
-
-   1. Note that the different `GPFSELn` registers handle group of 10, so you 
-	can divide the pin number to compute the right `GPFSEL` register.
-   2. You will be using this code later!   Make sure you test the code by 
-	rewiring your pi to use pins in each group.
-
-
-#### 6. Break and tweak stuff.
+#### 6. Extra: Break and tweak stuff.
 
 You're going to break and change your code to see effects of things going 
 wrong and to make it somewhat better:
@@ -247,10 +243,19 @@ wrong and to make it somewhat better:
    Change your code to just loop for a small fixed number of times and make
    sure reboot() works.
 
+   5. Force the blink loop to be at different code alignments mod 64.   Do 
+   you notice any difference in timing?  (You may have to make your 
+   delay longer.)  What is going on?  
+
 #### Additional information
 
 More links:
-	1. useful baremetal information: (http://www.raspberrypi.org/forums/viewtopic.php?t=16851)
-	2. more baremetalpi: (https://github.com/brianwiddas/pi-baremetal)
 
-	3. And even more bare metal pi: (http://www.valvers.com/embedded-linux/raspberry-pi/step01-bare-metal-programming-in-cpt1)
+  1. useful baremetal information: (http://www.raspberrypi.org/forums/viewtopic.php?t=16851)
+
+  2. more baremetalpi: (https://github.com/brianwiddas/pi-baremetal)
+
+  3. And even more bare metal pi: (http://www.valvers.com/embedded-linux/raspberry-pi/step01-bare-metal-programming-in-cpt1)
+
+  4. Finally: it's worth running through all of dwelch's examples:
+  (https://github.com/dwelch67/raspberrypi).
