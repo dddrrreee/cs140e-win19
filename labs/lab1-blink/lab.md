@@ -24,9 +24,9 @@ We'll use different variations of a blinky light using GPIO pin 20:
 The final sign off for the lab, show the TA/me your code and run four
   programs: 
   1. one that blinks pin 20; 
-  2. pin 21;
+  2. pin 16 (right above 20);
   3. pin 5;
-  4. Finally, blink 20 and 21 simultaneously.
+  4. Finally, blink 20 and 21 (right below 20) simultaneously.
   (This will point out a subtle mistake people make reading the docs).
 
 Also, with your partner: write out any problems you hit, how you diagnosed
@@ -210,12 +210,15 @@ wrong and to make it somewhat better:
 
    1. Eliminate volatile from your code.  The easiest way: just put
    `#define volatile` at the top of your file.  Recompile using `-O2`.
-   What happens?  Why?
+   What happens?  Why?  (It may help to look at the assembly code 
+   in `blink.list` and compare how it changes.)
 
    2. Change your delay to increasingly smaller amounts.   What is going on?
 
-   3. Change from using `volatile` pointer read/writes to using an 
-	external function.
+   3. Change from using `volatile` pointer read/writes to using external
+	functions (`get32`, `put32`, `get16`, `put16`, `get8`, `put8` to 
+	get or set the indicated number of bits).
+
 	The easiest way to see how:  make a simple file `foo.c` with routines
 	that take in a pointer "p" and either read it by returning `*p` or 
 	write it via `*p = v`.  You can see the assembly gcc generates
