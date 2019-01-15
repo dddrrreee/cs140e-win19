@@ -8,14 +8,13 @@ show_on_index: true
 	
 This class you're going:
 
-	1. Write your own bootloader (both the Unix and pi side)
-	to replace what we used last lab (i.e., `rpi-install.py` and
-	`bootloader.bin`).
+     1. Write your own bootloader (both the Unix and pi side) to replace
+     what we used last lab (i.e., `rpi-install.py` and `bootloader.bin`).
 
-	2. Write your own code to enable the UART and GPIO
-	pin functions to replace the code givin in this lab
-	(in `bootloader/pi-side/libpi.small/uart.o` and
-	`bootloader/pi-side/libpi.small/gpio.o`).
+     2. Write your own code to enable the UART and GPIO
+     pin functions to replace the code givin in this lab
+     (in `bootloader/pi-side/libpi.small/uart.o` and
+     `bootloader/pi-side/libpi.small/gpio.o`).
 
 
 At this point, with the exception of about 20 lines of code, all the
@@ -26,10 +25,10 @@ no magic, and you understand everything.    The downside is that if there
 is a mistake, the rest of the quarter can be a rough ride.   Thus,
 the third, final piece of the homework will be:
 
-	3. Write code that will allow you to cross-check your uart.c
-	and bootloader implementations against all those written by
-	everyone else.  Once you pass these tests, you will be surprised
-	if the code breaks.
+     3. Write code that will allow you to cross-check your uart.c and
+     bootloader implementations against all those written by everyone
+     else.  Once you pass these tests, you will be surprised if the
+     code breaks.
 
 The two benefits of part 3 are that: (1) if you pass it, you will almost
 certainly get 100% on the assignment since it will catch most bugs,
@@ -73,7 +72,8 @@ Unix side: to send a binary program, send the following:
 
  	2. `nbytes` : the size of the file
 
-	3. `checksum` : a 32-bit crc of of the nbytes and code
+	3. `checksum` : a 32-bit crc of the code.  (The CRC32
+	implementation is in `shared-code/simple-boot.h`.)
 
 	4. wait to receive the echoed SOH, a crc32 checksum of the nbytes,
 	and the checksum back.  If you don't get it, exit with an error.
@@ -85,7 +85,7 @@ Unix side: to send a binary program, send the following:
 
 	7. Wait for an `ACK`.
 
-	8. Done.
+	8. Done.   Exit with an informative error if anything fails.
 
 On the pi side you'll do the opposite:
 
@@ -103,12 +103,12 @@ On the pi side you'll do the opposite:
 
 	6. For all errors, send back the matching error code.
 
-
 You'll need to write the pi code to receive these values and copy the
 binary to the right place.  After compiling you'll have to copy onto
 the SD card. 
  
 I'd start small: 
+
       1. echo SOH from pi-bootloader back to the Unix side and make sure
 	you receive it correctly.
 
