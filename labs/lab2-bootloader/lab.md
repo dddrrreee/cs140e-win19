@@ -21,25 +21,30 @@ too much issue.
 
 #### 1. Write the unix support code.
 
-You'll write the support code needed by your bootloader for opening the 
-device to the tty and reading in the binary program.  Neither is very
+You'll write the support code needed by your bootloader for (1) opening the 
+device to the tty and (2) reading in the binary program.  Neither is very
 hard, we do it in lab to make sure that everyone is up to speed.  If you
 finish, make sure to help your partner.
 
 Look in `homeworks/1-bootloader/bootloader/unix-side`.  You will need
 to implement the two procedures in `support.c`:
 
-	1. `read_file`: open file `name`, use `stat()` to get the size,
-	and then use `read()` to read the entire file into memory.
-	(Don't use `fread()` unless you set it up to read binary!)
-	You should pad the memory so that it is a multiple of 4.
+	1. `read_file`: read the file `name` into a buffer and return it,
+	write the size of the buffer in `size`.  Note that 
+	you should pad the memory so that it is a multiple of 4.
 
+	You'll implement this using `stat()` to get the size, and then
+	use `read()` to read the entire file into memory.  (Don't use
+	`fread()` unless you set it up to read binary!)
 	
-	1. `open_tty` will look though your `/dev` directory to find 
-	the USB device that your OS has connected the TTY-USB to.  You 
-	should use `scandir` to do so.  (`man scandir`).  The 
-	array `ttyusb_prefixes` has the set of prefixes we have seen
-	thus far; if your computer uses a different one, let us know!
+	2. `open_tty` will look though your `/dev` directory to find the
+	USB device that your OS has connected the TTY-USB to, open it,
+	and return the resultant file descriptor
+
+	You should use `scandir` to scan the `/dev` directory.
+	(`man scandir`).  The array `ttyusb_prefixes` has the set of
+	prefixes we have seen thus far; if your computer uses a different
+	one, let us know!
 
 Both of these will be in your homework, so if any function can fail,
 check it, and give an error message if it does.
@@ -63,7 +68,7 @@ can't work, so we verify you can do a simple test:
 	4. Swap your card with your partner and make sure that your code
 	works with theirs.
 
-At this point your can do part 1 of the homework.
+At this point you should be in fine shape to complete part 1 of the homework.
 
 #### 3.  Sign off.
 
