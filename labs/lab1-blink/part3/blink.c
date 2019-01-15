@@ -38,12 +38,11 @@ void delay(unsigned ticks) {
 
 int notmain ( void ) {
 	int led = 20;
-	led = 16;
 
   	gpio_set_output(led);
         while(1) {
                 gpio_set_on(led);
-                delay(10000000);
+                delay(1000000);
                 gpio_set_off(led);
                 delay(1000000);
         }
