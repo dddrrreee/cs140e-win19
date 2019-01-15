@@ -12,7 +12,7 @@ This class you're going:
      what we used last lab (i.e., `rpi-install.py` and `bootloader.bin`).
 
      2. Write your own code to enable the UART and GPIO
-     pin functions to replace the code givin in this lab
+     pin functions to replace the code given in this lab
      (in `bootloader/pi-side/libpi.small/uart.o` and
      `bootloader/pi-side/libpi.small/gpio.o`).
 
@@ -25,7 +25,7 @@ no magic, and you understand everything.    The downside is that if there
 is a mistake, the rest of the quarter can be a rough ride.   Thus,
 the third, final piece of the homework will be:
 
-     3. Write code that will allow you to cross-check your uart.c and
+     3. Write code that will allow you to cross-check your `uart.c` and
      bootloader implementations against all those written by everyone
      else.  Once you pass these tests, you will be surprised if the
      code breaks.
@@ -35,36 +35,33 @@ certainly get 100% on the assignment since it will catch most bugs,
 and (2) you will learn some cool, interesting tricks that we can use
 the rest of the quarter and after.
 
-
 ### Part 1: Implementing a fast, simple bootloader.
 
 
 Look through the code in `bootloader/`.  
 
 	1. The sub-directory `pi-side` has the skeleton code that will run 
-	on the pi.  You'll implement the missing code in `notmain`, complile
+	on the pi.  You'll implement the missing code in `notmain`, compile
 	it, and copy it to the SD card as `kernel.img` just as before.
 
 	2. The sub-directory `unix-side` has the code that will run on
 	your Unix laptop. You'll implement the code missing in `support.c`
 	and in `simple-boot.c`.
 
-After you do so, running `my-install blink-pin20.bin` in the `unix-side`
-directory should cause an LED  hooked up to pin 20 to blink as before.
+After you finish writing this code, running `my-install blink-pin20.bin`
+in the `unix-side` directory should cause an LED  hooked up to pin 20
+to blink as before.
 
 For historical reasons, the bootloader we gave you in lab1 uses the
 xmodem protocol to send bytes between Unix and pi.  (cs107e still uses
-this method.)  
-To get a feel for what this looks like, 
-you can
-look through the `sample-code-xmodem` subidectory in this directory.
+this method.)  To get a feel for what this looks like, you can look
+through the `sample-code-xmodem` subdirectory.
 
 The high bit, which is obvious after a few seconds of code inspection,
-is that the approach is 
-complicated and fragile (the cs107e code has bugs,
-and I think this one does too).  So you're going to implement a faster,
-simpler boot system by extending the code in `bootloader/pi-side` and
-`bootloader/unix-side`.
+is that the xmodem approach is complicated and fragile (the cs107e code
+has bugs, and I think this one does too).  So you're going to implement a
+faster, simpler boot system by extending the code in `bootloader/pi-side`
+and `bootloader/unix-side`.
 
 Unix side: to send a binary program, send the following:
 
@@ -122,17 +119,6 @@ I'd start small:
 Make sure your bootloader will work with other people's Unix side client,
 and vise verse.
 
-### Advanced.
-
-When you get the code working:
-
-   	1. change it to use a faster bitrate --- at what point does it 
-       	   stop working?  You'll have to modify the constant 270 in 
-	   librpi/uart.c to make the pi recieve faster.
-
-	2. You may want to try enabling the cache (enable_cache()) to 
-	see how much faster you can push it.
-
 ### Part 2: Implementing the UART code.
 
 TBD.
@@ -147,6 +133,6 @@ TBD.
 You'll write a simple system to log each `get32` and `put32` to device
 memory and verify that the addresses you read and write, the order you
 do so, and the final values written are identical to everyone else in the class.
-By checking equivalance we know that if one 
-person gets it right, and everyone is equivalant, that everyone is right.
+By checking equivalence we know that if one 
+person gets it right, and everyone is equivalent, that everyone is right.
 Monday's lab 4 will be over this part.
