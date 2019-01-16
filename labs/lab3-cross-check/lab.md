@@ -4,7 +4,8 @@ title: Quick overview.
 show_on_index: true
 ---
 
-### Lab: write code to cross check your gpio against everyone else's.
+Lab: write code to cross check your gpio against everyone else's.
+======================================================================
 
 [cut this down.  what are they going to do.]
 
@@ -33,12 +34,6 @@ After completing the lab you will:
 	2. Be able to quickly, correctly write a more full-featured
 	`gpio` implementation by checking its equivalance against the
 	fairly complicated code used in the initial cs107e class.
-
-	3. Be able to run your blink on Unix using your normal development
-	environment (`gdb`, `valgrind`, `gcov`, etc) while using the
-	r/pi as its own simulator so your r/pi-specific stuff works
-	identically to when you run on the pi itself.
-
 
 After this lab you can then most of the rest of the homework without too
 much issue.
@@ -79,28 +74,31 @@ In general:
 	1.  You'll need to do any setup and then call `notmain`.
 
 	2. You'll have to write fake versions of any pi-specific routines
-	your code calls.  
-	
-	3. You'll have to remove any files you don't need. 
+	your code calls.  Since your `blink` is simple, all you'll have
+	to do is provide fake implementations of `get32` and `put32`.
 
-Since your `blink` is simple, all you'll have to do is provide
-implementations of `get32` and `put32`.  
-
-For the moment, just make a simple, tracing memory (an array that prints
-on each read or write) that on on reads of any
-address `addr` returns the last value written to it (just like normal
-memory) or, if no value was written, initializes the memory associated
-with `addr` to a random value and then returns that.
+For the moment, you'll implement `get32` and `put32` by making a simple,
+tracing memory (an array that prints on each read or write) that on on
+reads of any address `addr` returns the last value written to it (just
+like normal memory) or, if no value was written, initializes the memory
+associated with `addr` to a random value and then returns that.
 
 On `put32(addr,v)`: 
+
 	1. Create an entry for `addr` if it doesn't exist.
+
 	2. Write `v` to `addrs` entry.
+
 	3. Call `print_write(addr,v)`.
 
 On `get32(addr)`:
+
 	1. If `addr` does not exist, `put32(addr, random())`.
+
 	2. Get the value `v` associated with `addr`.
+
 	3. Call `print_read(addr,v)`.
+
 	4. Return `v`.
 
 Run your blink code on Unix.  It shouldn't crash, and it should print out
