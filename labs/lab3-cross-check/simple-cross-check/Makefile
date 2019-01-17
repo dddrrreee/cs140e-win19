@@ -1,4 +1,4 @@
-CFLAGS = -Wall -Og 
+CFLAGS = -Wall -Og   -std=gnu99  
 CC = gcc
 SRC = simple-check.c fake-pi.c blink.c
 OBJS = $(SRC:.c=.o)
