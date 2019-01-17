@@ -77,6 +77,9 @@ In general:
 	2. You'll have to write fake versions of any pi-specific routines
 	your code calls.  Since your `blink` is simple, all you'll have
 	to do is provide fake implementations of `get32` and `put32`.
+	Also, since we can't do arm assembly code, you'll have to 
+	provide an empty definition for `delay` (for the moment, you
+	can just comment out the body of your version).
 
 For the moment, you'll implement `get32` and `put32` by making a simple,
 tracing memory (an array that prints on each read or write) that on on
@@ -94,7 +97,8 @@ On `put32(addr,v)`:
 
 On `get32(addr)`:
 
-	1. If `addr` does not exist, `put32(addr, random())`.
+	1. If `addr` does not exist, insert `(addr, random())` but do
+	not print anything.
 
 	2. Get the value `v` associated with `addr`.
 
@@ -102,10 +106,20 @@ On `get32(addr)`:
 
 	4. Return `v`.
 
-Run your blink code on Unix.  It should run without crashing and,
-importantly, print out the values for each put and get in the exact order
-they happened.  If you pipe the result through `cksum`, it should give
-you the same value as your lab partner has.
+
+To test it:
+
+	1. Take your `blink.c` code from lab3 and put it in
+	`simple-cross-check/blink.c` here.
+
+	2. Compile.
+
+	3. Run `./test-blink` on Unix.  It should run without crashing and,
+	importantly, print out the values for each `put32` and `get32` in the
+	exact order they happened.  
+
+	4. If you pipe the result through `cksum`,
+	it should give you the same value as your lab partner has.
 
 	`./blink.unix | cksum`
 
@@ -130,28 +144,32 @@ behavior and compare.
 
 For this section:
 
-	1. Adapt the code to use...
-	2. Run the tracing routine.
-	3. checksum the result.
-	4. this should be the same as your partner.
-	5. post this to the newsgroup.
-	6. by the end of the class everyone should have the same result.
+	1. Test your `gpio_set_output`, `gpio_set_on` and `gpio_set_off`
+	using the full generator version (which runs them on many values)
+	individually against your partner.   
 
-#### 4. Reimplement `gpio.o`
+	2. Post the cksum value for each to the newsgroup.
 
-We gave you a complicated implementation of gpio.  Rewrite it to be
-simple.  Make sure you annotate each interesting thing with the page
-number and any sentence fragment from broadcom document.   Verify that
-your code is equivalant.  You'll have to modify the given gpio.c code.
+	3. By the end of the class everyone should have the same result.
 
-#### 5. Sign-off
 
-Show that
-	1. Your original `gpio_set_output`, `gpio_set_input`, `gpio_set`,
-	`gpio_clear` give the same result as other peoples.  You can
+#### 4. Sign-off
+
+	1. Your original `gpio_set_output`, `gpio_set_on`,
+	`gpio_set_off` give the same result as other peoples.  You can
 	run them in this order and just hash the end result.
 
 	2. Show that it gets the same value as the original.
+
+#### 5. Extra credit: Reimplement `gpio.o`
+
+We gave you a complicated implementation of gpio
+(`cs107e-complex-gpio/gpio.c`).  Check it's verion of `gpio_set_output`
+against yours.  Implement your own `gpio_set_func` and annotate each
+interesting thing with the page number and any sentence fragment from
+broadcom document.   Verify that your code is equivalant.  You'll have
+to modify the given gpio.c code since it does not do error checking and
+you should.
 
 #### 6. Advanced.
 
@@ -187,8 +205,6 @@ Modify your code to:
 
 If you can do all of these you are in great shape to check some
 interesting code.
-
-
 
 Cross-checking Background
 ---------------------------------------------------------------------
