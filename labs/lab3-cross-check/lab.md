@@ -4,10 +4,8 @@ title: Quick overview.
 show_on_index: true
 ---
 
-Lab: write code to cross check your gpio against everyone else's.
+Lab: automatically cross-check your gpio against everyone else's.
 ======================================================================
-
-[cut this down.  what are they going to do.]
 
 A goal of this course is that you will write every single line of
 (interesting) low level code you use.  A good result of this approach is
@@ -85,7 +83,7 @@ associated with `addr` to a random value and then returns that.
 
 On `put32(addr,v)`: 
 
-	1. Create an entry for `addr` if it doesn't exist.
+	1. Create an entry for `addr` in `mem` if it doesn't exist.
 
 	2. Write `v` to `addrs` entry.
 
@@ -101,15 +99,16 @@ On `get32(addr)`:
 
 	4. Return `v`.
 
-Run your blink code on Unix.  It shouldn't crash, and it should print out
-sensible values.  If you pipe the result through `cksum`, it should give
+Run your blink code on Unix.  It should run without crashing and,
+importantly, print out the values for each put and get in the exact order
+they happened.  If you pipe the result through `cksum`, it should give
 you the same value as your lab partner has.
 
 	`./blink.unix | cksum`
 
+If these values match, you know your code worked the same as your partner's.
 
 #### 3. Check your code against everyone else (5 minutes)
-
 
 We want to check that your `gpio` code works the same as everyone
 else.  Given the `get32` and `put32` modifications above, a 
@@ -120,7 +119,6 @@ simple, stringent approach is to check that:
 
 	2. Returns the same result.  
 
-
 If so, then we know that --- at least for this input --- they have the
 same effect.
 
@@ -129,7 +127,7 @@ behavior and compare.
 
 For this section:
 
-	1.  Adapt the code to use...
+	1. Adapt the code to use...
 	2. Run the tracing routine.
 	3. checksum the result.
 	4. this should be the same as your partner.
@@ -142,7 +140,6 @@ We gave you a complicated implementation of gpio.  Rewrite it to be
 simple.  Make sure you annotate each interesting thing with the page
 number and any sentence fragment from broadcom document.   Verify that
 your code is equivalant.  You'll have to modify the given gpio.c code.
-
 
 #### 5. Sign-off
 
@@ -187,6 +184,8 @@ Modify your code to:
 
 If you can do all of these you are in great shape to check some
 interesting code.
+
+
 
 Cross-checking Background
 ---------------------------------------------------------------------
