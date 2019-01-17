@@ -32,11 +32,11 @@ static void print_read(mem_t *m) {
  * implement these two functions.
  */
 
-unsigned (get32)(void *addr) {
+unsigned (get32)(volatile void *addr) {
 	assert(0);
 }
 
-void (put32)(void *addr, unsigned val) {
+void (put32)(volatile void *addr, unsigned val) {
 	assert(0);
 }
 

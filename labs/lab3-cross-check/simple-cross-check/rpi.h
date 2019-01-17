@@ -3,14 +3,11 @@
 
 #include "gpio.h"
 
-// FIXME: ugly way to strip volatile.
-#define put32(x,y) (put32)((void*)x, y)
-#define get32(x) (get32)((void*)x)
+// return *(volatile unsigned *)addr
+unsigned get32(volatile void *addr);
 
-unsigned (get32)(void *addr);
-
-// *(unsigned *)addr = v
-void (put32)(void *addr, unsigned val);
+// *(volatile unsigned *)addr = v
+void put32(volatile void *addr, unsigned val);
 
 void notmain(void);
 
