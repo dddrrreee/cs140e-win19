@@ -44,7 +44,10 @@ happens when your code writes to GPIO memory.  Later in this course
 intercept all loads and stores and cause them to do interesting things.
 For the moment, we will do things in a much simpler, though manual way.
 
-	1. Rewrite your `blink` code from lab1 to use `GET32` and `PUT32`
+	0.  Do a pull.	 Your `lab1/part3`  should now have an `rpi.h`
+	with definitions for `get32` and `put32`.
+
+	1. Rewrite your `blink` code from lab1/part3 to use `get32` and `put32`
 	instead of a raw read or write of device memory.  So, for example
 
 	     	*gpio_fsel0 &= ~111b;
