@@ -121,18 +121,85 @@ and vise verse.
 
 ### Part 2: Implementing the UART code.
 
-TBD.
+NOTE: Lab4 will cover much of this.
 
-You'll go through the broadcom documents and implement the code to initialize
-the bootloader.  The next lab will go over this.
+The code to setup and use the miniUART on the pi is the last "major"
+piece of the pi runtime that you have not built yourself.
+
+The miniUART on the pi is what talks to your laptop via the TTY-USB
+device.  You will write the code to initialize the miniUART to the state
+the TTY-USB needs and write `getc` and `putc` routines to receive and
+transmit bytes using it, respectively.
+
+Once you finish, all code on the pi (and much on the Unix end) will have
+been built by you, with the exception of the trivial `start.s` and some
+helper functions.  Also, once your UART code works, you can then start
+using `printf` on the pi, since `printf` can use the miniUART to transmit
+the bytes it prints.
+
+Concretely, you will implement three routines (skeletons given in 
+`homework/1-boot-loader/my-uart/my-uart.c`):
+	
+	1. `void uart_init(void)`: called to setup the miniUART.
+	It should set the baud rate to 115,200 and leave the miniUART
+	in its default 8n1 configuration.
+
+	2. `int uart_getc(void)` which blocks until it can read a byte
+	from the miniUART, and returns the byte as an integer 
+	(do for consistency with `getc`).
+
+	3. `void uart_putc(unsigned c)` which blocks until it can give
+	the byte `c` to the miniUART to transmit.
+
+When compiled the resultant `my-uart.o` should function as a drop-in
+replacement for the `uart.o` we gave you.     One extremely useful trick:
+if things break, you can swap the old `uart.o` in to see if there is a
+problem with your code, or somewhere else (e.g., fried hardware).
+
+In order to do this assignment, you'll have to go through the Broadcom
+document  to figure out where, what, and why you have to read/write
+values.  Again, lab4 will partially cover this.  As with the GPIO, the
+upper bits of the broadcom addresses are incorrect for the pi and you
+will have to use different ones (in our case `0x2021`).
+
+NOTE: AN IMPORTANT DELIVERABLE FOR THIS PART IS DOCUMENTED CODE.
+Almost all device drivers are full of mysterious reads  and writes of
+unexplained constants to unexplained locations in unexplained orders.
+At best they are hard to understand, at worst wrong, in either case
+giving you no
+way to check how well the author understood
+the device and why they decided to do what they did, in the order they
+did it.
+
+You code WILL NOT be like this.  Every single decision you make should
+have a page number, and either a direct quote (typed out) or at least a
+succinct paraphrase givin the reason for each and every action you do.
+That way someone else can read the code and (1) know why you decided to
+do something and (2) decide if you were correct (for example, if they
+see you are --- possibly unknowingly --- confused about something).
+You do not have to replicate the broadcom document in your code: for
+this part, a reasonable balance is that there will likely be about as
+many tokens in your comments as in your code.  Of course, if you start
+putting long quotes, which is a reasonable thing to do, this will skew
+more towards comment length.
+
+Think of your comments as an informal proof sketch stating the reasons
+that, QED, your believe your code does what it purports to do.
 
 ### Part 3: Cross-checking your UART and GPIO against everyone else.
 
-TBD.
+NOTE: you will have done much of this part in Lab 3.
 
 You'll write a simple system to log each `get32` and `put32` to device
 memory and verify that the addresses you read and write, the order you
-do so, and the final values written are identical to everyone else in the class.
-By checking equivalence we know that if one 
-person gets it right, and everyone is equivalent, that everyone is right.
-Monday's lab 4 will be over this part.
+do so, and the final values written are identical to everyone else in
+the class.  By checking equivalence we know that if one person gets it
+right, and everyone is equivalent, that everyone is right.
+
+In the lab you have already checked `gpio_set_output`, `gpio_clear`,
+and `gpio_set`.  You will extend your checking for your miniUART code.
+
+NOTE: we are in flux as to the right directory structure and makefiles,
+so for the moment, run your `uart` routines manually by just dropping
+them into your lab 2 code.  Check against your lab partner and use the
+newgroup to check against everyone else.
