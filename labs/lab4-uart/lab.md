@@ -161,17 +161,21 @@ Now that you verify that everything works with the original system:
 What you should do:
 
    1. Show us the working `my-uart.c` code.
-   2. Show us that `1hello-inf.bin` works when linked it it.
+   2. Show us that `1hello-inf.bin` works when linked with your UART
+	implementation.
+   3. If your bootloader works: show that it does so with your UART
+   and that you can run `2-hello-once.bin`.
 
-When you pass this, let us know and we will give you access to the most
-widely used code out there.  Go through it, and annotate several things
-it does which contradict what Broadcom says you should do.
+Optional: When you pass 1 and 2: let us know and we will give you access
+to the most widely-used pi UART code out there.  Surprisingly, it violates
+what the Broadcom document states you should do in several ways.  Give us
+two examples.
 
 ## Extra Credit.
 ==================
 
 Repurpose the memory tracing code you built in the previous lab to 
-check what your UART code produces, and cross check against your
+check what your UART code produces, and cross-check against your
 partner.
 
 You will need to do this for your homework, so might as well do now!
