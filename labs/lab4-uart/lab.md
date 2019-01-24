@@ -160,7 +160,10 @@ Now that you verify that everything works with the original system:
 
 What you should do:
 
-   1. Show us the working `my-uart.c` code.
+   1. Show us the working `my-uart.c` code.  It should make it clear 
+   why you did what you did, and supporting reasons --- i.e., have
+   page numbers and partial quotes for each thing you did. 
+
    2. Show us that `1hello-inf.bin` works when linked with your UART
 	implementation.
    3. If your bootloader works: show that it does so with your UART
