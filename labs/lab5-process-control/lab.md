@@ -1,3 +1,5 @@
+## Lab: testing your bootloader using process control and fault-injection.
+
 This lab will show how to use Unix verbs (`fork`, `exec`, `waitpid`)
 and nouns (sockets, pipes, processes) to control processes and make them
 do tricks.
@@ -11,7 +13,7 @@ of concrete examples showing how to use the system calls you'll need.
 You should go through and read/run/modify the various programs to get
 a reasonable feel for how things work.
 
-## Don't do this.
+### Don't make these mistakes.
 
 The single largest mistake I see people do over and over again in lab is not
 checking if a system call failed.  Given that this is many people's
