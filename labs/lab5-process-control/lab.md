@@ -8,7 +8,8 @@ Our main trick will be testing your bootloader code by using another
 process to intercept all its communication and cause it to fail in a
 variety of ways, making sure it does not crash.
 
-Since man pages are not always clear, `useful-examples` has a bunch
+Since man pages are not always clear, the sub-directory 
+`useful-examples` has a bunch
 of concrete examples showing how to use the system calls you'll need.
 You should go through and read/run/modify the various programs to get
 a reasonable feel for how things work.
@@ -18,13 +19,14 @@ a reasonable feel for how things work.
 The single largest mistake I see people do over and over again in lab is not
 checking if a system call failed.  Given that this is many people's
 first experience with these calls, the probability that they are used
-incorrectly is 1.  Further, given that we are using hardware, the chance
-that a call fails because of a pi issue is 2.  This is a selfish rather
-an a priggish moral issue: Checking each call is the
+incorrectly is 1.  Further, given that we are using hardware, the probability
+that a call fails because of a pi issue is 2.  Checking calls
+is a selfish rather
+an a priggish moral issue: it is the
 simplest, fastest way to detect when you've screwed up.  It will save
 you a huge amount of time, since otherwise you have to invert the
-function "my program doesn't work" which is wildly non-biijective.
-You can do something as simple as:
+function "my program doesn't work" which is wildly, tediously non-biijective.
+Such checking is not hard.  You can do something as simple as:
 
     #include "demand."
 
@@ -45,5 +47,6 @@ in fact it has.  To get around this either:
 	1.  Put a newline on any `printf` (not guaranteed).
 
 	2. Or, better yet do `fprintf(stderr, "..."` which will immediately
-	force output to `stderr`.
+	force output to `stderr`.  There's a helpful macro `debug` in 
+	`demand.h` which will do this.
 
