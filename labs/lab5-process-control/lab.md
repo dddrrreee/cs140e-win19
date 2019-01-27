@@ -19,22 +19,31 @@ The single largest mistake I see people do over and over again in lab is not
 checking if a system call failed.  Given that this is many people's
 first experience with these calls, the probability that they are used
 incorrectly is 1.  Further, given that we are using hardware, the chance
-that a call fails because of a pi issue is 2.  Checking calls will
-save you a huge amount of time, since otherwise you have to invert the
+that a call fails because of a pi issue is 2.  This is a selfish rather
+an a priggish moral issue: Checking each call is the
+simplest, fastest way to detect when you've screwed up.  It will save
+you a huge amount of time, since otherwise you have to invert the
 function "my program doesn't work" which is wildly non-biijective.
 You can do something as simple as:
 
+    #include "demand."
+
+    ...
     if(write(fd, buf, n) < 0)
-      sys_die(write, write failed?)
+          sys_die(write, write failed?)
 
+Which will kill your program, printing out: (1) the file, function and
+line number of the call, (2) the actual error the system call returned
+and (3) printing out any helpful message you want.
 
-
-A minor technical mistake: if you are using `printf` to see what's
-going on, MacOS will often buffer the output,  and not print til later.
+A second, much more minor gotcha: if you are using `printf` to see what's
+going on, both MacOS and Linux will often buffer the output --- i.e., not
+print it til "later."
 This can be confusing since you will then believe code has not run when
 in fact it has.  To get around this either:
 
-	1.  Put a newline on any `printf` (this is not super reliable).
+	1.  Put a newline on any `printf` (not guaranteed).
 
-	2. Or, better yet do `fprintf(stderr, "..."`.
+	2. Or, better yet do `fprintf(stderr, "..."` which will immediately
+	force output to `stderr`.
 
