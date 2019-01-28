@@ -1,7 +1,7 @@
-CFLAGS = -Wall -Og  -Werror -std=gnu99
+CFLAGS = -Wall -Og  -I../boot-check -Werror -std=gnu99
 CC = gcc
 
-PROGS = select-ex demand-ex pipe-ex signal-ex pipe-read-exit-ex wait-ex local-socket is-fd-open
+PROGS = select-ex demand-ex pipe-ex signal-ex pipe-read-exit-ex wait-ex local-socket is-fd-open socket-ex
 all : $(PROGS)
 
 local-socket: local-socket.o
