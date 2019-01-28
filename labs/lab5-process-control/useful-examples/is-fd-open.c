@@ -1,3 +1,4 @@
+// engler: showing how to check if an fd is open
 #include <assert.h>
 #include <fcntl.h>
 #include <stdio.h>

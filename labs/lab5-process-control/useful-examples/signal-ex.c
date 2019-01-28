@@ -1,4 +1,4 @@
-// if a process writes to a closed pipe, will get a SIGPIPE.
+// engler: if a process writes to a closed pipe, will get a SIGPIPE.
 // this shows two ways to handle this:
 //	1. you can ignore the signal explicitly.
 //	2. you could also not close the write end of the pipe in the parent,
