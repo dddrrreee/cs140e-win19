@@ -48,6 +48,20 @@ void parent(int fd, int pid) {
 		assert(status == 10);
 	}
 	printf("SUCCESS!\n");
+
+	printf("about to write to closed socket\n");
+
+        // 2. probably clearer: ignore the signal.
+        if(signal(SIGPIPE, SIG_IGN) < 0)
+                sys_die(signal, cannot catch);
+
+	if(write(fd, &val, 4) < 0)
+		sys_die(write, failed);
+
+	fprintf(stderr, "successx2\n");
+	fprintf(stderr, "successx2\n");
+	fprintf(stderr, "successx2\n");
+	fprintf(stderr, "successx2\n");
 }
 
 void child(int fd) {
