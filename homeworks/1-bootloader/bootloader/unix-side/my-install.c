@@ -32,7 +32,7 @@
 // from the pi telling us to shutdown.
 static int done(unsigned char *s) {
 	static unsigned pos = 0;
-	const char exit_string[] = "DONE!!!";
+	const char exit_string[] = "DONE!!!\n";
 	const int n = sizeof exit_string - 1;
 
 	for(; *s; s++) {
@@ -42,7 +42,7 @@ static int done(unsigned char *s) {
 			return done(s+1); // check remainder
 		}
 		// maybe should check if "DONE!!!" is last thing printed?
-		if(pos == sizeof exit_string - 1)
+		if(pos == n)
 			return 1;
 	}
 	return 0;
