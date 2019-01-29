@@ -56,7 +56,7 @@ void parent(int fd, int pid) {
                 sys_die(signal, cannot catch);
 
 	if(write(fd, &val, 4) < 0)
-		sys_die(write, failed);
+		fprintf(stderr, "broken pip\n");
 
 	fprintf(stderr, "successx2\n");
 	fprintf(stderr, "successx2\n");
