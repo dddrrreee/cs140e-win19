@@ -1,22 +1,48 @@
 #ifndef __DEMAND_H__
 #define __DEMAND_H__
 
-void FFatal(const char *file, int line, const char *fmt, ...);
-#define panic(msg...) FFatal(__FILE__, __LINE__, ##msg)
+#include <stdio.h>
+#include <stdlib.h>
 
-#define unimplemented() do {	\
-	fprintf(stderr, "%s:%d: ERROR:Calling unimplemented function.  Write some code :)\n", __FILE__, __LINE__); \
-	exit(1); \
+#define _XSTRING(x) #x
+
+// usage: 
+//	demand(expr, msg)
+// prints <msg> if <expr> is false.
+// example:
+//	demand(x < 3, x has bogus value!);
+// note: 
+//	if <_msg> contains a ',' you'll have to put it in quotes.
+#define demand(_expr, _msg) do {					\
+	if(!(_expr)) { 							\
+		fprintf(stderr, "ERROR:%s:%s:%d: "			\
+			"FALSE(<" _XSTRING(_expr) ">): " _XSTRING(_msg) "\n",\
+			__FILE__, __FUNCTION__, __LINE__);		\
+		exit(1);						\
+	}								\
+} while(0)
+
+
+#define sys_die(syscall, msg) do {                                      \
+        fprintf(stderr, "%s:%s:%d: <%s>\n\tperror=",                    \
+                        __FILE__, __FUNCTION__, __LINE__, _XSTRING(msg));               \
+        perror(_XSTRING(syscall));                                      \
+        exit(1);                                                        \
+} while(0)
+
+#define panic(msg...) do { 						\
+        fprintf(stderr, "%s:%s:%d:", __FILE__, __FUNCTION__, __LINE__); \
+        fprintf(stderr, ##msg);						\
+        exit(1);                                                        \
+} while(0)
+
+#define debug(msg...) do { 						\
+        fprintf(stderr, "%s:%s:%d:", __FILE__, __FUNCTION__, __LINE__); \
+        fprintf(stderr, ##msg);						\
 } while(0)
 
 /* Compile-time assertion used in function. */
-#define AssertNow(x) switch(0) { case (x): case 0: }
+#define AssertNow(x) switch(1) { case (x): case 0: ; }
 
-/* Compile time assertion used at global scope; need expansion. */
-#define _assert_now2(y) _ ##  y
-#define _assert_now1(y) _assert_now2(y)
-#define AssertNowF(x)                                                   \
-  static inline void _assert_now1(__LINE__)()                           \
-        { AssertNow(x); (void)_assert_now1(__LINE__);  /* shut up -Wall. */}
-
-#endif /*__DEMAND_H__ */
+#define unimplemented() panic("implement this function!\n");
+#endif /* __DEMAND_H__ */
