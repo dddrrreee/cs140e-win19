@@ -1,6 +1,5 @@
 void simple_boot(int fd, const unsigned char * buf, unsigned n);
 
-#ifdef __SIMPLE_IMPL__
 /*
  * Protocol, Send:
  * 	SOH
@@ -21,6 +20,7 @@ enum {
         NAK,   // Some kind of error, restart
         EOT,   // end of transmission
 };
+#ifdef __SIMPLE_IMPL__
 
 /* ***********************************************************************
  * Simple public domain implementation of the standard CRC32 checksum.
