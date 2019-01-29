@@ -1,3 +1,6 @@
+#ifndef __SIMPLE_BOOT_H__
+#define  __SIMPLE_BOOT_H__
+
 void simple_boot(int fd, const unsigned char * buf, unsigned n);
 
 /*
@@ -90,3 +93,5 @@ u32 crc32(const void *buf, unsigned size) {
 	return crc ^ ~0U;
 }
 #endif /* __SIMPLE_IMPL__ */
+
+#endif
