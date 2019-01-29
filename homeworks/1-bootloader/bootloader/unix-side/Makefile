@@ -3,7 +3,7 @@ CC = gcc
 SRC = my-install.c simple-boot.c  support.c trace.c tty.c
 OBJS = $(SRC:.c=.o)
 
-all : my-install  test
+all : my-install 
 
 my-install:  $(OBJS) 
 	$(CC) $(CFLAGS) $(OBJS) -o my-install -lm
