@@ -33,10 +33,6 @@
 #	define NAME(x) x
 #endif
 
-int NAME(printf)(const char *format, ...);
-int NAME(snprintf)(char *buf, size_t n, const char *fmt, ...);
-int NAME(puts)(const char *msg);
-int NAME(putchar)(int c);
 
 
 /*****************************************************************************
@@ -57,10 +53,10 @@ void delay_ms(unsigned ms) ;
 /*****************************************************************************
  * standard libc like functions for the pi.
  */
-int printf(const char *format, ...);
-int snprintf(char *buf, size_t n, const char *fmt, ...);
-int puts(const char *msg);
-int putchar(int c);
+int NAME(printf)(const char *format, ...);
+int NAME(snprintf)(char *buf, size_t n, const char *fmt, ...);
+int NAME(puts)(const char *msg);
+int NAME(putchar)(int c);
 
 int strcmp(const char *_p, const char *q);
 void *memset(void *_p, int c, size_t n) ;
