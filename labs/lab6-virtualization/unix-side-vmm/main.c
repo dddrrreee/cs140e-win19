@@ -14,7 +14,7 @@ int main(void) {
 		fprintf(stderr, "expected READY (%d), got %d\n", OP_READY, v);
 
 	fprintf(stderr, "about to run fake pi\n");
-	rpi_notmain();
+	notmain();
 	fprintf(stderr, "fake pi done\n");
 	return 0;
 }

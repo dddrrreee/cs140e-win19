@@ -20,7 +20,8 @@ all: $(NAME).fake
 
 %.fake.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
-	objcopy $@ --prefix-symbols="rpi_"
+
+	# objcopy $@ --prefix-symbols="rpi_"
 
 $(NAME).fake:  $(NAME).fake.o $(PI_VMM)/fake-libpi.a
 	$(CC) $(CFLAGS) $(NAME).fake.o -o $@ $(PI_VMM)/fake-libpi.a

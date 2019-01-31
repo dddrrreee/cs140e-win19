@@ -23,10 +23,7 @@ all: fake-libpi.a
 
 fake-libpi.a:  $(OBJS) emulate-rpi.o main.o
 	# rm -f fake-libpi.a
-	ar cr fake-libpi.a $(OBJS) 
-	objcopy fake-libpi.a --prefix-symbols="rpi_"
-	objcopy fake-libpi.a --redefine-sym "rpi___stack_chk_fail=__stack_chk_fail"
-	ar cr fake-libpi.a main.o emulate-rpi.o
+	ar cr fake-libpi.a $(OBJS) main.o emulate-rpi.o
 
 clean :
 	rm -f *.o *~ Makefile.bak fake-libpi.a
