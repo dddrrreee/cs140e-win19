@@ -9,9 +9,9 @@ void notmain(void) {
 	gpio_set_output(led);
 
 	for(int i = 0; i < 20; i++) { 
-                gpio_set_on(led);
+                gpio_write(led,1);
 		delay_ms(ms);
-                gpio_set_off(led);
+                gpio_write(led,0);
 		delay_ms(ms);
         }
 	printf("done!\n");
