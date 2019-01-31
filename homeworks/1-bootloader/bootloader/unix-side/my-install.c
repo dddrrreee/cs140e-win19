@@ -28,6 +28,10 @@
 #include "../shared-code/simple-boot.h"
 #include "tty.h"
 
+void handoff_to(int fd, char *argv[]) {
+	unimplemented();
+}
+
 // simple state machine to indicate when we've seen a special string
 // from the pi telling us to shutdown.
 static int done(unsigned char *s) {
@@ -42,7 +46,7 @@ static int done(unsigned char *s) {
 			return done(s+1); // check remainder
 		}
 		// maybe should check if "DONE!!!" is last thing printed?
-		if(pos == n)
+		if(pos == sizeof exit_string - 1)
 			return 1;
 	}
 	return 0;
@@ -97,6 +101,7 @@ int main(int argc, char *argv[]) {
 		name = argv[argc];
 	}
 
+	char **exec_args = 0;
 	const char *portname = 0;
 	int print_p = 1;
 	for(int i = 1; i < argc; i++) {
@@ -106,7 +111,12 @@ int main(int argc, char *argv[]) {
 			trace_turn_on_raw();
 		else if(argv[i][0] == '/')
 			portname = argv[i];
-		else
+		else if(strcmp(argv[i], "-exec") == 0) {
+			assert((i+1) < argc);
+			exec_args = &argv[i+1];
+			argv[argc] = 0;
+			break;
+		} else
                 	panic("my-install: bad argument '%s'.\n", argv[i]);
 	
 	}
@@ -142,7 +152,9 @@ int main(int argc, char *argv[]) {
 	fprintf(stderr, "my-install: about to boot\n");
 
         simple_boot(fd, program, prog_nbytes);
-	if(print_p) {
+	if(exec_args) {
+		handoff_to(fd,exec_args);
+	} else if(print_p) {
 		fprintf(stderr, "my-install: going to echo\n");
 		echo(fd, portname);
 	}
