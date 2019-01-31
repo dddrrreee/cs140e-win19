@@ -55,7 +55,7 @@ void put_uint(unsigned u) {
 }
 
 
-void reboot(void) {
+void rpi_reboot(void) {
 	printf("in reboot\n");
 	unimplemented();
 	printf("done\n");
@@ -63,7 +63,7 @@ void reboot(void) {
 }
 void clean_reboot(void) {
 	printf("clean reboot\n");
-	reboot();
+	rpi_reboot();
 }
 
 void PUT32(unsigned addr, unsigned v) {
