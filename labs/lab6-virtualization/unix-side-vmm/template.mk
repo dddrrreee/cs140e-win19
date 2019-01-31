@@ -12,7 +12,7 @@ PI_VMM = ../unix-side-vmm/
 
 
 CC = gcc
-CFLAGS = -Wall -g -Og -std=gnu99 -I$(LPI) -DFAKE_PI
+CFLAGS = -Wall -g -O -std=gnu99 -I$(LPI) -DFAKE_PI
 
 LPI= $(LIBPI_PATH)
 

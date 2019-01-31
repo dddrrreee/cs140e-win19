@@ -23,7 +23,7 @@ all: fake-libpi.a
 
 fake-libpi.a:  $(OBJS) emulate-rpi.o main.o
 	# rm -f fake-libpi.a
-	/usr/bin/ar cr fake-libpi.a $(OBJS) main.o emulate-rpi.o
+	/usr/bin/ar crf fake-libpi.a $(OBJS) main.o emulate-rpi.o
 
 clean :
 	rm -f *.o *~ Makefile.bak fake-libpi.a
