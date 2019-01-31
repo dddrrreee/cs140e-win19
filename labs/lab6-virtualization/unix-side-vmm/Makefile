@@ -1,12 +1,13 @@
 
+
 ifndef LIBPI_PATH
 $(error LIBPI_PATH is not set: this should contain the absolute path to where this directory is.  Define it in your shell's initialiation.  For example, .tcshrc for tcsh or .bashrc for bash)
 endif
+LPI= $(LIBPI_PATH)
 
 CC = gcc
 CFLAGS = -Wall -O -std=gnu99 -I$(LPI) -DFAKE_PI -I../pi-side-vmm
 
-LPI= $(LIBPI_PATH)
 
 PI_SRC=my-gpio.c cs140e-timer.c cs140e-printf.c 
 
