@@ -3,6 +3,7 @@ all: build
 # install
 
 build:
+	make -C ../../libpi
 	make -C unix-side-vmm
 	make -C pi-side-vmm
 	make -C blink
