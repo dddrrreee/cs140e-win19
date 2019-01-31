@@ -1,7 +1,12 @@
+Today's lab: you'll write a small little emulator for the pi.   After
+you'll be able to recompile your pi programs and run them on your laptop,
+while still controlling pi hardware.  Running pi programs on Unix will
+allow you to use `valgrind`, `gdb`, or even something as simple memory
+protection.  
 
+The first set modifications is to extend `my-install`:
 
-Today's lab:
-   1. Extend `my-install` to handle an `-exec <stuff>` argument, where after
+   1. `my-install` can now take an `-exec <stuff>` argument, where after
    bootloading a pi binary it will hand off the serial file descriptor.
    This is basically just a rip-off of your `handoff.c` code.
 
@@ -11,21 +16,45 @@ Today's lab:
    This should behave identically to not using `echo`: 
 	  `my-install ../test-binaries/hello.bin`.
 
-   3. Write a trivial virtual machine so you can run pi programs on
-   your Unix laptop, and just emulate GPIO by sending reads and writes
-   to the pi.  Running on Unix will allow you to use `valgrind`, `gdb`,
-   or even something as simple memory protection.
 
-This is the Unix side emulation (or virtualization) layer for the pi.
+The rest of the lab is writing the trivial virtual machine can run pi
+programs on your Unix laptop, and just emulate GPIO by sending reads
+and writes
+to the pi.
+
+### What to do for emulation.
+
+You'll write the code to control the pi and Unix.
+
+   1. `pi-side-vmm/pi-vmm.c` has the code that will run on the pi.
+   This will be a trivial loop that waits for `OP_READ32`, `OP_WRITE32`,
+   `OP_DONE` (reboot).
+
+   2. `unix-side-vmm` has the code you will link with on the Unix side.
+   `emulate-rpi.c` has the emulation functions we need for `blink` and
+    `hello`.   The unix side starts in main, which waits for an 
+    `OP_READY` message from the pi, and then calls `notmain`.  You'll
+    have to write the code in `emulate-rpi.c`.
+
+To test:
+
+   1. Do `make` in `lab6-virtualization`.  It should be sucessful.
+
+   2. You should be able to run `blink/blink.bin` and `hello/hello.bin`
+   Using the bootloader.  The other versions `blink/blink.fake` and
+   `hello/hello.fake` are the ones you run on your laptop.
+
+### Discussion
+
+
 The big picture is that we override low-level functions in `libpi`
 and and re-implement them on Unix.
 
 At risk of being overly-dramatic, you are making the virtualization
-layer of a  simple virtual machine.
-Your pi programs are tiny, trivial operating systems in the power 
-sense that
-they have complete control over the entire machine (but, of course,
-not in the functionality sense of doing fancy OS things).  
+layer of a  simple virtual machine.  Your pi programs are tiny, trivial
+operating systems in the power sense that they have complete control
+over the entire machine (but, of course, not in the functionality sense
+of doing fancy OS things).
 
 To over-simplify, at a mechanical level, a virtual machine is a system
 that can take an OS running with kernel privileges on raw hardware and
