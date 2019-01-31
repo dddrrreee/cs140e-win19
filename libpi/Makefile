@@ -7,7 +7,7 @@
 #
 # TODO: You should replace these .o's with your code and remove
 # the use of SUPPORT_OBJS
-SUPPORT_OBJS= cs140e-gpio.o cs140e-gpioextra.o cs140e-uart.o 
+SUPPORT_OBJS= cs140e-gpioextra.o cs140e-uart.o 
 
 START= cs140e-start.o
 
@@ -19,6 +19,7 @@ SRC = 	cs140e-printf.c  	\
 	cs140e-mem-barrier.s  	\
 	cs140e-stdlib.c		\
 	cs140e-cstart.c		\
+	my-gpio.c		\
 	cs140e-put-get.s
 
 # defines CC, etc.
