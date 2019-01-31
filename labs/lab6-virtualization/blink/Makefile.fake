@@ -1,0 +1,6 @@
+NAME = blink
+include ../unix-side-vmm/template.mk
+
+# run using the emulation layer.
+run: 
+	my-install -exec ./$(NAME).fake ../pi-side-vmm/pi-vmm.bin

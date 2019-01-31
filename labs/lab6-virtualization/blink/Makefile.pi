@@ -1,0 +1,8 @@
+NAME = blink
+
+PI = $(LIBPI_PATH)
+include $(PI)/template.mk
+
+# run natively.
+run:
+	my-install  $(NAME).bin
