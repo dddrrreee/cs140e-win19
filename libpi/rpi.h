@@ -33,10 +33,10 @@
 #	define NAME(x) x
 #endif
 
-int printf(const char *format, ...);
-int snprintf(char *buf, size_t n, const char *fmt, ...);
-int puts(const char *msg);
-int putchar(int c);
+int NAME(printf)(const char *format, ...);
+int NAME(snprintf)(char *buf, size_t n, const char *fmt, ...);
+int NAME(puts)(const char *msg);
+int NAME(putchar)(int c);
 
 
 /*****************************************************************************
