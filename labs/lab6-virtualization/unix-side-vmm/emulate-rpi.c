@@ -11,7 +11,9 @@
 #include "pi-vmm-ops.h"
 #include "vmm.h"
 
-static int pi_fd = 3;
+enum { TRACE_FD_REPLAY = 11, TRACE_FD_HANDOFF };
+
+static int pi_fd = TRACE_FD_HANDOFF;
 
 // using standard headers is tricky here since we redefined some symbols.
 #define FAKE_PI_IMPL
