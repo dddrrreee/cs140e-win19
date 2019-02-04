@@ -1,50 +1,50 @@
-NAME = timer
-CC= arm-none-eabi-gcc
-AS = arm-none-eabi-as
-SRC = $(NAME).c 
+# makefile based on scott mcpeak's grad school page :)
+# 	http://scottmcpeak.com/autodepend/autodepend.html
 
-# CFLAGS =  -I$(LIBPI) -I. -std=gnu99 -Wall -Og -nostdlib -nostartfiles -ffreestanding
-CFLAGS =  -I$(LIBPI) -I. -Wall -Og -std=gnu99 -nostdlib -nostartfiles -ffreestanding $(FPFLAGS)
+NAME=timer
+OBJS = $(NAME).o interrupts-asm.o interrupts-c.o cstart.o  timer-interrupt.o
 
-# CFLAGS =  -I$(LIBPI) -I. -Wall -Og -std=gnu99 -Wall -Og -std=gnu99  -nostdlib -nostartfiles -ffreestanding  -mapcs-frame -fno-omit-frame-pointer -ffunction-sections -fdata-sections  
+ifndef LIBPI_PATH
+$(error LIBPI_PATH is not set: this should contain the absolute path to where this directory is.  Define it in your shell's initialiation.  For example, .tcshrc for tcsh or .bashrc for bash)
+endif
 
-# these are flags for floating-point
-# FPFLAGS = -mfloat-abi=hard   -march=armv6 -mfpu=vfp 
-# START =  $(LIBPI)/fp-start.o
-# LPI = $(LIBPI)/libpi-fp.a 
+# useful set of defines.
+include $(LIBPI_PATH)/includes.mk
 
-# non-float
-LPATH= ../../lab4-uart/libpi-mine/
-LPI_INC = $(LPATH)/../libpi-include
-LPI = $(LPATH)/libpi.a 
+all: libpi $(NAME).bin
 
-LIBPI = $(LPI_INC) 
-OBJS = $(SRC:.c=.o)  interrupts-asm.o interrupts-c.o cstart.o  timer-interrupt.o
-
-
-ASFLAGS = $(FPFLAGS)
-
-all : libpi kernel.img  run
-
+# is there a better way to do this?
 libpi:
-	make -C $(LPATH)
+	@make -C $(LIBPI_PATH)
 
-kernel.img : memmap start.o $(OBJS)
-	arm-none-eabi-ld start.o $(OBJS) -T memmap -o $(NAME).elf  $(LPI)
-	arm-none-eabi-objdump -D $(NAME).elf > $(NAME).list
-	arm-none-eabi-objcopy $(NAME).elf -O binary kernel.img
+$(NAME).bin: memmap start.o $(OBJS)
+	$(LD) start.o $(OBJS) -T memmap -o $(NAME).elf  $(LPI)
+	$(OD) -D $(NAME).elf > $(NAME).list
+	$(OCP) $(NAME).elf -O binary $(NAME).bin
 
-run:
-	my-install kernel.img
+# pull in dependency info for *existing* .o files
+-include $(OBJS:.o=.d)
 
-clean :
-	rm -f *.o *.bin *.elf *.list *.img *~ Makefile.bak
+# compile and generate dependency info;
+# more complicated dependency computation, so all prereqs listed
+# will also become command-less, prereq-less targets
+#   sed:    strip the target (everything before colon)
+#   sed:    remove any continuation backslashes
+#   fmt -1: list words one per line
+#   sed:    strip leading spaces
+#   sed:    add trailing colons
+%.o: %.c
+	$(CC) -c $(CFLAGS) $*.c -o $*.o
+	$(CC) -MM $(CFLAGS) $*.c > $*.d
+	@mv -f $*.d $*.d.tmp
+	@sed -e 's|.*:|$*.o:|' < $*.d.tmp > $*.d
+	@sed -e 's/.*://' -e 's/\\$$//' < $*.d.tmp | fmt -1 | \
+	  sed -e 's/^ *//' -e 's/$$/:/' >> $*.d
+	@rm -f $*.d.tmp
 
-ctags:
-	ctags *.[ch] ../../libpi/*.[csh]
-etags:
-	etags *.[ch] ../../libpi/*.[csh]
+.s.o: 
+	$(AS) $(ASFLAGS) $< -o $@
 
-depend:
-	makedepend -I$(LIBPI)/ *.[ch] 
-
+# remove compilation products
+clean:
+	rm -f replay *.o *.d *.bin *.elf *.list *.img Makefile.bak *~
