@@ -4,3 +4,24 @@ to give credit, add it to this file as an index.
 Index:
 	+ somefile.pdf --- came from http://some.com
 	+ ...
+
+The R/pi A+ is a  ARM1176JZF-S ARM11 chip. Confusingly, the ARM11 is actually
+an ARMv6 rev of the architecture.
+	https://en.wikipedia.org/wiki/ARM11
+
+The pi zero uses the same chip, so should require minimal reworking.  (At
+least that's my theory.)
+
+ARM wiki: https://www.heyrick.co.uk/armwiki/Main_Page
+
+Useful lessons:
+https://www.cl.cam.ac.uk/projects/raspberrypi/tutorials/os/downloads.html
+
+raspian flags:
+https://www.raspbian.org/RaspbianFAQ
+
+-march=armv6
+
+-mfpu=vfp
+
+-mfloat-abi=hard
