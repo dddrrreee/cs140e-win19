@@ -11,5 +11,5 @@ void _cstart() {
         	*bss++ = 0;
  
     	notmain(); 
-	reboot();
+	rpi_reboot();
 }

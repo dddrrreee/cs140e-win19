@@ -18,24 +18,19 @@
 #	include <string.h>
 #	include <ctype.h>
 
-#	define NAME(x)  (rpi_ ## x)
 #else
 #	include "rpi.h"
 #	include "assert.h"
 
-#ifndef NAME
-#       define NAME(x)  x
-#endif
-
-int NAME(putchar)(int c) { uart_putc(c); return c; } 
+int rpi_putchar(int c) { uart_putc(c); return c; } 
 
 // XXX: check sign promotion.
 static int isdigit(int c) { return c >= '0' && c <= '9'; }
 
 void (panic)(const char *file, int lineno, const char *msg) {
-	puts("<PANIC>:");
-        printf("%s:%d: PANIC PANIC PANIC: %s\n", file, lineno, msg);
-        reboot();
+	putk("<PANIC>:");
+        printk("%s:%d: PANIC PANIC PANIC: %s\n", file, lineno, msg);
+        rpi_reboot();
 }
 #endif
 
@@ -150,7 +145,7 @@ static char* emit(unsigned base, char *dst, int n, int val, int width, int signe
 }
 
 
-static int va_printf(char *buf, int n, const char *fmt, va_list args) {
+static int va_printk(char *buf, int n, const char *fmt, va_list args) {
 	char *p = buf, *e = buf + n - 1;
 
 	buf[0] = 0;
@@ -210,7 +205,7 @@ static int va_printf(char *buf, int n, const char *fmt, va_list args) {
 				s = emit(8, num, 128, va_arg(args, int),width,0);
 				break;
 			default: 
-				panic("printf: not handling specifier '%c'\n", *fmt);
+				panic("printk: not handling specifier '%c'\n", *fmt);
 				return 0;   // ugh
 			}
 			fmt++;
@@ -224,37 +219,36 @@ static int va_printf(char *buf, int n, const char *fmt, va_list args) {
 	return p - buf;
 }
 
-int NAME(snprintf)(char *buf, size_t n, const char *fmt, ...) {
+int snprintk(char *buf, size_t n, const char *fmt, ...) {
 	va_list args;
         va_start(args, fmt);
-		int sz = va_printf(buf, n, fmt, args);
+		int sz = va_printk(buf, n, fmt, args);
 	va_end(args);
 	return sz;
 }
 
-// i think the f-omit-frame-pointer was fucking things??
-// oh, fuck.
-int NAME(printf)(const char *fmt, ...) {
+// i think the f-omit-frame-pointer was messing things up?
+int printk(const char *fmt, ...) {
 
 	// this is a really huge buffer for a pi.   could do this better.
 	static char buf[1024];
 	va_list args;
 
         va_start(args, fmt);
-		int sz = va_printf(buf, sizeof buf, fmt, args);
+		int sz = va_printk(buf, sizeof buf, fmt, args);
 	va_end(args);
 
 	int i;
 	for(i = 0; buf[i]; i++)
-		putchar(buf[i]);
+		rpi_putchar(buf[i]);
 	return sz;
 }
 
 
 // needs a newline, right?
-int NAME(puts)(const char *p) {
+int putk(const char *p) {
 	for(; *p; p++)
-		putchar(*p);
+		rpi_putchar(*p);
 	return 1;
 }
 
