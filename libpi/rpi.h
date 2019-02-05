@@ -44,6 +44,8 @@ unsigned timer_get_time(void) ;
 void delay_us(unsigned us) ;
 void delay_ms(unsigned ms) ;
 
+// a not very good rand()
+unsigned short rpi_rand(void);
 
 /*****************************************************************************
  * standard libc like functions for the pi.
@@ -103,6 +105,8 @@ unsigned short get16(const volatile void *addr);
 // *(unsigned char *)addr
 unsigned char GET8(unsigned addr);
 unsigned char get8(const volatile void *addr);
+
+
 
 #include "gpio.h"
 #include "assert.h"
