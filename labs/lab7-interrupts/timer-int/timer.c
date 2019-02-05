@@ -19,6 +19,7 @@ void int_handler(unsigned pc) {
 	unsigned pending = RPI_GetIRQController()->IRQ_basic_pending;
 
 	// if this isn't true, could be a GPU interrupt: just return.
+	// 	- possibly worth counting these.
 	if((pending & RPI_BASIC_ARM_TIMER_IRQ) == 0)
 		return;
 
