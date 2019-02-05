@@ -119,5 +119,6 @@ There's lots of other things to do:
   4. New instructions `cps`, `srs`, `rfe` to manipulate privileged state
    (e.g., Section A4-113 in `docs/armv6.pdf`).   So you can do things like
 
-		cpsie if @ Enable irq and fiq interrupts
-		cpsid if @ ...and disable them
+            cpsie if @ Enable irq and fiq interrupts
+
+            cpsid if @ ...and disable them
