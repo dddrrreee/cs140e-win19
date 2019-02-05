@@ -12,7 +12,7 @@ Big picture for today's lab:
 
    0. We'll show how to setup interrupts / exceptions on the r/pi.
    Interrupts and exceptions are useful for responding quickly to devices,
-   do pre-emptive threads, handling protection faults, and other things.
+   doing pre-emptive threads, handling protection faults, and other things.
 
    1. We strip interrupts down to a fairly small amount of code.  You will
    go over each line and get a feel for what is going on.  
