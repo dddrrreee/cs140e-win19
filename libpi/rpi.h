@@ -68,6 +68,18 @@ void BRANCHTO( unsigned addr);
 // a no-op routine called to defeat the compiler.
 void dummy(unsigned);
 
+
+/*******************************************************************************
+ * simple memory allocation.
+ */
+
+void *kmalloc_heap_end(void);
+void *kmalloc_heap_start(void);
+void *kmalloc(unsigned sz) ;
+void kfree(void *p);
+void kfree_all(void);
+
+
 /*****************************************************************************
  * memory barriers
  */
