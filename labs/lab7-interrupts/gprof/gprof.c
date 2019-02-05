@@ -32,6 +32,7 @@ void *kmalloc(unsigned nbytes) {
 /*
  * one-time called before kmalloc to setup heap.
  * 	- should be just a few lines of code.
+ */
 void kmalloc_init(void) {
 	unimplemented();
 }
@@ -110,7 +111,10 @@ void notmain() {
 	printk("setting up timer interrupts\n");
 	// Q: if you change 0x100?
 	timer_interrupt_init(0x10);
+
+	// could combine some of these.
         gprof_init();
+	kmalloc_init();
 
 	// Q: if you don't do?
 	printk("gonna enable ints globally!\n");
