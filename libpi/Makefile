@@ -20,7 +20,6 @@ SRC = 	cs140e-printf.c  	\
 	cs140e-stdlib.c		\
 	cs140e-cstart.c		\
 	cs140e-rand.c		\
-	cs140e-kmalloc.c		\
 	my-gpio.c		\
 	cs140e-put-get.s
 
