@@ -63,5 +63,5 @@ void notmain() {
 				iter,cnt, period,period);
 		iter++;
 	}
-	debug("DONE!!!");
+	clean_reboot();
 }
