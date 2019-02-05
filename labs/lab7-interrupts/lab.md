@@ -11,14 +11,16 @@ Big picture for today's lab:
 
 
    0. We'll show how to setup interrupts / exceptions on the r/pi.
-   These are useful for responding quickly to devices, do pre-emptive
-   threads, handle protection faults.
+   Interrupts and exceptions are useful for responding quickly to devices,
+   do pre-emptive threads, handling protection faults, and other things.
 
    1. We strip interrupts down to a fairly small amount of code.  You will
    go over each line and get a feel for what is going on.  
 
    2. You will use timer interrupts to implement a simple but useful
-   statistical profiler.
+   statistical profiler similar to `gprof`.  As is often the case,
+   because the r/pi system is so simple, so too is the code we need to
+   write, especially as compared to on a modern OS.
 
 The good thing about the lab is that interrupts are often made very
 complicated or just discussed so abstractly it's hard to understand them.
@@ -31,21 +33,16 @@ grasp.
 
 As you'll see over the rest of the quarter, managing multiple devices
 can be difficult.  Either you check constantly (poll), which means most
-checks are fruitless.    Or you do not check constantly, which means
-most actions have significant delay.  Interrupts will allow you do to
-your normal actions, yet get interrupted as soon as an interesting
-event happens on a device you care about.
+checks are fruitless.    Or you do not check constantly, which means most
+actions have significant delay since the device has stuff for you to do
+much before you check it.  Interrupts will allow you do to your normal
+actions, yet get interrupted as soon as an interesting event happens on
+a device you care about.
 
 You can use interrupts to mitigate the problem of device input by telling
 the pi to jump to an interrupt handler (a piece of code with some special
 rules) when something interesting happens.  An interrupt will interrupt
-your normal code, run, finish, and jump back.  If both your regular code
-and the interrupt handler read / write the same variables (which for us
-will be the common case) you can have race conditions where they both
-overwrite each other's values (partial solution: have one reader and one
-writer) or miss updates because the compiler doesn't know about interrupt
-handling and so eliminates variable reads b/c it doesn't see anyone
-changing them (partial solution: mark shared variables as "volatile").
+your normal code, run, finish, and jump back.  
 
 Interrupts also allow you to not trust code to complete promptly, by giving
 you the ability to run it for a given amount, and then interrupt (pre-empt)
@@ -63,22 +60,34 @@ such as a access fault, divide by zero, illegal instruction, etc.
 The framework we use will handle these as well; and, in fact, on the
 arm at a mechanical level there is little difference.
 
+Like everything good, interrupts also have a cost:  this will be our
+first exposure to race conditions.  If both your regular code and the
+interrupt handler read / write the same variables (which for us will be
+the common case) you can have race conditions where they both overwrite
+each other's values (partial solution: have one reader and one writer)
+or miss updates because the compiler doesn't know about interrupt handling
+and so eliminates variable reads b/c it doesn't see anyone changing them
+(partial solution: mark shared variables as "volatile").  We'll implement
+different ways to mitigate these problems over the next couple of weeks.
+
+
+
 ### Supplemental documents
 
 There's plenty to read, all put in the `docs` directory in this lab:
  
-   1. If you get confused, the overview at `valvers` was useful: (http://www.valvers.com/open-software/raspberry-pi/step04-bare-metal-programming-in-c-pt4)
+  1. If you get confused, the overview at `valvers` was useful: (http://www.valvers.com/open-software/raspberry-pi/step04-bare-metal-programming-in-c-pt4)
 
-   2. We annotated the Broadcom discussion of general interrupts and
-   timer interrupts on the pi in `docs/BCM2835-ARM-timer-int.annot.pdf`.
-   It's actually not too bad.
+  2. We annotated the Broadcom discussion of general interrupts and
+  timer interrupts on the pi in `docs/BCM2835-ARM-timer-int.annot.pdf`.
+  It's actually not too bad.
 
-    3. We annotated the ARM discussion of registers and interrupts in
-   `docs/armv6-interrupts.annot.pdf`.
+  3. We annotated the ARM discussion of registers and interrupts in
+  `docs/armv6-interrupts.annot.pdf`.
 
-    4. There are two useful lectures on the ARM instruction set.
-    Kind of dry, but easier to get through than the arm documents:
-    `docs/Arm_EE382N_4.pdf` and `docs/Lecture8.pdf`.
+  4. There are two useful lectures on the ARM instruction set.
+  Kind of dry, but easier to get through than the arm documents:
+  `docs/Arm_EE382N_4.pdf` and `docs/Lecture8.pdf`.
 
 If you find other documents that are more helpful, let us know!
 
