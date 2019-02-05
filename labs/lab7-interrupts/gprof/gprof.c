@@ -23,12 +23,15 @@
  * return a memory block of at least size <nbytes>
  *	- use to allocate gprof code histogram table.
  *	- note: there is no free, so is trivial.
+ * 	- should be just a few lines of code.
  */
 void *kmalloc(unsigned nbytes) {
 	unimplemented();
 }
 
-// one-time called before kmalloc to setup heap.
+/*
+ * one-time called before kmalloc to setup heap.
+ * 	- should be just a few lines of code.
 void kmalloc_init(void) {
 	unimplemented();
 }
@@ -41,10 +44,14 @@ void kmalloc_init(void) {
  *	- gprof_dump will print out all samples.
  */
 
+// allocate table.
+//    few lines of code
 static unsigned gprof_init(void) {
 	unimplemented();
 }
 
+// increment histogram associated w/ pc.
+//    few lines of code
 static void gprof_inc(unsigned pc) {
 	unimplemented();
 }
@@ -55,7 +62,6 @@ static void gprof_inc(unsigned pc) {
 static void gprof_dump(unsigned min_val) {
 	unimplemented();
 }
-
 
 
 /***********************************************************************
