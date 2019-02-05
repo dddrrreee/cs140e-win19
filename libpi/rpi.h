@@ -55,10 +55,10 @@ int putk(const char *msg);
 int rpi_putchar(int c);
 
 // reboot the pi.
-void rpi_reboot(void);
+void rpi_reboot(void) __attribute__((noreturn));
 
 // reboot after printing out a string to cause the unix my-install to shut down.
-void clean_reboot(void);
+void clean_reboot(void) __attribute__((noreturn));
 
 // set pc value to <addr>
 void BRANCHTO( unsigned addr);
