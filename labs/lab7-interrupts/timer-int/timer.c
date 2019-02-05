@@ -48,7 +48,7 @@ void notmain() {
 
 	printk("setting up timer interrupts\n");
 	// Q: if you change 0x100?
-	timer_interrupt_init(0x10);
+	timer_interrupt_init(0x1);
 
 	printk("gonna enable ints globally!\n");
 
@@ -58,7 +58,9 @@ void notmain() {
 
 	// enable_cache(); 	// Q: what happens if you enable cache?
 	unsigned iter = 0;
-	while(cnt<20) {
+
+	// may have to bump this up.
+	while(cnt<200) {
 		printk("iter=%d: cnt = %d, period = %dusec, %x\n", 
 				iter,cnt, period,period);
 		iter++;

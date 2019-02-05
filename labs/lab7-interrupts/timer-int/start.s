@@ -1,3 +1,6 @@
+//
+// start.s
+//
 // To keep this in the first portion of the binary.
 .section ".text.boot"
 

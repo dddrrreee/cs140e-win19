@@ -1,3 +1,7 @@
+/* 
+ * interrupts-c.c: some interrupt support code.  Default handlers, 
+ * interrupt installation.
+ */
 #include "rpi.h"
 #include "rpi-interrupts.h"
 

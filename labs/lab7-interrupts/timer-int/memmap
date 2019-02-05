@@ -1,3 +1,7 @@
+/* 
+ * memmap: tell the linker how to lay out the different sections.  We 
+ * define useful symbols, e.g., __heap_start__ which kmalloc can use.
+ */
 SECTIONS
 {
     /*

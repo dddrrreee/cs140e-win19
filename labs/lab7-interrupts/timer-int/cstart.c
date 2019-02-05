@@ -1,3 +1,7 @@
+/*
+ * cstart.c: initialize the c-runtime.  not too much, besides zero out
+ * "uninitialized" data.
+ */
 void _cstart() {
 	extern int __bss_start__, __bss_end__;
 	void notmain();

@@ -64,6 +64,8 @@ void timer_interrupt_init(unsigned ncycles) {
                 RPI_ARMTIMER_CTRL_INT_ENABLE |
                 RPI_ARMTIMER_CTRL_PRESCALE_256;
 
+  //              RPI_ARMTIMER_CTRL_PRESCALE_256;
+
   	// Now GPIO interrupts are enabled, but interrupts are still
   	// globally disabled. Caller has to enable them when they are 
 	// ready.

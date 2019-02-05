@@ -16,10 +16,6 @@
 #define RPI_BASIC_ACCESS_ERROR_1_IRQ    (1 << 6)
 #define RPI_BASIC_ACCESS_ERROR_0_IRQ    (1 << 7)
 
-
-// 10 0000 0000
-
-
 // http://xinu.mscs.mu.edu/BCM2835_Interrupt_Controller
 typedef struct {
     volatile uint32_t IRQ_basic_pending;
@@ -60,9 +56,4 @@ extern unsigned _interrupt_table;
 extern unsigned _interrupt_table_end;
 
 void install_int_handlers(void);
-
-
-
-
 #endif 
-
