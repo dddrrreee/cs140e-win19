@@ -25,9 +25,9 @@ need.  This process will foreshadow what you'll have to do when you
 write drivers for devices on your own (with the simplification that
 in this case we know its possible to get the needed information!).
 
-Checkin:
+Check-in:
 
- 1. A smoothly scaling LED that uses interrupts to smoothly dim/brighten 
+ - A smoothly scaling LED that uses interrupts to smoothly dim/brighten 
  with distance.
 
 ##### Motivation.
