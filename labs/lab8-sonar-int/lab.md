@@ -142,5 +142,44 @@ You can make many different bugs in this code.  Some examples:
 
 ### Extension: Build your own version of `gpio_pullup`/`gpio_pulldown`.
 
-These are described in the Broadcom document.  Note, you will need time
-delays.
+These are described, with much ambiguity, in the Broadcom document on 
+page 101.  Some issues:  
+
+  1. They say to use clock delays, but do not way which clock (the pi clock?
+  The GPU clock?  Some other clock?)
+
+  2. A straight-forward reading of steps (5) and (6) imply you have
+  to write to the `GPPUD` to and `GPPUDCLK` after setup to signal
+  you are done setting up.  Two problems: (1) write what value? (2)
+  the only values you could write to `GPPUD`, will either disable the
+  pull-up/pull-down or either repeat what you did, or flip it.  
+
+In other domains, you don't use other people's implementation to make
+legal decisions about what acts are correct, but when dealing with
+devices, we may not have a choice (though, in this case: what could we
+do in terms of measurements?).
+
+Two places you can often look for the pi: 
+
+  1. Linux source.  On one hand: the code may be battle-tested, or
+  written with back-channel knowledge.  On the other hand:
+  it will have lots of extra Linux puke everywhere, and linux has at a tens of
+  thousands of bugs at a minimum.
+
+  2, `dwelch76` code, which tends to be simple, but does things (such
+  as eliding memory barriers) that the documents explicitly say is wrong
+  (and has burned me in the past).
+
+For delays: 
+[Linux]
+(https://elixir.bootlin.com/linux/v4.8/source/drivers/pinctrl/bcm/pinctrl-bcm2835.c#L898) uses 150 usec.  [dwelch76]
+(https://github.com/dwelch67/raspberrypi/blob/master/uart01/uart01.c)
+uses something that is 2-3x 150 pi system clock cycles.  The 
+the general view is
+that too-much is much better than too-little, so I'd go with 150usec.  
+
+For what to write:  from looking at both Linux and dwelch67 it *seems*
+the broadcom document means to convey that after steps (1)-(4) at
+set up, you then do step (6), disabling the clock, but do not do step
+(5), which actually refers to the case that you are completely done with
+this configuration and want to reconfigure the pin in a different way.
