@@ -4,6 +4,7 @@
 #define GPIO_BASE 0x20200000
 #define GPSET0  (GPIO_BASE+0x1c)
 #define GPCLR0  (GPIO_BASE+0x28)
+#define GPLEV0  (GPIO_BASE+0x34)
 
 int gpio_set_function(unsigned pin, unsigned val) {
         if(pin >= 32)
@@ -47,4 +48,12 @@ int gpio_write(unsigned pin, unsigned v) {
 		return gpio_set_on(pin);
 	else
 		return gpio_set_off(pin);
+}
+
+// doesn't do error checking...
+unsigned gpio_read(unsigned pin) {
+	assert(pin < 32);
+        unsigned bank  = (GPLEV0 + pin/32);
+        unsigned off = (pin%32);
+	return (GET32(bank) >> off) & 1;
 }
