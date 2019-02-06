@@ -79,7 +79,8 @@ There's plenty to read, all put in the `docs` directory in this lab:
   1. If you get confused, the overview at `valvers` was useful: (http://www.valvers.com/open-software/raspberry-pi/step04-bare-metal-programming-in-c-pt4)
 
   2. We annotated the Broadcom discussion of general interrupts and
-  timer interrupts on the pi in `docs/BCM2835-ARM-timer-int.annot.pdf`.
+  timer interrupts on the pi in [BCM interrupts](./docs/BCM2835-ARM-timer-int.annot.pdf).
+
   It's actually not too bad.
 
   3. We annotated the ARM discussion of registers and interrupts in
