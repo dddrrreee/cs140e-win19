@@ -30,7 +30,6 @@ Checkin:
  1. A smoothly scaling LED that uses interrupts to smoothly dim/brighten 
  with distance.
 
-
 ##### Motivation.
 
 Most OS classes will have a few minutes where the words "device driver"
@@ -89,14 +88,10 @@ resistor` to clean up the signal.
 Some hints, you'll need to:
 
   0. do the pins need to be set as `pulldown`?
-
   1. init the device (pay attention to time delays here)
-
   2. do a send (again, pay attention to any needed time delays)
-        
   3. Measure how long it takes and compute round trip by converting
    that time to distance using the datasheet formula
-
   4. You can start with the code in `gpioextra.h` but then replace it
    with your own (using the broadcom pdf in the docs/ directory).
 
@@ -105,16 +100,12 @@ Troubleshooting:
   0. Check wiring.   Check if the sensor is reversed.  Use specific
   wire colors to keep track of what is going where.  It's easy to be
   off-by-one.
-
   1. readings can be noisy --- you may need to require multiple
   high (or low) readings before you decide to trust the signal.
-
   2. there are conflicting accounts of what value voltage you
   need for `Vcc`.
-
   3. Put the device so it's overhanging from your breadboard, otherwise
   you may get unfortunate reflections.
-
   4. Crucial: if you lose an echo, don't get stuck in the measurement
   loop!  Retry after some maximum time.
 
