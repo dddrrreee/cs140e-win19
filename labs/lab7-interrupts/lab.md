@@ -6,7 +6,6 @@ show_on_index: true
 
 ### Overview
 
-
 Big picture for today's lab:
 
 
@@ -79,16 +78,19 @@ There's plenty to read, all put in the `docs` directory in this lab:
   1. If you get confused, the overview at `valvers` was useful: (http://www.valvers.com/open-software/raspberry-pi/step04-bare-metal-programming-in-c-pt4)
 
   2. We annotated the Broadcom discussion of general interrupts and
-  timer interrupts on the pi in ![BCM interrupts](docs/BCM2835-ARM-timer-int.annot.pdf).
-
+  timer interrupts on the pi in `./docs/BCM2835-ARM-timer-int.annot.pdf`.
   It's actually not too bad.
 
   3. We annotated the ARM discussion of registers and interrupts in
-  `docs/armv6-interrupts.annot.pdf`.
+  `./docs/armv6-interrupts.annot.pdf`.
 
-  4. There are two useful lectures on the ARM instruction set.
+  4. There is also the RealView developer tool document, which has 
+  some useful worked out examples (including how to switch contexts
+  and grab the banked registers): `../../docs/DUI0203.pdf`.
+
+  5. There are two useful lectures on the ARM instruction set.
   Kind of dry, but easier to get through than the arm documents:
-  `docs/Arm_EE382N_4.pdf` and `docs/Lecture8.pdf`.
+  `./docs/Arm_EE382N_4.pdf` and `./docs/Lecture8.pdf`.
 
 If you find other documents that are more helpful, let us know!
 
