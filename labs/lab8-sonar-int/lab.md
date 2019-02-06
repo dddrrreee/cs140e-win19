@@ -8,18 +8,16 @@ show_on_index: true
 
 This is a fun lab.  You'll:
 
-  1. Implement a sensor driver on your own --- a distance
-  measuring device that uses sonar.    
+ 1. Implement a sensor driver on your own --- a distance
+ measuring device that uses sonar.    
 
-  2. Hook the output up to an LED that gets brighter as distance gets
-  shorter and struggle for a bit trying to make the variation clean.
-  This is not as straightforward as it might seem, and not b/c of 
-  device issues.
+ 2. Hook the output up to an LED that gets brighter as distance gets
+ shorter and struggle for a bit trying to make the variation clean.
+ This is not as straightforward as it might seem, and not b/c of 
+ device issues.
 
-  3. Use the code from the last lecture to set up an interrupt handler
-  to fix the problems in (2).
-
-  4. If you get ambitious, do several.
+ 3. Use the code from the last lecture to set up an interrupt handler
+ to fix the problems in (2).
 
 There's some simple skeleton code, but you're going to do all the work
 yourself, including getting the data sheets and anything else you
