@@ -55,19 +55,19 @@ get good at it, you'll realize what a superpower it is.
 ### Implementing the HC-SR04 sonar driver.
 
 First, find the data sheet.   Google search for 'HC-SR04 datasheet'
-or some variation of that.  You're looking for the manufacturer's doc for
-what to do to use the sensor.
-When you find it, you'll notice it's fairly confusing.  This is the norm.
+or some variation of that.  You're looking for the manufacturer's doc
+for what to do to use the sensor.  When you find it, you'll notice it's
+fairly confusing.  This is the norm.
 
-Don't necessarily stop with the first document you find.  
-The first one to show up for me is a 3-page sheet that isn't super
-helpful (common); there's a longer one if you keep digging.  Also, the
-`sparkfun.com` comments for the device have useful factoids (but also
-wrong ones, which --- you guessed it --- is common).
+Don't necessarily stop with the first document you find.  The first one
+to show up for me is a 3-page sheet that isn't super helpful (common);
+there's a longer one if you keep digging.  Also, the `sparkfun.com`
+comments for the device have useful factoids (but also wrong ones,
+which --- you guessed it --- is common).
 
 The game is to skim around ignoring the vast majority of information
-(which will be irrelevant to you) and find the few bits of information you
-need: 
+(which will be irrelevant to you) and find the few bits of information
+you need:
 
   1. What the pins do (input power, output, ground).
   2. What voltage you need for power (`Vcc`).
@@ -119,11 +119,12 @@ LED on/off quickly to reach a given percentage of brightness.  Write the
 code to do this.  From past experience: run it on a few values without
 the sonar so that you can see it works.
 
-Now try to make it scale smoothly.  You'll likely notice some issues.
-If you come up with a clever hack to get around it, let us know (hint,
-there is one, similar to using "cooperative threads").   However, don't
-spend too much time on it --- instead adapt the interrupt code from the
-last lab to brute force fix the issue by using interrupts.
+Now try to make it scale smoothly.  You'll likely notice some issues in
+LED brightness (e.g., jagged jumps in brightness, flickering).  If you
+come up with a clever hack to get around it, let us know (hint, there
+is one, similar to using "cooperative threads").   However, don't spend
+too much time on it --- instead adapt the interrupt code from the last
+lab to brute force fix the issue by using interrupts.
 
 ### Interrupts
 
@@ -131,6 +132,13 @@ You need a way to have one job to run while another is hogging the CPU.
 Make a copy of the code from last lab and do some of the work in the
 interrupt handler, some in the "main thread."
 
+You can make many different bugs in this code.  Some examples:
+   - no sonar timeout
+   - doing too much in interrupt handler. (what happens?)
+   - no volatile (what happens?)
+   - too long period for timer interrupts (what happens?)
+   - not delaying long enough in the sonar readings (what happens?)
+   - not disabling interrupts when getting reading (what happens?)
 
 ### Extension: Build your own version of `gpio_pullup`/`gpio_pulldown`.
 
