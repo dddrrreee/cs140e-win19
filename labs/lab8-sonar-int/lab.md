@@ -140,6 +140,20 @@ is one, similar to using "cooperative threads").   However, don't spend
 too much time on it --- instead adapt the interrupt code from the last
 lab to brute force fix the issue by using interrupts.
 
+##### PWM hacks.
+
+A nice hack for PWM --- lets say we want the LED to be at 30% brightness.
+So, over 10 periods, we will do 3 on's for 7 off's.  There are many
+ways to arrange these on and offs.   It's easy to mess this calculation up.
+Fortunately, if we change domains there's an easy solution: you can look
+at this problem as drawing a line on a graphics display (i.e., where the
+X and Y coordinates are integers) with a 3/7 slope (i.e., X=on, Y=off),
+where we want to minimize the error of the line (so it is not jagged).
+This is a well-known, old problem in graphics, which means there is some
+simple, well-tested code for it. You can adapt the [Bresenham](https://rosettacode.org/wiki/Bitmap/Bresenham%27s_line_algorithm#C) code for it.  We
+have some code in the `libpi/` directory if you want to use it.  
+It makes the interrupt handler in the next part much simpler.
+
 ### Part 3: Use interrupts to PWM smoothly.
 
 You need a way to have one job to run while another is hogging the CPU.
@@ -206,13 +220,13 @@ put the sonar functionality in there.
    1. Periodically you will trigger the sonar (say every 100ms).
    The code for this is in the interrupt handler, and just checks
    how long since it was last triggered and, if more than 100ms
-   starts.
+   starts.  This code should be very very short.
 
    2. You use the pi to generate an interrupt when the echo 
    input goes from low (no signal) to hi (signal).  
 
 Making a GPIO pin generate an interrupt is useful for many other
-things in the class, so this is a good baby step.
+things in the class, so this is good functionality to figure.
 
 First, configure the pi to:
    1. Use the pin as an `input` and as a `pulldown` (so you don't pick
@@ -237,4 +251,5 @@ Singe speed of light is much faster than people, you may get multiple
 prints for a single touch.
 
 Now restructure your sonar code to use this interrupt to detect when
-an pulse has returned and caused echo to go high.
+an pulse has returned and caused echo to go high.  This is actually the
+easiest part.
