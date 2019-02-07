@@ -20,7 +20,7 @@ This is a fun lab.  You'll:
  to fix the problems in (2).
 
 There's some simple skeleton code, but you're going to do all the work
-yourself, including getting the data sheets and anything else you
+yourself, including getting the datasheets and anything else you
 need.  This process will foreshadow what you'll have to do when you
 write drivers for devices on your own (with the simplification that
 in this case we know its possible to get the needed information!).
@@ -42,7 +42,7 @@ Check-in:
 
 Most OS classes will have a few minutes where the words "device driver"
 or "I/O devices" appear, but that's as close as many get to dealing with actual
-devices and actual data sheets.  This class goes the opposite direction.
+devices and actual datasheets.  This class goes the opposite direction.
 Two reasons:
 
  1. 90% of an OS is device driver code, so ignoring it entirely to
@@ -56,7 +56,7 @@ Two reasons:
  More than anything else, doing so requires getting through device sheets.
 
 You could argue that being able to aggressively extract the information
-you need from opaque, confusing, wrong data-sheets is the main skill that
+you need from opaque, confusing, wrong datasheets is the main skill that
 separates real system hackers from Javascript programmers.  Once you
 get good at it, you'll realize what a superpower it is.
 
@@ -70,7 +70,7 @@ pull it out.
 
 ### Part 1: Implementing the HC-SR04 sonar driver.
 
-First, find the data sheet.   Google search for 'HC-SR04 datasheet'
+First, find the datasheet.   Google search for 'HC-SR04 datasheet'
 or some variation of that.  You're looking for the manufacturer's doc
 for what to do to use the sensor.  When you find it, you'll notice it's
 fairly confusing.  This is the norm.
