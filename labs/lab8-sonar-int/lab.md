@@ -30,6 +30,14 @@ Check-in:
  - A smoothly scaling LED that uses interrupts to smoothly dim/brighten 
  with distance.
 
+ - Extension (easy): Build your own version of `gpio_pullup`/`gpio_pulldown`.
+
+ - Extension (harder): have the sonar functionality use the interrupt
+ rather than the LED.  This will require figuring out how to get
+ interrupts from GPIO pins.  You'll have to do this on the homework,
+ so why wait!
+
+
 ##### Motivation.
 
 Most OS classes will have a few minutes where the words "device driver"
@@ -48,11 +56,19 @@ Two reasons:
  More than anything else, doing so requires getting through device sheets.
 
 You could argue that being able to aggressively extract the information
-you need from opaque, confusing, wrong datasheets is the main skill that
+you need from opaque, confusing, wrong data-sheets is the main skill that
 separates real system hackers from Javascript programmers.  Once you
 get good at it, you'll realize what a superpower it is.
 
-### Implementing the HC-SR04 sonar driver.
+### Part 0: Understanding a breadboard
+
+Today is the first time we'll use a breadboard.  If this is the
+first time you've used one in your life, the [sparkfun tutorial]
+(https://learn.sparkfun.com/tutorials/how-to-use-a-breadboard) is a
+good, quick place to look.  Don't fry your pi.  If anything gets hot,
+pull it out.
+
+### Part 1: Implementing the HC-SR04 sonar driver.
 
 First, find the data sheet.   Google search for 'HC-SR04 datasheet'
 or some variation of that.  You're looking for the manufacturer's doc
@@ -109,7 +125,7 @@ Troubleshooting:
   4. Crucial: if you lose an echo, don't get stuck in the measurement
   loop!  Retry after some maximum time.
 
-### Use distance to control an LED.
+### Part 2: Use distance to control LED brightness.
 
 Make an LED get brighter as distance decreases.
 
@@ -126,7 +142,7 @@ is one, similar to using "cooperative threads").   However, don't spend
 too much time on it --- instead adapt the interrupt code from the last
 lab to brute force fix the issue by using interrupts.
 
-### Interrupts
+### Part 3: Use interrupts to PWM smoothly.
 
 You need a way to have one job to run while another is hogging the CPU.
 Make a copy of the code from last lab and do some of the work in the
@@ -166,13 +182,13 @@ Two places you can often look for the pi:
   it will have lots of extra Linux puke everywhere, and linux has at a tens of
   thousands of bugs at a minimum.
 
-  2, `dwelch76` code, which tends to be simple, but does things (such
+  2, `dwelch67` code, which tends to be simple, but does things (such
   as eliding memory barriers) that the documents explicitly say is wrong
   (and has burned me in the past).
 
 For delays: 
 [Linux]
-(https://elixir.bootlin.com/linux/v4.8/source/drivers/pinctrl/bcm/pinctrl-bcm2835.c#L898) uses 150 usec.  [dwelch76]
+(https://elixir.bootlin.com/linux/v4.8/source/drivers/pinctrl/bcm/pinctrl-bcm2835.c#L898) uses 150 usec.  [dwelch67]
 (https://github.com/dwelch67/raspberrypi/blob/master/uart01/uart01.c)
 uses something that is 2-3x 150 pi system clock cycles.  The 
 the general view is
@@ -183,3 +199,44 @@ the broadcom document means to convey that after steps (1)-(4) at
 set up, you then do step (6), disabling the clock, but do not do step
 (5), which actually refers to the case that you are completely done with
 this configuration and want to reconfigure the pin in a different way.
+
+### Extension: Use GPIO interrupts for sonar
+
+Rather than just put the LED pwm in your interrupt handler, you can
+put the sonar functionality in there.
+
+   1. Periodically you will trigger the sonar (say every 100ms).
+   The code for this is in the interrupt handler, and just checks
+   how long since it was last triggered and, if more than 100ms
+   starts.
+
+   2. You use the pi to generate an interrupt when the echo 
+   input goes from low (no signal) to hi (signal).  
+
+Making a GPIO pin generate an interrupt is useful for many other
+things in the class, so this is a good baby step.
+
+First, configure the pi to:
+   1. Use the pin as an `input` and as a `pulldown` (so you don't pick
+   up random environmental noise from the pin, which can act as an 
+   antennae).
+
+   2. Have the pin raise an interrupt when it detects a rising edge.
+
+   3. As with the timer, we also have to enable general interrupts,
+   so configure the general interrupts (chapter 7) to be tied to 
+   the GPIO pin you picked.  The IRQ table on page 113 is kind of 
+   confusing, so you'll have to think about what it probably means
+   (hint: 49).
+
+   4. In the interrupt handler: you'll have to figure out if your
+   pin caused the interrupt (`EVENT_DETECT`) and, then, clear it.
+   
+Test this code by running power through an LED (to bring down the current)
+and touching your input wire to the LED leg.   If you print out in the
+interrupt handler when it triggers, this should match when you touch.
+Singe speed of light is much faster than people, you may get multiple
+prints for a single touch.
+
+Now restructure your sonar code to use this interrupt to detect when
+an pulse has returned and caused echo to go high.
