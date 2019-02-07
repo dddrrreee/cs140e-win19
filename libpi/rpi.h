@@ -118,7 +118,9 @@ unsigned short get16(const volatile void *addr);
 unsigned char GET8(unsigned addr);
 unsigned char get8(const volatile void *addr);
 
-
+// cache enable
+void enable_cache(void) ;
+void disable_cache(void) ;
 
 #include "gpio.h"
 #include "assert.h"
