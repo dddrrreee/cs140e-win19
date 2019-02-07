@@ -63,8 +63,7 @@ get good at it, you'll realize what a superpower it is.
 ### Part 0: Understanding a breadboard
 
 Today is the first time we'll use a breadboard.  If this is the
-first time you've used one in your life, the [sparkfun tutorial]
-(https://learn.sparkfun.com/tutorials/how-to-use-a-breadboard) is a
+first time you've used one in your life, the [sparkfun tutorial](https://learn.sparkfun.com/tutorials/how-to-use-a-breadboard) is a
 good, quick place to look.  Don't fry your pi.  If anything gets hot,
 pull it out.
 
@@ -108,22 +107,21 @@ Some hints, you'll need to:
   2. do a send (again, pay attention to any needed time delays)
   3. Measure how long it takes and compute round trip by converting
    that time to distance using the datasheet formula
-  4. You can start with the code in `gpioextra.h` but then replace it
-   with your own (using the broadcom pdf in the docs/ directory).
+  4. You can start with the pulldown/pullup functions declared 
+   in `gpio.h` but then replace it
+   with your own (using Broadcom pdf in the `docs/` directory).
 
 Troubleshooting:
 
   0. Check wiring.   Check if the sensor is reversed.  Use specific
   wire colors to keep track of what is going where.  It's easy to be
   off-by-one.
-  1. readings can be noisy --- you may need to require multiple
-  high (or low) readings before you decide to trust the signal.
+  1. Crucial: if you lose an echo, don't get stuck in the measurement
+  loop!  Retry after some maximum time.
   2. there are conflicting accounts of what value voltage you
   need for `Vcc`.
   3. Put the device so it's overhanging from your breadboard, otherwise
   you may get unfortunate reflections.
-  4. Crucial: if you lose an echo, don't get stuck in the measurement
-  loop!  Retry after some maximum time.
 
 ### Part 2: Use distance to control LED brightness.
 
@@ -182,7 +180,7 @@ Two places you can often look for the pi:
   it will have lots of extra Linux puke everywhere, and linux has at a tens of
   thousands of bugs at a minimum.
 
-  2, `dwelch67` code, which tends to be simple, but does things (such
+  2. `dwelch67` code, which tends to be simple, but does things (such
   as eliding memory barriers) that the documents explicitly say is wrong
   (and has burned me in the past).
 
