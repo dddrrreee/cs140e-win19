@@ -21,6 +21,7 @@ SRC = 	cs140e-printf.c  	\
 	cs140e-cstart.c		\
 	cs140e-rand.c		\
 	my-gpio.c		\
+	cs140e-pwm.c		\
 	cs140e-put-get.s
 
 # defines CC, etc.
