@@ -50,6 +50,7 @@ several smaller pieces.
    3. Showing that (1) and (2) work using the simple program we provide,
    `thread-test`.
 
+----------------------------------------------------------------------
 ### Background: A crash course in ARM registers
 
 ARM general-purpose registers:
@@ -111,9 +112,8 @@ You can find a bunch of of information in the ARM Manual:
   <img src="images/arm-registers.png"/>
 </td></tr></table>
 
-
-### Part 0: using assembly to validate your understanding (20 minutes)
 ----------------------------------------------------------------------
+### Part 0: using assembly to validate your understanding (20 minutes)
 
 This first part makes sure you have the basic tools to validate your
 understanding of assembly code by having you write a few assembly
