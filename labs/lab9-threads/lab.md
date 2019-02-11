@@ -135,7 +135,7 @@ routines.  Being comfortable doing so will come in handy later.
    value as (2).  Put an error in it, and verify you detect the error.
 
    4. Write another version with a single instruction; validate as in (3).
-   Don't be afraid to search through the [ARM manual](../../docs/armv6.pdf) or the [lectures](../lect7-interrupts/docs) or different ARM documents such as 
+   Don't be afraid to search through the ARM manual (`docs/armv6.pdf`) or the [lectures](../lab7-interrupts/docs/) or different ARM documents such as 
     [this](http://www.keil.com/support/man/docs/armasm/armasm_dom1359731152499.htm).
 
 Examples of `cpsr`:
@@ -235,7 +235,7 @@ caret after the register list:
     # ^ tells the assembler to emit S=1, which means we will store the #
     unbanked copies of sp, lr.  stmia sp, {sp, lr}^
 
-###### What to do:
+#### What to do:
 
  1. Modify the code in `interrupt-asm.s` to save the entire context
  to the interrupt stack.  **You must save it in the same format as the
