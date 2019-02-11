@@ -1,9 +1,3 @@
----
-layout: page
-title: Threads
-show_on_index: false
----
-
 ## Overview
 
 This is a lab-based class.  We will do two 3-hour labs each week.
