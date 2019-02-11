@@ -7,9 +7,23 @@ show_on_index: true
 ## Overview
 
 Big picture:  by the end of this lab you will have a very simple
-round-robin threading package.
+round-robin threading package for both "cooperative" and "pre-emptive"
+threads:
+  - Cooperative ("non-preemptive") threads run until they explicitly
+  yield the processor.
 
-The main trick for doing threads is implementing *context switching*:
+  - Pre-emptive threads only run until interrupted (e.g., by the expiration
+  of their time-slice).
+
+Cooperative threads make preserving large invariants easy (by default:
+all code is a critical section, only broken up when you yield) [Atul
+et al].  On the other hand, it is hard to verify that every single path
+through them yields "often enough".  Pre-emptive threads allow you to
+not trust the threading code to be well-behaved.  (Which is why OSes
+such as Linux and MacOS preempt user processes.)
+
+The main trick for implementing threads of either flavor is *context
+switching*:
 
   1.  Save all thread-specific state for the currently running
    thread `Tcur`.
@@ -17,15 +31,6 @@ The main trick for doing threads is implementing *context switching*:
   2. Load all thread-specific state for a new thread `Tnew`.
 
   3. Jump to the program counter that `Tnew` was interrupted or yielded at.
-
-On the ARM, thread-specific state is:
-
- -  Sixteen general-purpose registers `r0` through `r15`, which include
- the stack pointer `sp` (register `r13`), the return register `lr`
- (register `r15`).
-
- - The current processor status register (`cpsr`), which must be moved
- to and from the coprocessor using special instructions.
 
 Context switching involves saving these in a sequence that you can invert
 when you jump back to the thread.  
@@ -53,6 +58,13 @@ several smaller pieces.
 ----------------------------------------------------------------------
 ### Background: A crash course in ARM registers
 
+On the ARM, thread-specific state is:
+
+  - Sixteen general-purpose registers `r0`---`r15` which can be saved
+  and restored using standard load and store instructions.
+  - The current processor status register (`cpsr`), which must be moved
+  to and from the coprocessor using special instructions.
+
 ARM general-purpose registers:
 
    - `r0` --- `r12`: general purpose registers.  
@@ -70,8 +82,6 @@ ARM general-purpose registers:
    in control to immediately jump to `val`.  (Irrespective of whether
    `addr` points to valid code or not.)  From above: moving `lr` to `pc`
    will return from a call.
-
-
 
 Or the [ARM procedure call ABI](http://infocenter.arm.com/help/topic/com.arm.doc.ihi0042f/IHI0042F_aapcs.pdf) document:
 <table><tr><td>
@@ -135,7 +145,7 @@ routines.  Being comfortable doing so will come in handy later.
    value as (2).  Put an error in it, and verify you detect the error.
 
    4. Write another version with a single instruction; validate as in (3).
-   Don't be afraid to search through the ARM manual (`docs/armv6.pdf`) or the [lectures](../lab7-interrupts/docs/) or different ARM documents such as 
+   Don't be afraid to search through the ARM manual (`docs/armv6.pdf`) or the [lectures](`../lab7-interrupts/docs/`) or different ARM documents such as 
     [this](http://www.keil.com/support/man/docs/armasm/armasm_dom1359731152499.htm).
 
 Examples of `cpsr`:
@@ -146,7 +156,6 @@ Examples of `cpsr`:
 
 ----------------------------------------------------------------------
 ### Part 1: Cooperative context-switching (30 minutes)
-
 
 Context switching will involve inverting the code you wrote for Part 0.
 
