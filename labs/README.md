@@ -20,7 +20,7 @@ The labs:
   protocol.
 
   3. `lab3-cross-check`: you will use read-write logging to verify that
-  your GPIO code is equivalent to everyone elses.   If one person got
+  your GPIO code is equivalent to everyone else's.   If one person got
   the code right, everyone will have it right.<br></br>
   A key part of this class is having you write all the low-level,
   fundamental code your OS will need.  The good thing about this approach
@@ -37,7 +37,7 @@ The labs:
   and writes, and test your bootloader implementation by replaying these
   back, both as seen and with systematic corruption.<br></br>
   This approach comes from the model-checking community, and I believe
-  after you impement this lab and test (and fix) your bootloader you
+  after you implement this lab and test (and fix) your bootloader you
   will be surprised if it breaks later.  (In general, the approach
   we follow here applies well to other network protocols which have
   multi-step protocols and many potential failure modes, difficult to
