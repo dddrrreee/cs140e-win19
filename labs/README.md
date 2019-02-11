@@ -1,14 +1,7 @@
 ## Overview
 
-This is a lab-based class.  We will do two 3-hour labs each week.
-You should be able to complete almost all of the lab in one sitting.
-
-We try to work directly with primary-sources (mostly: the Broadcom manual
-and the ARM6 manual, both in the `../docs` directory) since understanding
-such prose is one of the main super-powers of good systems hackers.
-
-
 The labs:
+
   1. `lab1-blink`: get everyone up to speed and all necessary software
   installed.  You do the usual `blink` program by writing your own GPIO
   implementations based on the Broadcom document GPIO description.
