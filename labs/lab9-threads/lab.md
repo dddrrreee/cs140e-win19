@@ -85,10 +85,10 @@ The link [here](https://azeria-labs.com/arm-data-types-and-registers-part-2/) ha
 
 A nuance: Most machines split registers in into two categories:
 
-  1. "Callee-saved":  saved the a called function if it wants to reuse
+  - "Callee-saved":  saved the a called function if it wants to reuse
   them.  
 
-  2. "Caller-saved": saved by the calling code if it needs values
+  - "Caller-saved": saved by the calling code if it needs values
   preserved across function calls.  Thus, they can be used without
   saving/restoring by called code.
 
@@ -113,6 +113,7 @@ You can find a bunch of of information in the ARM Manual:
 
 
 ### Part 0: using assembly to validate your understanding (20 minutes)
+----------------------------------------------------------------------
 
 This first part makes sure you have the basic tools to validate your
 understanding of assembly code by having you write a few assembly
@@ -144,6 +145,7 @@ Examples of `cpsr`:
 
 
 ### Part 1: Cooperative context-switching (30 minutes)
+----------------------------------------------------------------------
 
 
 Context switching will involve inverting the code you wrote for Part 0.
@@ -152,7 +154,7 @@ Context switching will involve inverting the code you wrote for Part 0.
   the current registers to `cur`, and loads all the values from `next`.
 
   2. Make a `rpi_new_ctx(code, arg)` that will create the context for a
-  new thread such that if you call `rpi_ctx_switch(p,new)` on the result
+  new thread such that if you call `rpi_cswitch(p,new)` on the result
   your code will correctly switch.
 
   3. To make your code easy to test, make sure your `rpi_cswitch`
@@ -175,6 +177,7 @@ and pre-emptive (next) the same.
 
 
 ### Part 2: Make simple threads (30 minutes)
+----------------------------------------------------------------------
 
 Congratulations!  You can now build a simple threading system.
 
@@ -189,6 +192,7 @@ Congratulations!  You can now build a simple threading system.
    4. Make sure the given code: `simple-thread-test` works.
 
 ### Part 3: Make pre-emptive threads (60 minutes)
+----------------------------------------------------------------------
 
 Scheduling threads "pre-emptively" means we interrupt the current running
 thread (e.g., pre-empt it with a timer-interrupt) and switch to another
