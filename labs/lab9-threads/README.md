@@ -144,19 +144,11 @@ routines.  Being comfortable doing so will come in handy later.
 
    3. Write another version using ARM's "store multiple", (should be 
    just a few lines)  and verify 
-   you get the same values as (2) or what changed.
+   you get the same values as (2) or what changed.  Useful 
+   [ARM doc](http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0473m/dom1359731152499.html) or [this](http://www.keil.com/support/man/docs/armasm/armasm_dom1359731152499.htm).
 
-
-Some useful documents:
-  
-   - [here](http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0473m/dom1359731152499.html).
-
-   - Or [this](http://www.keil.com/support/man/docs/armasm/armasm_dom1359731152499.htm).
-
-   - The ARM manual (`docs/armv6.pdf`) 
-
-   - The [lectures](`../lab7-interrupts/docs/`) 
-
+Don't be afraid to go through the ARM manual (`docs/armv6.pdf`)  or the 
+lectures we posed in lab7 (`../lab7-interrupts/docs/`).
 
 Examples of `cpsr`:
 <table><tr><td>
@@ -170,7 +162,7 @@ Examples of `cpsr`:
 
 `mode` bits in CPSR:
 <table><tr><td>
-  <img src="images/cpsr-modes.png"/>
+  <img src="images/cpsr-mode-bits.png"/>
 </td></tr></table>
 
 
