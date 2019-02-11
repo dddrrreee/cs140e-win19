@@ -1,6 +1,6 @@
-## Overview
+# The labs
 
-The labs:
+### Writing boot-level code, modern techniques to validate it:
 
   1. `lab1-blink`: get everyone up to speed and all necessary software
   installed.  You do the usual `blink` program by writing your own GPIO
@@ -43,7 +43,9 @@ The labs:
   Unix debugging for pi code (address space protection, valgrind, etc)
   while getting complete fidelity in how the pi will behave (since we
   ship the reads and writes to it directly).
-  
+
+### Threads and Interrupts, with Tricks:
+
   7. `lab7-interrupts`: you will walk through a simple, self-contained
   implementation of pi interrupts (for timer-interrupts), kicking each
   line until you understand what, how, why.  You will use these to 
