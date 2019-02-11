@@ -144,8 +144,8 @@ Examples of `cpsr`:
 </td></tr></table>
 
 
-### Part 1: Cooperative context-switching (30 minutes)
 ----------------------------------------------------------------------
+### Part 1: Cooperative context-switching (30 minutes)
 
 
 Context switching will involve inverting the code you wrote for Part 0.
@@ -176,8 +176,8 @@ is negligible).  This makes the context switching for non-pre-emptive
 and pre-emptive (next) the same.
 
 
-### Part 2: Make simple threads (30 minutes)
 ----------------------------------------------------------------------
+### Part 2: Make simple threads (30 minutes)
 
 Congratulations!  You can now build a simple threading system.
 
@@ -191,8 +191,8 @@ Congratulations!  You can now build a simple threading system.
 
    4. Make sure the given code: `simple-thread-test` works.
 
-### Part 3: Make pre-emptive threads (60 minutes)
 ----------------------------------------------------------------------
+### Part 3: Make pre-emptive threads (60 minutes)
 
 Scheduling threads "pre-emptively" means we interrupt the current running
 thread (e.g., pre-empt it with a timer-interrupt) and switch to another
@@ -235,7 +235,7 @@ caret after the register list:
     # ^ tells the assembler to emit S=1, which means we will store the #
     unbanked copies of sp, lr.  stmia sp, {sp, lr}^
 
-What to do:
+###### What to do:
 
  1. Modify the code in `interrupt-asm.s` to save the entire context
  to the interrupt stack.  **You must save it in the same format as the
@@ -256,6 +256,7 @@ Congratulations!  Now you have a simple, but working thread implementation
 and understand the most tricky part of the code (context-switching)
 at a level most CS people do not.
 
+-------------------------------------------------------------------------
 ### Lab extensions
 
 There's a lot more you can do.  We will be doing a bunch of this later
