@@ -60,15 +60,18 @@ void xc_run_fn_vv_once(const char *A, void (*a)(void)) {
 	printf("returned\n");
 }
 
+static int pin_gen(unsigned *out) {
+        static unsigned u = 0;
+        if(u > 70) {
+                u = 0;
+                return 0;
+        }
+        *out = (u < 64) ? u : random();
+        u++;
+        return 1;
+}
+
 gen_t xc_get_pin_gen(void) {
-	return xc_lambda_gen
-        ({
-                static unsigned u = 0;
-                if(u > 70)
-                        return 0;
-                *out = (u < 64) ? u : random();
-                u++;
-                return 1;
-        });
+        return pin_gen;
 }
 
