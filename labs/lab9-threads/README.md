@@ -130,27 +130,47 @@ understanding of assembly code by having you write a few assembly
 routines.  Being comfortable doing so will come in handy later.
 
    1. Look up how to get the current `cpsr` in the `docs/armv6.pdf`
-   document (I'd suggest section A3), and write code to do so.  (You can
-   see examples of how to implement assembly functions in the `.s`
-   files in the `libpi` directory.)  Extract and print a couple flags
-   in it to verify you did so correctly.
+   document (I'd suggest section A2-6 or A3) or the screen shot below,
+   and write code to do so.  (You can see examples of how to implement
+   assembly functions in the `.s` files in the `libpi` directory.)
+   Extract and print a couple flags in it to verify you did so correctly.
 
-   2. Write a simple assembly routine `void *push(uint32 *p)` that stores
+   2. Write a simple assembly routine `unsigned *save_regs(uint32 *p)` 
+   that stores
    *all* general-purpose registers and the `cpsr` to pointed-to
-   memory `p` using the ARM idiom `push` and returns a pointer to the
+   memory `p` using the ARM instruction `str` and returns a pointer to the
    last saved value.  Verify that the values stored and the amount of
    space it used makes sense.
 
-   3. Write another version with `str`, and verify you get the same
-   value as (2).  Put an error in it, and verify you detect the error.
+   3. Write another version using ARM's "store multiple", (should be 
+   just a few lines)  and verify 
+   you get the same values as (2) or what changed.
 
-   4. Write another version with a single instruction; validate as in (3).
-   Don't be afraid to search through the ARM manual (`docs/armv6.pdf`) or the [lectures](`../lab7-interrupts/docs/`) or different ARM documents such as 
-    [this](http://www.keil.com/support/man/docs/armasm/armasm_dom1359731152499.htm).
+
+Some useful documents:
+  
+   - [here](http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0473m/dom1359731152499.html).
+
+   - Or [this](http://www.keil.com/support/man/docs/armasm/armasm_dom1359731152499.htm).
+
+   - The ARM manual (`docs/armv6.pdf`) 
+
+   - The [lectures](`../lab7-interrupts/docs/`) 
+
 
 Examples of `cpsr`:
 <table><tr><td>
   <img src="images/cpsr-examples.png"/>
+</td></tr></table>
+
+`cpsr` layout:
+<table><tr><td>
+  <img src="images/cpsr-layout.png"/>
+</td></tr></table>
+
+`mode` bits in CPSR:
+<table><tr><td>
+  <img src="images/cpsr-modes.png"/>
 </td></tr></table>
 
 
