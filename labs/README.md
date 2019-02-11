@@ -71,3 +71,54 @@
   switching.  Most people don't understand such things so, once again,
   you'll leave lab knowing something many do not.
 
+  10. Simple shell that runs code on the pi and manages these "processes"
+  using your threads package.
+
+### Binary code:
+
+TBD:
+
+  - Implement a domain-specific, simple visual programming language
+  for specifing binary formats.  You will use it to make it much
+  easier to implement subsequent labs, since it greatly aids specifing
+  virtual memory (page table entry, register layout), , machine code
+  encoding/decoding.
+
+  - Runtime code generation, using your language.
+
+  - Implement a statistical version of Valgrind and Eraser using pc-sampling
+  and instruction decoding.
+
+### Virtual Memory
+
+TBD:
+
+  - Simple virtual memory, user-level processes.
+
+### File system / SD Card.
+
+TBD:
+
+  - Implement a simple FAT32 file system using an SD card driver so you
+  can read/write files to the SD card.
+
+### Devices
+
+TBD:
+  
+   - You'll implement the widely-used I2C protocol using the broadcom 
+   documents
+
+   - Implement a gyroscope / accelerometer using your protocol.
+
+### Final projects.
+
+Multiple options:
+
+  - Extend your OS to do tricks in more advanced ways.
+
+  - You'll have an expense account at sparkfun/adafruit.  You can buy
+  whatever device you need and write the code to have your OS control
+  it to do interesting things.
+
+  - ? 
