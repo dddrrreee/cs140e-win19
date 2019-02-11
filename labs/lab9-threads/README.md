@@ -133,16 +133,17 @@ routines.  Being comfortable doing so will come in handy later.
    document (I'd suggest section A2-6 or A3) or the screen shot below,
    and write code to do so.  (You can see examples of how to implement
    assembly functions in the `.s` files in the `libpi` directory.)
-   Extract and print a couple flags in it to verify you did so correctly.
+   Print whether you have interrupts disabled and what mode you are in
+   to verify you did so correctly.
 
-   2. Write a simple assembly routine `unsigned *save_regs(uint32 *p)` 
+   2. Implement a simple assembly routine `test_csave(p)` that
    that stores
    *all* general-purpose registers and the `cpsr` to pointed-to
    memory `p` using the ARM instruction `str` and returns a pointer to the
    last saved value.  Verify that the values stored and the amount of
    space it used makes sense.
 
-   3. Write another version using ARM's "store multiple", (should be 
+   3. Write another version `test_csave_stm` using ARM's "store multiple", (should be 
    just a few lines)  and verify 
    you get the same values as (2) or what changed.  Useful 
    [ARM doc](http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0473m/dom1359731152499.html) or [this](http://www.keil.com/support/man/docs/armasm/armasm_dom1359731152499.htm).
