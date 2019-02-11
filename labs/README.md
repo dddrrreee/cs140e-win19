@@ -2,7 +2,7 @@
 
 ### Writing boot-level code, modern techniques to validate it:
 
-  1. [lab1-blink](lab1-blink/README.md): get everyone up to speed and all necessary software
+  1. [lab1-blink](lab1-blink/): get everyone up to speed and all necessary software
   installed.  You do the usual `blink` program by writing your own GPIO
   implementations based on the Broadcom document GPIO description.
 
