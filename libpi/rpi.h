@@ -122,6 +122,8 @@ unsigned char get8(const volatile void *addr);
 void enable_cache(void) ;
 void disable_cache(void) ;
 
+unsigned rpi_get_cpsr(void);
+
 #include "gpio.h"
 #include "assert.h"
 

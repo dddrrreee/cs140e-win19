@@ -20,10 +20,13 @@ SRC = 	cs140e-printf.c  	\
 	cs140e-stdlib.c		\
 	cs140e-cstart.c		\
 	cs140e-rand.c		\
+	cs140e-kmalloc.c		\
 	my-gpio.c		\
 	cs140e-pwm.c		\
 	cs140e-cache.c		\
 	cs140e-put-get.s
+
+TARGET = libpi.a
 
 # defines CC, etc.
 include includes.mk
@@ -35,10 +38,7 @@ endif
 LIB_OBJS := $(SRC:.c=.o)
 LIB_OBJS := $(LIB_OBJS:.s=.o)
 
-TARGET = libpi.a
-
-all : $(TARGET) $(START)
-
+all : $(TARGET) $(START) 
 
 # we bundle start.s with the library: just make different ones for each
 # different start so that the library is internally consistent.
@@ -70,9 +70,5 @@ $(TARGET): $(LIB_OBJS) $(SUPPORT_OBJS)
 .s.o: 
 	$(AS) $(ASFLAGS) $< -o $@
 
-
 clean :
-	rm -f $(LIB_OBJS) cs140e-start.o *.bin *.hex *.elf *.list *.img *~ $(TARGET)  Makefile.bak  *.d
-
-depend: 
-	makedepend $(SRC)
+	rm -f $(LIB_OBJS) cs140e-start.o *.bin *.hex *.elf *.list *.img *~ $(TARGET)  Makefile.bak  *.d 
