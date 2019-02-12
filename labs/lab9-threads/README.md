@@ -4,23 +4,27 @@ title: Threads
 show_on_index: true
 ---
 
-## Overview
+## Writing a non-preemptive threads package
 
 Big picture:  by the end of this lab you will have a very simple
-round-robin threading package for both "cooperative" and "pre-emptive"
-threads:
-  - Cooperative ("non-preemptive") threads run until they explicitly
+round-robin threading package for "cooperative" (i.e., non-preemptive)
+threads.
+
+Recall we split threads into two types:
+
+  - Non-preemptive threads run until they explicitly
   yield the processor.
 
   - Pre-emptive threads only run until interrupted (e.g., by the expiration
   of their time-slice).
 
-Cooperative threads make preserving large invariants easy (by default:
-all code is a critical section, only broken up when you yield) [Atul
-et al].  On the other hand, it is hard to verify that every single path
-through them yields "often enough".  Pre-emptive threads allow you to
-not trust the threading code to be well-behaved.  (Which is why OSes
-such as Linux and MacOS preempt user processes.)
+Cooperative threads make preserving large invariants easy since, by
+default, all code is a critical section, only broken up when you yield
+[Atul et al].  Their downside is that if they don't yield "often enough"
+they add large, difficult-to-debug latencies.  Pre-emptive threads (we
+will do in a subsequent lab) allow you to eliminate the need to trust
+that the threading code yields control in a well-behaved way, which is
+why   multi-user OSes (Linux and MacOS) preempt user processes.
 
 The main trick for implementing threads of either flavor is *context
 switching*:
@@ -32,28 +36,40 @@ switching*:
 
   3. Jump to the program counter that `Tnew` was interrupted or yielded at.
 
-Context switching involves saving these in a sequence that you can invert
-when you jump back to the thread.  
+For our case, context switching involves saving all registers in a sequence
+that you can invert when you jump back to the thread.
 
 Mechanically, context-switching doesn't require much work (say less
-than 30 instructions or even fewer using special ARM instructions),
+than 40 instructions or even fewer using special ARM instructions),
 but mistakes can be extremely hard to find.  So we'll break it down into
 several smaller pieces.
 
 ### Sign-off:
 
    0. Simple assembly functions that demonstrate your understanding of
-   the ARM's load and store instructions.
+   the ARM's load and store instructions (implement and run `part0()`).
 
    1. A cooperative (non-pre-emptive) context switching implementation
-   of the `rpi_yield()` procedure.
+   of the `rpi_yield()` procedure (run `part1()`).
 
-   2. An involuntary (pre-emptive) context switching implementation that
-   uses a modification of the timer interrupt code from lab 7 to interrupt
-   the current thread, pick a new one (round-robin), and jump to it.
+   2. A simple threads system that runs the trivial test in `part2()`,
+   plus two additional tests you design.
 
-   3. Showing that (1) and (2) work using the simple program we provide,
-   `thread-test`.
+
+#### Three possible extensions:
+
+   1. Extension (easy): an implementation of your context switching code
+   (from 2) using the ARM `stmfd` and `ldmfd` instructions.
+
+   4. Extension (medium): re-implement your sonar code to have two
+   threads, one for PWM of the LED, one for the sonar device thread.
+   Make a new `sleep_us(us)` routine that will `rpi_yield()` the processor
+   if needed.
+
+   5. Extension (hard): An involuntary (pre-emptive) context switching
+   implementation that uses a modification of the timer interrupt
+   code from lab 7 to interrupt the current thread, pick a new one
+   (round-robin), and jump to it.
 
 ----------------------------------------------------------------------
 ### Background: A crash course in ARM registers
@@ -96,12 +112,14 @@ The link [here](https://azeria-labs.com/arm-data-types-and-registers-part-2/) ha
 
 A nuance: Most machines split registers in into two categories:
 
-  - "Callee-saved":  saved the a called function if it wants to reuse
-  them.  
+  - "Callee-saved": saved and restored code before using it.  If a routine
+  `foo` (the caller) calls a routine `bar` (the callee) and `bar` wants
+  to use a callee-saved register `r`, it must save `r` before doing so,
+  and restore it afterwards.  uses them.
 
-  - "Caller-saved": saved by the calling code if it needs values
-  preserved across function calls.  Thus, they can be used without
-  saving/restoring by called code.
+  - "Caller-saved": saved by code if it needs values preserved across
+  function calls.  Thus, they can be used without saving/restoring by
+  the callee code.
 
 (Why have different types of registers?)
 
@@ -123,7 +141,7 @@ You can find a bunch of of information in the ARM Manual:
 </td></tr></table>
 
 ----------------------------------------------------------------------
-### Part 0: using assembly to validate your understanding (20 minutes)
+### Part 0: using assembly to validate your understanding (30 minutes)
 
 This first part makes sure you have the basic tools to validate your
 understanding of assembly code by having you write a few assembly
@@ -136,17 +154,18 @@ routines.  Being comfortable doing so will come in handy later.
    Print whether you have interrupts disabled and what mode you are in
    to verify you did so correctly.
 
-   2. Implement a simple assembly routine `test_csave(p)` that
-   that stores
-   *all* general-purpose registers and the `cpsr` to pointed-to
-   memory `p` using the ARM instruction `str` and returns a pointer to the
-   last saved value.  Verify that the values stored and the amount of
-   space it used makes sense.
+   2. Implement a simple assembly routine `test_csave(p,...)` that
+   that stores *all* general-purpose registers and the `cpsr` in the
+   pointed-to memory `p` using the ARM instruction `str` and returns a
+   pointer to the last saved value.  Verify that the values stored and
+   the amount of space it used makes sense.
 
-   3. Write another version `test_csave_stm` using ARM's "store multiple", (should be 
-   just a few lines)  and verify 
-   you get the same values as (2) or what changed.  Useful 
-   [ARM doc](http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0473m/dom1359731152499.html) or [this](http://www.keil.com/support/man/docs/armasm/armasm_dom1359731152499.htm).
+   3. Write another version `test_csave_stmfd` using ARM's
+   "store multiple", (should be just a few lines)  and verify
+   you get the same values as (2).  Note that `stmfd` stores
+   registers so that the smallest is at the lowest address.   Useful [ARM
+   doc](http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0473m/dom1359731152499.html)
+   or [this](https://www.heyrick.co.uk/armwiki/STM).
 
 Don't be afraid to go through the ARM manual (`docs/armv6.pdf`)  or the 
 lectures we posed in lab7 (`../lab7-interrupts/docs/`).
@@ -168,18 +187,14 @@ Examples of `cpsr`:
 
 
 ----------------------------------------------------------------------
-### Part 1: Cooperative context-switching (30 minutes)
+### Part 1: Cooperative context-switching (20 minutes)
 
 Context switching will involve inverting the code you wrote for Part 0.
 
   1. Implement `rpi_cswitch(cur,next)` (see `rpi-thread.h`), which saves
   the current registers to `cur`, and loads all the values from `next`.
 
-  2. Make a `rpi_new_ctx(code, arg)` that will create the context for a
-  new thread such that if you call `rpi_cswitch(p,new)` on the result
-  your code will correctly switch.
-
-  3. To make your code easy to test, make sure your `rpi_cswitch`
+  2. To make your code easy to test, make sure your `rpi_cswitch`
   code works when you pass the current thread as both arguments ---
   behaviorally this is a no-op since your code should save and restore
   the state, and resume right after the call.
@@ -199,22 +214,78 @@ and pre-emptive (next) the same.
 
 
 ----------------------------------------------------------------------
-### Part 2: Make simple threads (30 minutes)
+### Part 2: Make simple threads (60 minutes)
 
 Congratulations!  You can now build a simple threading system.
 
-   1. Implement `rpi_fork` using your `rpi_new_ctx` implementation
-   and the given skeleton code.
 
-   2. Implement  `rpi_yield` and `rpi_exit` using your `rpi_cswitch`
-   code.
+Implement:
 
-   3. How do you start up threading?
+  1. `rpi_fork(code, arg)`: to create a new thread, put it on the `runq`.
+  Note you will have to do "brain-surgery" on this thread's stack so 
+  that when its state is loaded in `rpi_cswitch` control will jump to
+  `code` with `arg` as the first argument.  Also, if control returns
+  from `code` that you call `rpi_exit`.
 
-   4. Make sure the given code: `simple-thread-test` works.
+  2. `rpi_yield()`: yield control to another thread.
+
+  3. `rpi_exit(int)`: kills the current thread.
+
+  4. `rpi_thread_start()`: starts the threading system.
+
+Unfortunately, a single bug can lead to your code jumping off into 
+hyperspace.   So before you write a bunch of code:
+  
+  1. Try to make it into small, simple, testable pieces.
+  
+  2. Print all sorts of stuff so you can sanity check!  (e.g., the value
+  of the stack pointer, the value of the register you just loaded).
+  Don't be afraid to call C code from assembly to do so.
+
+To break down the pieces:
+
+  0. Initially: Have `rpi_thread_start()` just reboot when there are no
+  more threads.
+
+  1. Create a single thread and make sure it can run and exit explicitly.
+
+  2. Make sure it can `rpi_yield` to itself.
+
+  3. Make sure if it doesn't exit it will do so implicitly.
+
+  4. Change `rpi_thread_start()` to create a dummy thread so that when
+  there are no more runnable threads, `rpi_cswitch` will transfer
+  control back and we can return to `part2`.
+
+Congratulations!  Now you have a simple, but working thread implementation
+and understand the most tricky part of the code (context-switching)
+at a level most CS people do not.
+
+-------------------------------------------------------------------------
+### Lab extensions
+
+There's a lot more you can do.  We will be doing a bunch of this later
+in the class:
+
+  0. Change all the timer code to use your yield function rather than
+  busy wait.  Make sure to check if threads are enabled in `rpi_yield()`!
+
+  1. Have a `sleep_until_us(us)` to put the current thread to sleep with a 
+  somewhat hard-deadline that it is woken up in `usec` micro-seconds.  Keep
+  track of your cumulative error to see how well you're scheduling is doing.
+
+  2. Rewrite the sonar code to use threads.  Tune your code til it varies
+  the light smoothly.
+
+  3. Tune your threads package to be fast.  In particular, you can avoid
+  context switching when a thread is run for the first time (there is
+  no context to load) and you don't thave to save state when it exits
+  (it's done).  You can also try tuning the interrupt handling code,
+  since it is at least 2x slower than optimal.  (I'm embarrassed, but
+  time = short.  Next year!)
 
 ----------------------------------------------------------------------
-### Part 3: Make pre-emptive threads (60 minutes)
+### Extension (hard) Make pre-emptive threads (60 minutes)
 
 Scheduling threads "pre-emptively" means we interrupt the current running
 thread (e.g., pre-empt it with a timer-interrupt) and switch to another
@@ -273,42 +344,3 @@ caret after the register list:
 
  4. Make sure you `thread-test-both` works.  Write your own code to test
  that you can intermix pre-emptive and non-pre-emptive threads.
-
-Congratulations!  Now you have a simple, but working thread implementation
-and understand the most tricky part of the code (context-switching)
-at a level most CS people do not.
-
--------------------------------------------------------------------------
-### Lab extensions
-
-There's a lot more you can do.  We will be doing a bunch of this later
-in the class:
-
-  0. Change all the timer code to use your yield function rather than busy
-  wait.  Make sure to check if threads are enabled in `rpi_yield()`!
-
-  1. Have a `sleep_until_us(us)` to put the current thread to sleep with a 
-  somewhat hard-deadline that it is woken up in `usec` micro-seconds.  Keep
-  track of your cumulative error to see how well you're scheduling is doing.
-
-  2. Rewrite the sonar code to use threads.  Tune your code til it varies
-  the light smoothly.
-
-  3. Tune your threads package to be fast.  In particular, you can avoid
-  context switching when a thread is run for the first time (there is
-  no context to load) and you don't thave to save state when it exits
-  (it's done).  You can also try tuning the interrupt handling code,
-  since it is at least 2x slower than optimal.  (I'm embarrassed, but
-  time = short.  Next year!)
-
-From the previous lab:
-
-  1. Using a suffix for the `CPSR` and `SPSR` (e.g., `SPSR_cxsf`) to
-  specify the fields you are [modifying](https://www.raspberrypi.org/forums/viewtopic.php?t=139856).
-
-  2. New instructions `cps`, `srs`, `rfe` to manipulate privileged state
-  e.g., Section A4-113 in `docs/armv6.pdf`).   So you can do things like
-
-            cpsie if @ Enable irq and fiq interrupts
-
-            cpsid if @ ...and disable them
