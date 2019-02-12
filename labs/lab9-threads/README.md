@@ -91,7 +91,7 @@ ARM general-purpose registers:
 
    - `r14` : link register (`lr`), holds the address of the instruction
    after the call instruction that called the current code (if any).
-   Since each call overwritesd `lr`, it must be saved before calling
+   Since each call overwrites `lr`, it must be saved before calling
    another.
 
    - `r15`: program counter (`pc`).  Writing a value `val` to `pc` causes
@@ -154,11 +154,12 @@ routines.  Being comfortable doing so will come in handy later.
    Print whether you have interrupts disabled and what mode you are in
    to verify you did so correctly.
 
-   2. Implement a simple assembly routine `test_csave(p,...)` that
-   that stores *all* general-purpose registers and the `cpsr` in the
-   pointed-to memory `p` using the ARM instruction `str` and returns a
-   pointer to the last saved value.  Verify that the values stored and
-   the amount of space it used makes sense.
+   2. Implement a simple assembly routine `test_csave(p,...)` that that
+   stores *all* general-purpose registers and the `cpsr` in the pointed-to
+   memory `p` using the ARM instruction `str` and explicit constant
+   offsets (i.e., there will be one instruction for each register saved)
+   and returns a pointer to the last saved value.  Verify that the values
+   stored and the amount of space it used makes sense.
 
    3. Write another version `test_csave_stmfd` using ARM's
    "store multiple", (should be just a few lines)  and verify
@@ -184,7 +185,6 @@ Examples of `cpsr`:
 <table><tr><td>
   <img src="images/cpsr-mode-bits.png"/>
 </td></tr></table>
-
 
 ----------------------------------------------------------------------
 ### Part 1: Cooperative context-switching (20 minutes)
@@ -212,7 +212,6 @@ difference between some loads and stores and some extra if-statements
 is negligible).  This makes the context switching for non-pre-emptive
 and pre-emptive (next) the same.
 
-
 ----------------------------------------------------------------------
 ### Part 2: Make simple threads (60 minutes)
 
@@ -222,10 +221,7 @@ Congratulations!  You can now build a simple threading system.
 Implement:
 
   1. `rpi_fork(code, arg)`: to create a new thread, put it on the `runq`.
-  Note you will have to do "brain-surgery" on this thread's stack so 
-  that when its state is loaded in `rpi_cswitch` control will jump to
-  `code` with `arg` as the first argument.  Also, if control returns
-  from `code` that you call `rpi_exit`.
+
 
   2. `rpi_yield()`: yield control to another thread.
 
@@ -233,11 +229,23 @@ Implement:
 
   4. `rpi_thread_start()`: starts the threading system.
 
-Unfortunately, a single bug can lead to your code jumping off into 
-hyperspace.   So before you write a bunch of code:
-  
+Given that you have context-switching, the main tricky thing is figuring
+out how to setup a thread for the first time so that when you run context
+switching on it, the right thing will happen (i.e., it will invoke to
+`code(arg)`).  The standard way to do this is by manually storing values
+onto the thread's stack (sometimes called "brain-surgery") so that when
+its state is loaded via `rpi_cswitch` control will jump to a trampoline
+routine (written in assembly) with `code` with `arg` in known registers
+The trampoline will then branch-and-link to the code with `arg` in
+`r0`.  We use a trampoline so that if `code` returns, we can then call
+`rpi_thread_exit()`.
+
+While all this is exciting, a major sad is that a single bug can lead
+to your code jumping off into hyperspace.  This is hard to debug.
+So before you write a bunch of code:
+
   1. Try to make it into small, simple, testable pieces.
-  
+
   2. Print all sorts of stuff so you can sanity check!  (e.g., the value
   of the stack pointer, the value of the register you just loaded).
   Don't be afraid to call C code from assembly to do so.
@@ -247,15 +255,20 @@ To break down the pieces:
   0. Initially: Have `rpi_thread_start()` just reboot when there are no
   more threads.
 
-  1. Create a single thread and make sure it can run and exit explicitly.
+  1. Have the trampoline code you write (`rpi_init_trampoline`) initially
+  just call out to C code to print out its values so you can sanity check
+  that they make sense.
 
-  2. Make sure it can `rpi_yield` to itself.
+  2. Then only create a single thread and make sure it can run and `rpi_exit`
+  explicitly.
 
-  3. Make sure if it doesn't exit it will do so implicitly.
+  3. Then make sure if it doesn't exit it will do so implicitly.
 
-  4. Change `rpi_thread_start()` to create a dummy thread so that when
-  there are no more runnable threads, `rpi_cswitch` will transfer
-  control back and we can return to `part2`.
+  4. Then sure it can `rpi_yield` to itself.
+
+  5. Then change `rpi_thread_start()` to create a dummy thread so that
+  when there are no more runnable threads, `rpi_cswitch` will transfer
+  control back and we can return to its callsite in `part2`.
 
 Congratulations!  Now you have a simple, but working thread implementation
 and understand the most tricky part of the code (context-switching)
