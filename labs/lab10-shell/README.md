@@ -148,9 +148,9 @@ and the rest.
 
 Conceptually, running a program on the pi through the shell is pretty simple:
 
-    1. Just copy it over (you already have bootloader code to do so).
-    2. Jump to it.
-    3. Profit.
+ 1. Just copy it over (you already have bootloader code to do so).
+ 2. Jump to it.
+ 3. Profit.
 
 Unfortunately, there's a bunch of problems we need to solve for this.  
 A subset:
