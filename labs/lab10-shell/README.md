@@ -147,6 +147,7 @@ and the rest.
 ## Part 3:  Running remote programs (1 hour)
 
 Conceptually, running a program on the pi through the shell is pretty simple:
+
     1. Just copy it over (you already have bootloader code to do so).
     2. Jump to it.
     3. Profit.
@@ -154,25 +155,23 @@ Conceptually, running a program on the pi through the shell is pretty simple:
 Unfortunately, there's a bunch of problems we need to solve for this.  
 A subset:
 
-    1. We have to run the code somewhere other than where the `pi-shell.bin`
-    code is running.  How do we get it to run there if it was linked elsewhere,
-    how do we keep track of which memory is free?
+  1. We have to run the code somewhere other than where the `pi-shell.bin`
+  code is running.  How do we get it to run there if it was linked elsewhere,
+  how do we keep track of which memory is free?
 
-    2. We need to tell the Unix side when the code is done so that it can
-    stop echoing the output.
+  2. We need to tell the Unix side when the code is done so that it can
+  stop echoing the output.
 
-    3. What if `hello.bin` crashes?
+  3. What if `hello.bin` crashes?
 
-    4. What if `hello.bin` calls `reboot()` or sets its stack pointer to 
-    ours?
+  4. What if `hello.bin` calls `reboot()` or sets its stack pointer to 
+  ours?
 
-    4. What if `hello.bin` wants to call our code?
+  5. What if `hello.bin` infinite loops?
 
-    5. What if `hello.bin` infinite loops?
+  6. How do we run multiple programs?
 
-    6. How do we run multiple programs?
-
-    7. How can `hello.bin` call the main program?
+  7. How can `hello.bin` call the main program?
 
 Since we want to get you up and running in a couple of hours, we solve
 most of these issues either through gross hacks or simply ignoring them.
