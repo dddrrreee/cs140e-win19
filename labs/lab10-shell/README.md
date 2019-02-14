@@ -243,7 +243,7 @@ For today:
 
 #### What you will do
 
-###### 1. What we do to binaries
+##### A. What we do to binaries
 
 If you look in the `lab10-shell/hello-fixed` directory, you can see how
 we solve the above.  To summarize the above:
@@ -261,7 +261,7 @@ we solve the above.  To summarize the above:
  the shell's stack, reboots, or re-initializing the UART.  You should
  examine the code and be able to describe what the changes are and why.
 
-###### 2. What we do to send binaries
+###### B. What we do to send binaries
 
 At this point, I was hoping to triumphantly say you would simply use
 your bootloading code as-is, thereby vindicating my foresight and the
