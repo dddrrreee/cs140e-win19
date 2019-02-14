@@ -279,6 +279,34 @@ While you won't be using the code as-is, the understanding you gained
 from writing it the first time should allow you to create a custom
 protocol pretty quickly.  Hopefully.
 
+
+     =======================================================
+      unix side                          pi side 
+     -------------------------------------------------------
+                                         
+                                         put_uint(ACK);
+     expect(fd, ACK);
+
+     // version: stored by linker
+     put_uint(fd, code[0]);
+     // address: stored by linker.
+     put_uint(fd, code[1]);
+     put_uint(fd, nbytes);
+     put_uint(fd, crc32(code, nbytes));
+
+                                        <sanity checks>
+                                        put_uint(ACK);
+     expect(fd, ACK);
+     <send code>
+     put_uint(fd, EOT);
+                                        expect(EOT);
+                                        <check crc>
+                                        put_uint(ACK);
+     expect(fd, ACK);
+                                        <done!>
+     =======================================================
+
+
 I'd suggest the following modification to send a program:
 
  1. The Unix-side shell code sends the pi-side an ASCII command (e.g.,
