@@ -24,6 +24,7 @@ SRC = 	cs140e-printf.c  	\
 	my-gpio.c		\
 	cs140e-pwm.c		\
 	cs140e-cache.c		\
+	cs140e-asm.s		\
 	cs140e-put-get.s
 
 TARGET = libpi.a
