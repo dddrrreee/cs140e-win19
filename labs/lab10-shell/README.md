@@ -280,31 +280,39 @@ from writing it the first time should allow you to create a custom
 protocol pretty quickly.  Hopefully.
 
 
-     =======================================================
-      unix side                          pi side 
-     -------------------------------------------------------
+This is a stripped down version (explained more below):
+
+        =======================================================
+         unix side                          pi side 
+        -------------------------------------------------------
                                          
-                                         put_uint(ACK);
-     expect(fd, ACK);
+                                            put_uint(ACK);
 
-     // version: stored by linker
-     put_uint(fd, code[0]);
-     // address: stored by linker.
-     put_uint(fd, code[1]);
-     put_uint(fd, nbytes);
-     put_uint(fd, crc32(code, nbytes));
+        expect(fd, ACK);
 
-                                        <sanity checks>
-                                        put_uint(ACK);
-     expect(fd, ACK);
-     <send code>
-     put_uint(fd, EOT);
-                                        expect(EOT);
-                                        <check crc>
-                                        put_uint(ACK);
-     expect(fd, ACK);
-                                        <done!>
-     =======================================================
+
+        // version: stored by linker
+        put_uint(fd, code[0]);
+        // address: stored by linker.
+        put_uint(fd, code[1]);
+        put_uint(fd, nbytes);
+        put_uint(fd, crc32(code, nbytes));
+   
+                                           <sanity checks>
+                                           put_uint(ACK);
+
+        expect(fd, ACK);
+        <send code>
+        put_uint(fd, EOT);
+
+                                           expect(EOT);
+                                           <check crc>
+                                           put_uint(ACK);
+
+        expect(fd, ACK);
+
+                                           <done!>
+        =======================================================
 
 
 I'd suggest the following modification to send a program:
@@ -312,40 +320,24 @@ I'd suggest the following modification to send a program:
  1. The Unix-side shell code sends the pi-side an ASCII command (e.g.,
  "run <program name>").   You will do this even if you use your old code.
 
- 2. The pi side prints this (so you can double-check) and then does a 
+ 2. The pi side prints this (so you can double-check) and then waits for
+ an `ACK`, forcing the Unix-side to wait until its ready.
 
-    	put_uint(ACK)
- <br></br>
- forcing the Unix-side to wait until its ready.
+ 3. The unix side sends: the version, the address the code is linked at,
+ its size, and a CRC of the code (`crc32(code, nbytes))`).  The linker
+ script is written to that it stores the version as the first word of
+ the binary, and its linked-to address as the second.  We use a version
+ so that you know what version of the boot protocol you are using and
+ can extend it later --- for us `version=2`.
 
- 3. The unix side sends:
-
-        put_uint(fd, version);
-        put_uint(fd, addr);
-        put_uint(fd, nbytes);
-        put_uint(fd, crc32(code, nbytes));
- <br></br>
- Where `version=2` (so you know what version of the boot protocol
- you are using and can extend it later).   `addr` is the location the
- code is linked at.   `nybtes` is the size as before.  And we send a
- CRC32 of just the code.
-
- 4. The pi-side checks the address and the size, and if ok, sends 
-
-	put_uint(ACK);
- <br></br>
- Otherwise it does a `put_uint` of the right error message (sending
- different conditions will help debug, since you can print them on
- the Unix-side).  **NOTE: you cannot print at this point since the
+ 4. The pi-side checks the address and the size, and if ok, sends  an
+ `ACK`.  Otherwise it does a `put_uint` of the right error message
+ (sending different conditions will help debug, since you can print them
+ on the Unix-side).  **NOTE: you cannot print at this point since the
  Unix-side is expecting raw bytes.  Doing so makes your code not work.**
 
  5. The unix-side sends the code and an `EOT` and then waits for an `ACK`.
 
-        for(int i = 0; i < nbytes/4; i++)
-                put_uint(fd, code[i]);
-        put_uint(fd, EOT);
-        expect_val(fd, ACK);
- <br></br>
  6. The pi-side copies the code to `addr` (as before), checks the
  checksum, and if its ok, sends an `ACK` and then jumps to `addr`.
 
@@ -357,5 +349,3 @@ you can simply jump to it.
 
 At this point you will have a very simple shell!  A full-featured one
 is a lot more code, but not alot more ideas.
-
-
