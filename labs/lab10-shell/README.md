@@ -367,13 +367,16 @@ There's several things you can do.
  that there is no `cd`!  (Which is not a Unix command, but rather is
  built-in to the shell.)
 
- 1. Run the program in its separate thread so the pi-side shell stack is
+ 1. Extend the shell to be able to run on scripts (e.g., files that
+ have `#/usr/bin/pix` as their first line).   
+
+ 2. Run the program in its separate thread so the pi-side shell stack is
  not corrupted.  You can then extend your Unix side with a `&` operator
  so you can run multiple programs.  Because we are running cooperatively,
  we might actually be able to make good progress without trashing shared
  state (such as the UART).
 
- 2. Add a `rpi_alarm(code, ms)` function (using timer-interrupts) to your
+ 3. Add a `rpi_alarm(code, ms)` function (using timer-interrupts) to your
  threading package so that it will `code` when an alarm expires.  You can
  use this to make a "watch-dog timer that kills a too-long running thread.
  You will have to also add `rpi_kill(tid)`.  Alternatively, you could
@@ -381,5 +384,5 @@ There's several things you can do.
  in a loop, yielding control until too-much time has passed, upon which
  it kills the running program.
 
- 3. Compile some other programs using fixed addresses (e.g., `sonar`)
+ 4. Compile some other programs using fixed addresses (e.g., `sonar`)
  and change the delay code to `rpi_yield()` rather than busy wait..
