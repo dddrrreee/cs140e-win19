@@ -287,7 +287,7 @@ I'd suggest the following modification to send a program:
  2. The pi side prints this (so you can double-check) and then does a 
 
     	put_uint(ACK)
-
+ <br></br>
  forcing the Unix-side to wait until its ready.
 
  3. The unix side sends:
@@ -296,7 +296,7 @@ I'd suggest the following modification to send a program:
         put_uint(fd, addr);
         put_uint(fd, nbytes);
         put_uint(fd, crc32(code, nbytes));
-
+ <br></br>
  Where `version=2` (so you know what version of the boot protocol
  you are using and can extend it later).   `addr` is the location the
  code is linked at.   `nybtes` is the size as before.  And we send a
@@ -305,7 +305,7 @@ I'd suggest the following modification to send a program:
  4. The pi-side checks the address and the size, and if ok, sends 
 
 	put_uint(ACK);
-
+ <br></br>
  Otherwise it does a `put_uint` of the right error message (sending
  different conditions will help debug, since you can print them on
  the Unix-side).  **NOTE: you cannot print at this point since the
@@ -317,7 +317,7 @@ I'd suggest the following modification to send a program:
                 put_uint(fd, code[i]);
         put_uint(fd, EOT);
         expect_val(fd, ACK);
-
+ <br></br>
  6. The pi-side copies the code to `addr` (as before), checks the
  checksum, and if its ok, sends an `ACK` and then jumps to `addr`.
 
