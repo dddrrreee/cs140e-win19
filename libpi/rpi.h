@@ -26,6 +26,7 @@
 	void *memset(void *_p, int c, size_t n) ;
 	int memcmp(const void *_s1, const void *_s2, size_t nbytes);
 	void *memcpy(void *dst, const void *src, size_t nbytes);
+	int strncmp(const char* _s1, const char* _s2, size_t n);
 #else
 #	include <stddef.h>
 #endif
@@ -117,6 +118,9 @@ unsigned short get16(const volatile void *addr);
 // *(unsigned char *)addr
 unsigned char GET8(unsigned addr);
 unsigned char get8(const volatile void *addr);
+
+// jump to <addr>
+void BRANCHTO(unsigned addr);
 
 // cache enable
 void enable_cache(void) ;
