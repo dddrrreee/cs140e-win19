@@ -17,7 +17,7 @@ all: make-deps $(NAME)
 
 make-deps:
 	make -C $(BOOT_DIR)/unix-side
-	make -C $(BOOT_DIR)/pi-side
+	@ make -C $(BOOT_DIR)/pi-side
 	make -C ../shell-pi-side
 
 run:
