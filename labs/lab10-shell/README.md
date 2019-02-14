@@ -338,8 +338,9 @@ More descriptively:
  4. The pi-side checks the address and the size, and if OK, sends  an
  `ACK`.  Otherwise it does a `put_uint` of the right error message
  (sending different conditions will help debug, since you can print them
- on the Unix-side).  **NOTE: you cannot print at this point since the
- Unix-side is expecting raw bytes.  Doing so makes your code not work.**
+ on the Unix-side).  **NOTE: the pi-side code cannot print at this point
+ since the Unix-side is expecting raw bytes.  Doing so makes your code
+ not work.**
 
  5. The Unix-side sends the code and an `EOT` and then waits for an `ACK`.
 
