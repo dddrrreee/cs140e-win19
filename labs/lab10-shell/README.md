@@ -146,6 +146,20 @@ and the rest.
 
 ## Part 3:  Running remote programs (1 hour)
 
+This final piece involves you extending your shell so that the Unix-side
+can send a single program at a time (hereafter: `hello.bin`) to the
+pi-side, which will run the code, and then tell the Unix side when it has
+finished. Before termination, the Unix-side simply echos all characters
+it receives from the UART to standard output.
+
+At a high level you will re-purpose your bootloader code both (the Unix
+and pi side) so that it can send programs from within the shell.
+
+We first talk about some of the issues and then what you need to do 
+concretely.
+
+#### Running multiple programs: Some Issues
+
 Conceptually, running a program on the pi through the shell is pretty simple:
 
  1. Just copy it over (you already have bootloader code to do so).
@@ -171,49 +185,143 @@ A subset:
 
   6. How do we run multiple programs?
 
-  7. How can `hello.bin` call the main program?
+  7. How can `hello.bin` call the main program?  For example, if it
+  creates threads internally and does a `yield()` this will not be able
+  to call the main scheduler.  We might or might no like this behavior,
+  depending on context.  Similarly, for `kmalloc`, where each program
+  will have its own private heap.  (Sometimes nice for isolation, sometimes
+  not so nice because of fragmentation.)
 
-Since we want to get you up and running in a couple of hours, we solve
-most of these issues either through gross hacks or simply ignoring them.
-The rest of the quarter will involve (among other things) eliminating
-these hacks and solving the associated problems to make the scheme
-less embarassing.
+There are more-or-less the problems we'd have to solve to make a full-on
+multi-user operating system.  Since we want to get you up and running in
+a couple of hours, we solve most of these issues either through gross
+hacks or simply pretending they don't exit.  The rest of the quarter
+will involve (among other things) eliminating these hacks and solving
+the associated problems to make the scheme less embarrassing.
+
+#### Some hacks and non-solutions:
 
 For today:
 
-  1. We statically link the code at a "known" address so that when
-  we ship it over, your bootloader can simply copy it to that address
-  without needing to fix up any absolute addresses your code references.
+  1. We statically link the code at a "known" address so that when we
+  ship it over, your bootloader can simply copy it to that address and
+  jump to it, without needing to fix up any absolute addresses the code
+  references. (Note that relative addresses "just work" since they
+  do not depend on the code's location.)
 
-  2. When the program `hello.bin` finishes on the pi, we echo back an
-  agreed-upon string so that the Unix end knows to stop echoing output.
-  (Otherwise it does not know if there's another character coming.)
+  2. When the program `hello.bin` finishes on the pi, the pi-side sends
+  an agreed-upon string to the Unix-side so that it will know to stop
+  echoing output.<br></br>
+  Without some form of job-control the Unix-side has no insight into
+  if the process finished or not or --- at the most concrete level
+  possible --- whether to print a `>` character, signalling it can run
+  a new command, or to wait to see if there's another character coming
+  that it will need to echo.
 
-  3. If `hello.bin` crashes, we are out of luck.
+  3. If `hello.bin` crashes, we are out of luck.  We will be doing
+  virtual memory fairly soon, which gives us a way to attack this problem.
 
-  4. We rewrite the `hello` code to eliminate reboot (which we have 
-  so far used as an `exit()`) and change `start.s` to not setup
-  a stack pointer internally but instead just assume that it has one.
+  4. We manually rewrite the `hello.bin` code to eliminate `reboot()`
+  (which we have so far used as an `exit()`), `uart_init()` (which
+  will have already occured), and change `start.s` to not setup a stack
+  pointer internally, but instead just assume that it has one.
 
-  5. inf-loop: you can actaully solve this easily (see extension).
+  5. inf-loop: you can actually solve this easily (see extension) even
+  with non-preemptive threads.
 
   6. Multiple programs: just use your threads!  You will need some way
-  to know when a given thread is finished, but you can write the code
-  as a client, or extend your threads package.
+  to track the address ranges that are in use, and some way to know when
+  a given thread is finished.  Both require less than 10-20 lines of code.
 
-  7. We ignore this problem; but its not hard to add by doing a form
-  of dynamic linking (or using system calls).
+  7. Calling the main program: We ignore this problem for the moment,
+  but will get to it fairly soon.  The intuition is that its not hard
+  to do so by using dynamic linking or using system calls (implemented
+  using the `SWI` exception on the ARM).
 
-So, to summarize: 
+#### What you will do
 
- 1. We statically link each binary to a free address (the free range is
- defined in `shell-pi-side/pi-shell.h` and is just anything above the
- highest address we currently  use).
+##### What we do to binaries
+
+
+If you look in the `lab10-shell/hello-fixed` directory, you can see how
+we solve the above.  To summarize the above:
+
+ 1. We statically link each binary to a free address.  The legal free
+ range is defined in `shell-pi-side/pi-shell.h` --- it is all addressses
+ above the highest address we have ever used in the code we've written
+ so far and below what the end of the pi's physical memory is.
 
  2. We only run one program at a time so don't have to keep track of
  what is free or not in any kind of fancy way, nor which input/output
  is for/from which program.
 
- 3. We rewrite the code to avoid any ugly problems such as trashing the
- shell's stack, reboots, or re-initializing the UART.
+ 3. We rewrite the code to avoid any ugly problems such as trashing
+ the shell's stack, reboots, or re-initializing the UART.  You should
+ examine the code and be able to describe what the changes are and why.
+
+##### What we do to send binaries
+
+At this point, I was hoping to triumphantly say you would simply use
+your bootloading code as-is, thereby vindicating my foresight and the
+generality of what you've done already.  Unfortunately, while you *can*
+use your code with minimal modifications, I think it's probably better
+to strip the code down to something simpler. Doing so will be easier to 
+debug, and will get around some of the
+issues in the original protocol, which actually has some race conditions,
+given the UART 8-character queue size.
+
+While you won't be using the code as-is, the understanding you gained
+from writing it the first time should allow you to create a custom
+protocol pretty quickly.  Hopefully.
+
+I'd suggest the following modification to send a program:
+
+    1. The Unix-side shell code sends the pi-side an ASCII command (e.g.,
+    "run <program name>").   You will do this even if you use your old code.
+
+    2. The pi side prints this (so you can double-check) and then does a 
+
+    	put_uint(ACK)
+
+    forcing the Unix-side to wait until its ready.
+
+    3. The unix side sends:
+
+        put_uint(fd, version);
+        put_uint(fd, addr);
+        put_uint(fd, nbytes);
+        put_uint(fd, crc32(code, nbytes));
+
+   Where `version=2` (so you know what version of the boot protocol
+   you are using and can extend it later).   `addr` is the location the
+   code is linked at.   `nybtes` is the size as before.  And we send a
+   CRC32 of just the code.
+
+   4. The pi-side checks the address and the size, and if ok, sends 
+
+	put_uint(ACK);
+
+   Otherwise it does a `put_uint` of the right error message.  **NOTE: 
+   you cannot print at this point since the Unix-side is expecting raw
+   bytes.  Doing so makes your code not work.**
+
+   5. The unix-side sends the code and an `EOT` and then waits for an `ACK`.
+
+        for(int i = 0; i < nbytes/4; i++)
+                put_uint(fd, code[i]);
+        put_uint(fd, EOT);
+        expect_val(fd, ACK);
+
+   6. The pi-side copies the code to `addr` (as before), checks the
+   checksum, and if its ok, sends an `ACK` and then jumps to `addr`.
+
+The use of `ACKS` prevents the Unix-side from overrunning our finite-sized
+queue.  The range checks and the checksums guard against corruption.
+
+We are sleazily running the code on our stack, so after you bootload,
+you can simply jump to it.
+
+At this point you will have a very simple shell!  A full-featured one
+is a lot more code, but not alot more ideas.
+
 
