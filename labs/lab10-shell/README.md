@@ -310,8 +310,9 @@ This is a stripped down version (explained more below):
         <send code>
         put_uint(fd, EOT);
 
+					   <get code>
                                            expect(EOT);
-                                           <check crc>
+                                           <check code crc>
                                            put_uint(ACK);
 
         expect(fd, ACK);
