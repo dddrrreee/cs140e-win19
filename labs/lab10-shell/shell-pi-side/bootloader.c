@@ -35,7 +35,8 @@ static void die(unsigned err) {
 // load_code:
 //	1. figure out if the requested address range is available.
 //	2. copy code to that region.
-//	3. return address of first executable instruction 
+//	3. return address of first executable instruction: note we have
+//	a 8-byte header!  (see ../hello-fixed/memmap)
 int load_code(void) {
 	unsigned addr=0;
 
@@ -50,6 +51,5 @@ int load_code(void) {
         // give time to flush out; ugly.   implement `uart_flush()`
 	delay_ms(100);  
 
-	// must skip over the 8-byte header!
-        return addr + 8;
+	/* return address */
 }
