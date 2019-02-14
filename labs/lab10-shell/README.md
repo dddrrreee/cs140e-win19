@@ -61,6 +61,7 @@ Extensions:
    runtime of programs (to catch when they inf loop).
    4. Add the ability to run shell scripts (not hard, but fun).
 
+----------------------------------------------------------------------
 ## Part 0:  Getting handoff to work (15 minutes)
 
 This step is to just hand-off the pi file descriptor to the Unix-side
@@ -78,6 +79,7 @@ echo the results to the terminal:
 
       my-install -exec ./pi-shell ../lab4-uart/uart-tests/2hello-once.bin
 
+----------------------------------------------------------------------
 ## Part 1:  Add some built-in commands (20 minutes)
 
 Add logic to both the Unix and pi side so that they recognize two commands:
@@ -144,6 +146,7 @@ The CS140 website has example code for
 [doing so](http://www.scs.stanford.edu/19wi-cs140/notes/) --- `redirsh.c`
 and the rest.
 
+----------------------------------------------------------------------
 ## Part 3:  Running remote programs (1 hour)
 
 This final piece involves you extending your shell so that the Unix-side
@@ -210,8 +213,8 @@ For today:
   do not depend on the code's location.)
 
   2. When the program `hello.bin` finishes on the pi, the pi-side sends
-  an agreed-upon string to the Unix-side so that it will know to stop
-  echoing output.<br></br>
+  an agreed-upon string to the Unix-side (`"CMD-DONE\n"`) so that it
+  will know to stop echoing output.<br></br>
   Without some form of job-control the Unix-side has no insight into
   if the process finished or not or --- at the most concrete level
   possible --- whether to print a `>` character, signalling it can run
@@ -224,7 +227,7 @@ For today:
   4. We manually rewrite the `hello.bin` code to eliminate `reboot()`
   (which we have so far used as an `exit()`), `uart_init()` (which
   will have already occured), and change `start.s` to not setup a stack
-  pointer internally, but instead just assume that it has one.
+  pointer internally, but instead just assume that it already has one.
 
   5. inf-loop: you can actually solve this easily (see extension) even
   with non-preemptive threads.
@@ -233,15 +236,14 @@ For today:
   to track the address ranges that are in use, and some way to know when
   a given thread is finished.  Both require less than 10-20 lines of code.
 
-  7. Calling the main program: We ignore this problem for the moment,
-  but will get to it fairly soon.  The intuition is that its not hard
-  to do so by using dynamic linking or using system calls (implemented
-  using the `SWI` exception on the ARM).
+  7. Calling code in the main program (the pi-side shell code): We
+  ignore this problem for the moment, but will get to it fairly soon.
+  The intuition is that its not hard to do so by using dynamic linking or
+  using system calls (implemented using the `SWI` exception on the ARM).
 
 #### What you will do
 
-##### What we do to binaries
-
+###### 1. What we do to binaries
 
 If you look in the `lab10-shell/hello-fixed` directory, you can see how
 we solve the above.  To summarize the above:
@@ -259,7 +261,7 @@ we solve the above.  To summarize the above:
  the shell's stack, reboots, or re-initializing the UART.  You should
  examine the code and be able to describe what the changes are and why.
 
-##### What we do to send binaries
+###### 2. What we do to send binaries
 
 At this point, I was hoping to triumphantly say you would simply use
 your bootloading code as-is, thereby vindicating my foresight and the
