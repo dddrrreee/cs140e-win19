@@ -43,8 +43,25 @@ void *memcpy(void *dst, const void *src, size_t nbytes) {
 	return dst;
 }
 
+int strcmp(const char *a, const char *b) {
+        while (*a && *a == *b)
+                ++a, ++b;
+        return *a - *b;
+}
+
+// https://clc-wiki.net/wiki/strncmp#Implementation
+int strncmp(const char* _s1, const char* _s2, size_t n) {
+	const unsigned char *s1 = (void*)_s1, *s2 = (void*)_s2;
+	while(n--) {
+        	if(*s1++!=*s2++)
+            		return s1[-1] - s2[-1];
+	}
+    	return 0;
+}
+
 // use this if you need memory barriers.
 void dev_barrier(void) {
         dmb();
         dsb();
 }
+
