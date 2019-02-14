@@ -1,4 +1,4 @@
-## Writing a trivial shell.
+## Writing a trivial shell. 
 
 By the end of today, you'll put together several pieces of code you've already
 built so that you have a trivial shell that runs on Unix and can:
