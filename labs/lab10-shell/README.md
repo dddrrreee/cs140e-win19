@@ -245,8 +245,7 @@ For today:
 
 ##### A. What we do to binaries
 
-If you look in the `lab10-shell/hello-fixed` directory, you can see how
-we solve the above.  To summarize the above:
+To summarize the above:
 
  1. We statically link each binary to a free address.  The legal free
  range is defined in `shell-pi-side/pi-shell.h` --- it is all addressses
@@ -258,19 +257,23 @@ we solve the above.  To summarize the above:
  is for/from which program.
 
  3. We rewrite the code to avoid any ugly problems such as trashing
- the shell's stack, reboots, or re-initializing the UART.  You should
- examine the code and be able to describe what the changes are and why.
+ the shell's stack, reboots, or re-initializing the UART.  
 
-###### B. What we do to send binaries
+You can see these concrete changes by examining the code in
+`lab10-shell/hello-fixed` directory.  You should be able to describe
+what the changes are compared to a normal `hello` and why.
 
-At this point, I was hoping to triumphantly say you would simply use
-your bootloading code as-is, thereby vindicating my foresight and the
-generality of what you've done already.  Unfortunately, while you *can*
-use your code with minimal modifications, I think it's probably better
-to strip the code down to something simpler. Doing so will be easier to 
-debug, and will get around some of the
-issues in the original protocol, which actually has some race conditions,
-given the UART 8-character queue size.
+##### B. What we do to send binaries
+
+At this point, I was hoping to triumphantly say you would ship programs to
+the pi by simply using your bootloading code as-is, thereby vindicating my
+foresight and the generality of what you've done already.  Unfortunately,
+while you *can* use your code with minimal modifications, I think it's
+probably much better to strip the code down to something simpler.
+The result will be easier to debug and get around some of the race
+conditions in the original protocol, which arise when the protocol's
+insufficient flow-control hits the UART's 8-byte finite receive
+queue size.
 
 While you won't be using the code as-is, the understanding you gained
 from writing it the first time should allow you to create a custom
@@ -278,44 +281,45 @@ protocol pretty quickly.  Hopefully.
 
 I'd suggest the following modification to send a program:
 
-    1. The Unix-side shell code sends the pi-side an ASCII command (e.g.,
-    "run <program name>").   You will do this even if you use your old code.
+ 1. The Unix-side shell code sends the pi-side an ASCII command (e.g.,
+ "run <program name>").   You will do this even if you use your old code.
 
-    2. The pi side prints this (so you can double-check) and then does a 
+ 2. The pi side prints this (so you can double-check) and then does a 
 
     	put_uint(ACK)
 
-    forcing the Unix-side to wait until its ready.
+ forcing the Unix-side to wait until its ready.
 
-    3. The unix side sends:
+ 3. The unix side sends:
 
         put_uint(fd, version);
         put_uint(fd, addr);
         put_uint(fd, nbytes);
         put_uint(fd, crc32(code, nbytes));
 
-   Where `version=2` (so you know what version of the boot protocol
-   you are using and can extend it later).   `addr` is the location the
-   code is linked at.   `nybtes` is the size as before.  And we send a
-   CRC32 of just the code.
+ Where `version=2` (so you know what version of the boot protocol
+ you are using and can extend it later).   `addr` is the location the
+ code is linked at.   `nybtes` is the size as before.  And we send a
+ CRC32 of just the code.
 
-   4. The pi-side checks the address and the size, and if ok, sends 
+ 4. The pi-side checks the address and the size, and if ok, sends 
 
 	put_uint(ACK);
 
-   Otherwise it does a `put_uint` of the right error message.  **NOTE: 
-   you cannot print at this point since the Unix-side is expecting raw
-   bytes.  Doing so makes your code not work.**
+ Otherwise it does a `put_uint` of the right error message (sending
+ different conditions will help debug, since you can print them on
+ the Unix-side).  **NOTE: you cannot print at this point since the
+ Unix-side is expecting raw bytes.  Doing so makes your code not work.**
 
-   5. The unix-side sends the code and an `EOT` and then waits for an `ACK`.
+ 5. The unix-side sends the code and an `EOT` and then waits for an `ACK`.
 
         for(int i = 0; i < nbytes/4; i++)
                 put_uint(fd, code[i]);
         put_uint(fd, EOT);
         expect_val(fd, ACK);
 
-   6. The pi-side copies the code to `addr` (as before), checks the
-   checksum, and if its ok, sends an `ACK` and then jumps to `addr`.
+ 6. The pi-side copies the code to `addr` (as before), checks the
+ checksum, and if its ok, sends an `ACK` and then jumps to `addr`.
 
 The use of `ACKS` prevents the Unix-side from overrunning our finite-sized
 queue.  The range checks and the checksums guard against corruption.
