@@ -11,8 +11,8 @@ built so that you have a trivial shell that runs on Unix and can:
  
    3. Run Unix commands locally so that, for example, `ls`, `pwd`, work.
 
-While it sounds lke a lot, you've done much of the hard parts, and can just
-repurpose old code.
+While it sounds like a lot, you've done much of the hard parts, and can just
+re-purpose old code.
 
 ### STOP: do this first!
 
@@ -58,7 +58,7 @@ Extensions:
    1. Run the program in a thread.
    2. Add `&` to your commands so you can run multiple programs at once.
    3. Add a `set timeout <secs>` command so that you can limit the 
-   runtime of programs (to catch when they inf loop).
+   runtime of programs (to catch when they infinite loop).
    4. Add the ability to run shell scripts (not hard, but fun).
 
 ----------------------------------------------------------------------
@@ -78,6 +78,9 @@ As a simple test, just run the `hello.bin` from the UART lab, and
 echo the results to the terminal:
 
       my-install -exec ./pi-shell ../lab4-uart/uart-tests/2hello-once.bin
+
+For the Unix-side you'll modify `pi-shell.c`, we gave you some useful 
+helpers in `shell-support.c`.
 
 ----------------------------------------------------------------------
 ## Part 1:  Add some built-in commands (20 minutes)
@@ -161,6 +164,8 @@ and pi side) so that it can send programs from within the shell.
 We first talk about some of the issues and then what you need to do 
 concretely.
 
+For the pi-side you'll modify `bootloader.c` and `pi-shell.c`.
+
 #### Running multiple programs: Some Issues
 
 Conceptually, running a program on the pi through the shell is pretty simple:
@@ -226,7 +231,7 @@ For today:
 
   4. We manually rewrite the `hello.bin` code to eliminate `reboot()`
   (which we have so far used as an `exit()`), `uart_init()` (which
-  will have already occured), and change `start.s` to not setup a stack
+  will have already occurred), and change `start.s` to not setup a stack
   pointer internally, but instead just assume that it already has one.
 
   5. inf-loop: you can actually solve this easily (see extension) even
@@ -248,7 +253,7 @@ For today:
 To summarize the above:
 
  1. We statically link each binary to a free address.  The legal free
- range is defined in `shell-pi-side/pi-shell.h` --- it is all addressses
+ range is defined in `shell-pi-side/pi-shell.h` --- it is all addressees
  above the highest address we have ever used in the code we've written
  so far and below what the end of the pi's physical memory is.
 
@@ -315,7 +320,7 @@ This is a stripped down version (explained more below):
         =======================================================
 
 
-I'd suggest the following modification to send a program:
+More descriptively:
 
  1. The Unix-side shell code sends the pi-side an ASCII command (e.g.,
  "run <program name>").   You will do this even if you use your old code.
@@ -330,16 +335,16 @@ I'd suggest the following modification to send a program:
  so that you know what version of the boot protocol you are using and
  can extend it later --- for us `version=2`.
 
- 4. The pi-side checks the address and the size, and if ok, sends  an
+ 4. The pi-side checks the address and the size, and if OK, sends  an
  `ACK`.  Otherwise it does a `put_uint` of the right error message
  (sending different conditions will help debug, since you can print them
  on the Unix-side).  **NOTE: you cannot print at this point since the
  Unix-side is expecting raw bytes.  Doing so makes your code not work.**
 
- 5. The unix-side sends the code and an `EOT` and then waits for an `ACK`.
+ 5. The Unix-side sends the code and an `EOT` and then waits for an `ACK`.
 
  6. The pi-side copies the code to `addr` (as before), checks the
- checksum, and if its ok, sends an `ACK` and then jumps to `addr`.
+ checksum, and if its OK, sends an `ACK` and then jumps to `addr`.
 
 The use of `ACKS` prevents the Unix-side from overrunning our finite-sized
 queue.  The range checks and the checksums guard against corruption.
@@ -347,5 +352,33 @@ queue.  The range checks and the checksums guard against corruption.
 We are sleazily running the code on our stack, so after you bootload,
 you can simply jump to it.
 
+#### Done!
+
 At this point you will have a very simple shell!  A full-featured one
 is a lot more code, but not alot more ideas.
+
+----------------------------------------------------------------------
+## Part 4:  Extensions.
+
+There's several things you can do.
+
+ 0. Add more useful commands to your shell.   I assume you've been annoyed
+ that there is no `cd`!  (Which is not a Unix command, but rather is
+ built-in to the shell.)
+
+ 1. Run the program in its separate thread so the pi-side shell stack is
+ not corrupted.  You can then extend your Unix side with a `&` operator
+ so you can run multiple programs.  Because we are running cooperatively,
+ we might actually be able to make good progress without trashing shared
+ state (such as the UART).
+
+ 2. Add a `rpi_alarm(code, ms)` function (using timer-interrupts) to your
+ threading package so that it will `code` when an alarm expires.  You can
+ use this to make a "watch-dog timer that kills a too-long running thread.
+ You will have to also add `rpi_kill(tid)`.  Alternatively, you could
+ add pre-emption to your thread code, and simply have your pi-code run
+ in a loop, yielding control until too-much time has passed, upon which
+ it kills the running program.
+
+ 3. Compile some other programs using fixed addresses (e.g., `sonar`)
+ and change the delay code to `rpi_yield()` rather than busy wait..
