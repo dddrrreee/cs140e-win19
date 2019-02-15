@@ -72,9 +72,8 @@
   preemptive context switching.  Most people don't understand such things
   so, once again, you'll leave lab knowing something many do not.
 
-  10. [lab10-shell](lab10-shell/): you'll repurpose code you've already
-  built (bootloader, replay, system call tricks) to easily put together
-  a simple shell that runs on Unix and can:
+  10. [lab10-shell](lab10-shell/): You'll write a simple shell that runs 
+  on Unix and can:
       + Remotely execute a set of built-in commands (`reboot`, `echo`)
       on the pi using a simple server.
 
@@ -85,8 +84,9 @@
       + Run Unix commands locally so that, for example, `ls`, `pwd`, work.
 
       While it sounds like a lot, you've done much of the hard parts,
-      and can just re-purpose old code --- we're at the point of the
-      quarter where you start to get some nice technological velocity.
+      and can just re-purpose old code (bootloader, replay, system call
+      tricks) --- we're at the point in the quarter where you start to get
+      some nice technological velocity because of how much you've done.
 
 
 ### Binary code:
