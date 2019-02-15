@@ -84,9 +84,9 @@
 
       + Run Unix commands locally so that, for example, `ls`, `pwd`, work.
 
-  While it sounds like a lot, you've done much of the hard parts, and can just
-  re-purpose old code --- we're at the point of the quarter where you start
-  to get some nice technological velocity.
+      While it sounds like a lot, you've done much of the hard parts,
+      and can just re-purpose old code --- we're at the point of the
+      quarter where you start to get some nice technological velocity.
 
 
 ### Binary code:
