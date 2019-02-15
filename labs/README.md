@@ -75,13 +75,13 @@
   10. [lab10-shell](lab10-shell/): you'll repurpose code you've already
   built (bootloader, replay, system call tricks) to easily put together
   a simple shell that runs on Unix and can:
-  + Remotely execute a set of built-in commands (`reboot`, `echo`)
-   on the pi using a simple server.
+      + Remotely execute a set of built-in commands (`reboot`, `echo`)
+      on the pi using a simple server.
 
-  + Ship pi binaries to the pi-server, where they execute, and their output
-   echoed to the screen (as you did in your handoff test).
+      + Ship pi binaries to the pi-server, where they execute, and their output
+      echoed to the screen (as you did in your handoff test).
 
-  + Run Unix commands locally so that, for example, `ls`, `pwd`, work.
+      + Run Unix commands locally so that, for example, `ls`, `pwd`, work.
 
 
 ### Binary code:
