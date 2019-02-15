@@ -78,10 +78,15 @@
       + Remotely execute a set of built-in commands (`reboot`, `echo`)
       on the pi using a simple server.
 
-      + Ship pi binaries to the pi-server, where they execute, and their output
-      echoed to the screen (as you did in your handoff test).
+      + Ship pi binaries to the pi-server, where they execute, and their
+      output echoed on the Unix-side shell's console (as you did in your
+      lab5's handoff test).
 
       + Run Unix commands locally so that, for example, `ls`, `pwd`, work.
+
+  While it sounds like a lot, you've done much of the hard parts, and can just
+  re-purpose old code --- we're at the point of the quarter where you start
+  to get some nice technological velocity.
 
 
 ### Binary code:
