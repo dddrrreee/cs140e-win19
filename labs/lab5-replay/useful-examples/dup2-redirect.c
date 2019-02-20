@@ -1,3 +1,4 @@
+// engler: override stdin, stdout, stderr in a program we fork/exec.
 #include <assert.h>
 #include <errno.h>
 #include <stdio.h>
