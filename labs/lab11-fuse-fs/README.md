@@ -112,7 +112,7 @@ You need to show that:
 Extensions:
 
    1. Add directories.
-   2. Add `/dev/led` so that writes turn the led on/off and that 
+   2. Add `/pi/dev/led` so that writes turn the led on/off and that 
    reads give the current state.
    3. Add a `pthread` thread to your FS that will pull output from
    the pi in the background.
@@ -122,8 +122,7 @@ Extensions:
 
 Make sure you have FUSE installed.  
 
-
-##### MacOS
+###### MacOS
 
 From the FAQ (https://github.com/osxfuse/osxfuse/wiki/FAQ):
 
@@ -133,31 +132,37 @@ From the FAQ (https://github.com/osxfuse/osxfuse/wiki/FAQ):
   "OSXFUSE-{version}.dmg" available from http://osxfuse.github.com/
   and double-clicking on "Install OSXFUSE {version}".
 
-
-
-##### MacOS
+###### Linux
 
 From the FUSE `github` repo (https://github.com/libfuse/libfuse):
 
     apt-get install gcc fuse libfuse-dev make cmake
 
-##### What to do:
+#### What to do:
 
-Run the `hello` example in `lab11-fuse-fs/part0-hello`.  It's
-taken from (https://github.com/libfuse/libfuse/tree/master/example).
+Run the `hello` example in `lab11-fuse-fs/part0-hello`:
+
+  0. `make`
+  1. `make mount` will mount the `hello` file system; it will do so
+  single-threaded (the `-s` option) and in the fore-ground (the `-f`
+  option).  
+  2. `make run` (in another terminal).  Will do a trivial test to show
+  it is up and running.
+
+
+This code comes from (https://github.com/libfuse/libfuse/tree/master/example).
 There are a bunch of other examples there.  Change the code so
 that it prints out:
 
     hello cs140e: today let us do a short lab!
 
-##### Background reading:
+##### Further background reading:
 
 Some other places to read:
 
   1. A reasonable [1-page rundown](https://engineering.facile.it/blog/eng/write-filesystem-fuse/).
 
   2.  A longer, [old-school rundown](https://www.cs.nmsu.edu/~pfeiffer/fuse-tutorial/html/index.html), with code.
-
 
 ----------------------------------------------------------------------
 ## Part 1: Implement FUSE methods to make a simple FS (45 minutes)
@@ -185,3 +190,8 @@ Other than `getattr` (which we already defined), these are more-or-less
 identical to Unix calls, so you can just man page them to figure stuff
 out.  If you run FUSE with debugging output (which we do) you can see
 where it is failing and why (usually permission errors).
+
+----------------------------------------------------------------------
+## Part 2: Handle redirection
+
+
