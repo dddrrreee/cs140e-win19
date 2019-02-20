@@ -93,7 +93,7 @@ You need to show that:
     hello world.
     %
 
-  Have them work as expected, and have all output appear in `/pi/console`.
+     Have them work as expected, and have all output appear in `/pi/console`.
 
    2. In order to hook up your pi-FS to you pi-sh: write Unix code that
    can fork/exec a program, overriding its file descriptors for
