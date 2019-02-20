@@ -131,6 +131,17 @@ From the FAQ (https://github.com/osxfuse/osxfuse/wiki/FAQ):
          http://osxfuse.github.com/ and double-clicking on "Install
          OSXFUSE {version}".
 
+From Ellie after she installed on the Mac:
+
+      For Fuse on Mac, I downloaded the Mac version of Fuse, OSXFuse,
+      from [here](https://osxfuse.github.io/).  It installs like any
+      other application on Mac.
+
+      Alternatively, someone could also use
+      Homebrew to install it [using these
+      instructions](https://github.com/alperakcan/fuse-ext2#alternate-install-method-of-fuse-for-macos).
+
+
 #### Linux
 
 From the FUSE `github` repo (https://github.com/libfuse/libfuse):
