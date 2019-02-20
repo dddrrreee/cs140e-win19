@@ -84,14 +84,16 @@ it did not fit nicely within the Unix file interface.
 
 You need to show that:
 
-   1. Your pi-FS works as a standard file system.  `make part0` wil
-   run some simple tests.  You should be able to do things like
+  1. Your pi-FS works as a standard file system.  `make part0` wil
+  run some simple tests.  You should be able to do file operations 
+  such as:
+
         % echo "hello world." > /pi/echo
         % cat /pi/echo
         hello world.
         %
 
-     And that all output appears in `/pi/console`.
+     Have them work as expected, and have all output appear in `/pi/console`.
 
    2. In order to hook up your pi-FS to you pi-sh: write Unix code that
    can fork/exec a program, overriding its file descriptors for
