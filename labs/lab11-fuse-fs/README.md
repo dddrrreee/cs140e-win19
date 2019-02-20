@@ -118,13 +118,9 @@ Extensions:
    the pi in the background.
 
 ----------------------------------------------------------------------
-## Part 0:  Install and use FUSE (15 minutes)
+## Install FUSE
 
-Make sure you have FUSE installed.  
-
-##### MacOS
-         ------------------------------------------
-
+#### MacOS
 
 From the FAQ (https://github.com/osxfuse/osxfuse/wiki/FAQ):
 
@@ -134,14 +130,15 @@ From the FAQ (https://github.com/osxfuse/osxfuse/wiki/FAQ):
   "OSXFUSE-{version}.dmg" available from http://osxfuse.github.com/
   and double-clicking on "Install OSXFUSE {version}".
 
-##### Linux
+#### Linux
          ------------------------------------------
 
 From the FUSE `github` repo (https://github.com/libfuse/libfuse):
 
     apt-get install gcc fuse libfuse-dev make cmake
 
-#### What to do:
+----------------------------------------------------------------------
+## Part 0: use FUSE (15 minutes)
 
 Run the `hello` example in `lab11-fuse-fs/part0-hello`:
 
@@ -151,7 +148,6 @@ Run the `hello` example in `lab11-fuse-fs/part0-hello`:
   option).  
   2. `make run` (in another terminal).  Will do a trivial test to show
   it is up and running.
-
 
 This code comes from (https://github.com/libfuse/libfuse/tree/master/example).
 There are a bunch of other examples there.  Change the code so
