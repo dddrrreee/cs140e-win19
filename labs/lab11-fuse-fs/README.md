@@ -88,10 +88,10 @@ You need to show that:
   run some simple tests.  You should be able to do file operations 
   such as:
 
-        % echo "hello world." > /pi/echo
-        % cat /pi/echo
-        hello world.
-        %
+   % echo "hello world." > /pi/echo
+   % cat /pi/echo
+   hello world.
+   %
 
      Have them work as expected, and have all output appear in `/pi/console`.
 
