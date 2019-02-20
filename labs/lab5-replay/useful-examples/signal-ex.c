@@ -49,9 +49,11 @@ int main(void) {
 	if(waitpid(pid, &status, 0) < 0)
 		sys_die(waitpid, should never fail);
 
+#if 0
 	// 2. probably clearer: ignore the signal.
 	if(signal(SIGPIPE, SIG_IGN) < 0)
 		sys_die(signal, cannot catch);
+#endif
 
 	printf("about to write to closed pipe\n");
 	char c;

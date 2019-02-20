@@ -1,10 +1,16 @@
 CFLAGS = -Wall -Og  -I../boot-check -Werror -std=gnu99
 CC = gcc
 
-PROGS = select-ex demand-ex pipe-ex signal-ex pipe-read-exit-ex wait-ex local-socket is-fd-open socket-ex
+PROGS = select-ex demand-ex pipe-ex signal-ex pipe-read-exit-ex wait-ex local-socket is-fd-open socket-ex test-redirect dup2-redirect
 all : $(PROGS)
 
 local-socket: local-socket.o
+	$(CC) $(CFLAGS) $^ -o $@ -lm
+
+dup2-redirect: dup2-redirect.o
+	$(CC) $(CFLAGS) $^ -o $@ -lm
+
+test-redirect: test-redirect.o
 	$(CC) $(CFLAGS) $^ -o $@ -lm
 
 is-fd-open: is-fd-open.o
@@ -27,6 +33,9 @@ signal-ex: signal-ex.o
 
 wait-ex: wait-ex.o
 	$(CC) $(CFLAGS) $^ -o $@ -lm
+
+run:
+	./dup2-redirect ./test-redirect
 
 clean :
 	rm -f *.o *~ Makefile.bak $(PROGS)
