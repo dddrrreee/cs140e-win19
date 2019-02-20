@@ -122,7 +122,9 @@ Extensions:
 
 Make sure you have FUSE installed.  
 
-###### MacOS
+##### MacOS
+         ------------------------------------------
+
 
 From the FAQ (https://github.com/osxfuse/osxfuse/wiki/FAQ):
 
@@ -132,7 +134,8 @@ From the FAQ (https://github.com/osxfuse/osxfuse/wiki/FAQ):
   "OSXFUSE-{version}.dmg" available from http://osxfuse.github.com/
   and double-clicking on "Install OSXFUSE {version}".
 
-###### Linux
+##### Linux
+         ------------------------------------------
 
 From the FUSE `github` repo (https://github.com/libfuse/libfuse):
 
