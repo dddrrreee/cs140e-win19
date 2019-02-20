@@ -124,14 +124,14 @@ Extensions:
 
 From the FAQ (https://github.com/osxfuse/osxfuse/wiki/FAQ):
 
-  2.1. What is the recommended way to install "FUSE for OS X"?
+  - 2.1. What is the recommended way to install "FUSE for OS X"?
 
-  The recommended way to install "FUSE for OS X" is to download the latest
-  "OSXFUSE-{version}.dmg" available from http://osxfuse.github.com/
-  and double-clicking on "Install OSXFUSE {version}".
+         The recommended way to install "FUSE for OS X" is to
+         download the latest "OSXFUSE-{version}.dmg" available from
+         http://osxfuse.github.com/ and double-clicking on "Install
+         OSXFUSE {version}".
 
 #### Linux
-         ------------------------------------------
 
 From the FUSE `github` repo (https://github.com/libfuse/libfuse):
 
