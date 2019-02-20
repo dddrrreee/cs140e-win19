@@ -155,14 +155,6 @@ that it prints out:
 
     hello cs140e: today let us do a short lab!
 
-##### Further background reading:
-
-Some other places to read:
-
-  1. A reasonable [1-page rundown](https://engineering.facile.it/blog/eng/write-filesystem-fuse/).
-
-  2.  A longer, [old-school rundown](https://www.cs.nmsu.edu/~pfeiffer/fuse-tutorial/html/index.html), with code.
-
 ----------------------------------------------------------------------
 ## Part 1: Implement FUSE methods to make a simple FS (45 minutes)
 
@@ -193,4 +185,14 @@ where it is failing and why (usually permission errors).
 ----------------------------------------------------------------------
 ## Part 2: Handle redirection
 
+
+
+----------------------------------------------------------------------
+## Further background reading:
+
+Some other places to read:
+
+  1. A reasonable [1-page rundown](https://engineering.facile.it/blog/eng/write-filesystem-fuse/).
+
+  2.  A longer, [old-school rundown](https://www.cs.nmsu.edu/~pfeiffer/fuse-tutorial/html/index.html), with code.
 
