@@ -243,6 +243,16 @@ Now you'll combine everything together.
 
   2. Implement the `do_echo`, `do_reboot`, `do_run`.
 
+  3. You'll have to use `Makefile.use`
+
+  4. Also, you'll need to replace your main with the code in `patch.c`.
+  The easiest way is to just do:
+
+     #ifndef PART3
+     ... your original code....
+     #else
+     #include "patch.c"
+     #endif
 
 Break this down into steps.
 
