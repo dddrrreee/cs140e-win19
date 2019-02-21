@@ -9,7 +9,7 @@ OBJS = $(NAME).o
 FUSE_CMD = ./$(NAME) -f -d -s $(WHERE)
 
 CC = gcc
-CFLAGS = -O -Wall -g -std=gnu99 -D_FILE_OFFSET_BITS=64   -Wno-unused-function -Werror
+CFLAGS = -O -Wall -g -std=gnu99 -D_FILE_OFFSET_BITS=64   -Wno-unused-function -Werror  `pkg-config fuse --cflags --libs`
 
 all: $(NAME) 
 
