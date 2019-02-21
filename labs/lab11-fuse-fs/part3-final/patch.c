@@ -13,7 +13,7 @@ static dirent_t *console = 0;
 static char prompt[] = "PIX:> ";
 static int wr_console(int i) {
     char c = i;
-    cmd_append(console, "/console", &c, 1);
+//    cmd_append(console, "/console", &c, 1);
     fputc(c, stderr);
     return 0;
 }
