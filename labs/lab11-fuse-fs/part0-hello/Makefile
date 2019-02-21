@@ -27,7 +27,9 @@ unmount:
 	fusermount -uz $(WHERE)
 
 $(NAME):  $(OBJS) 
-	$(CC) $(CFLAGS) $^  -o $@ -lm -lfuse
+	$(CC) $(CFLAGS) $^  -o $@ -lm 
+
+#  -lfuse
 
 # pull in dependency info for *existing* .o files
 -include $(OBJS:.o=.d)
