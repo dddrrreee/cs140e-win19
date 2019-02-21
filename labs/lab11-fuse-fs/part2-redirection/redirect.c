@@ -27,3 +27,16 @@ int redir(int *rd_fd, int *wr_fd, char * const pi_process) {
     return 0;
 }
 
+
+
+int fd_putc(int fd, char c) {
+    if(write(fd, &c, 1) != 1)
+        sys_die(write, write failed);
+    return 0;
+}
+void fd_puts(int fd, const char *msg) {
+    while(*msg)
+        fd_putc(fd, *msg++);
+}
+
+

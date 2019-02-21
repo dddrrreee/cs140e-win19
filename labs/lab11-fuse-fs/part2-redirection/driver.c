@@ -21,16 +21,6 @@
 #include "shell-prompt.h"
 
 
-static int fd_putc(int fd, char c) {
-    if(write(fd, &c, 1) != 1)
-        sys_die(write, write failed);
-    return 0;
-}
-static void fd_puts(int fd, const char *msg) {
-    while(*msg)
-        fd_putc(fd, *msg++);
-}
-
 static int 
 send_reply(int rd_fd, int wr_fd, const char *cmd, const char *prompt) {
     fd_puts(wr_fd, cmd);
