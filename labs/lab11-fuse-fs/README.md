@@ -196,7 +196,44 @@ where it is failing and why (usually permission errors).
 ----------------------------------------------------------------------
 ## Part 2: Handle redirection
 
+In order to allow your pi-fs to control your pi-shell, you'll have to 
+have a way to fork the pi-shell as a sub-process and control its 
+input (`stdin`) and see all its output (`stdout` and `stdin`).
 
+You've already done this kind of programming in your `replay` and
+`handoff` codes.  With a few small tweaks you can do the same here;
+we break this out to make it easier to debug any details in how you
+hook the two together.
+
+The main detail to get right is how the redirection process knows when
+your shell is done with the current command.  (You'll recall we used
+`CMD-DONE` in `lab10` as a hack to figure out when the shell was done.)
+Fortunately, this is actually easy (and I should have realized this before):
+the shell is done executing a command when it prints its shell prompt.
+E.g., `PIX:> `.  So we just need to listen for this.
+
+Rundown:
+ - `part2-redirection` holds all the code.
+ - `redirect.c/redir` is the routine you need to implement.
+ - `make run`: tests that you can (1) read `stdout` and `stderr` from
+ a subprocess and (2) your code exits when it does rather than hanging.
+ - `make run.fake-pi`: checks that you correctly listen for shell 
+  prompts.
+ - `make run.pi`: checks that you can control your pi-shell.
+
+----------------------------------------------------------------------
+## Part 3: Hook up the your pi-fs to the your pi-shell.
+
+Break this down into steps.
+
+  1. reboot:  `echo 1 > ./pi/reboot` should cause a reboot.  Make sure
+  you can do multiple times.
+  2. echo: `echo hello > ./pi/echo` should echo the output.  
+  3. Get the console working.
+  4. Loading a program is a bit annoying.  We didn't think to put a size
+  field in the binary, so we don't actually know how big it is.  We assume
+  all the bytes are there for a write.  This is ridiculous, but works for
+  our simple program.
 
 ----------------------------------------------------------------------
 ## Further background reading:
