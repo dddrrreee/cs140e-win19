@@ -248,11 +248,13 @@ Now you'll combine everything together.
   4. Also, you'll need to replace your main with the code in `patch.c`.
   The easiest way is to just do:
 
-        #ifndef PART3
-             ... your original code....
-        #else
-        #    include "patch.c"
-        #endif
+
+    #ifndef PART3
+       ... your original code....
+    #else
+    #    include "patch.c"
+    #endif
+
 
 Break this down into steps.
 
