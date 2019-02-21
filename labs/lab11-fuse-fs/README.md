@@ -169,16 +169,23 @@ that it prints out:
 ----------------------------------------------------------------------
 ## Part 1: Implement FUSE methods to make a simple FS (45 minutes)
 
-If you look in `part1/simple-fs`:
+If you look in `part1-pi-fs/`:
 
-   - There is starter code to implement a simple FUSE file system.  
-   - Typing `make test` will simple Unix commands to check if your 
+  - `pi-fs.c`: starter code to implement a simple FUSE file system.  
+  The file system just has a single root directory and files, no 
+  subdirectories.
+  - `pi-fs-support.c`: support code that we provide.
+  - `make mount`: will mount your file system.
+  - `make unmount`: will forcibly unmount if it gets stuck.
+   - `make test`: will execute simple Unix commands to check if your 
    system is broken.
 
-You'll have to implement five methods:
+You'll have to implement six methods:
 
    - `getattr` get attributes of the file: its size, permissions, and
    number of hardlinks to it.
+
+   - `open`: read fro the file at a `offset` of `size` bytes.
 
    - `read`: read fro the file at a `offset` of `size` bytes.
 
@@ -214,15 +221,28 @@ E.g., `PIX:> `.  So we just need to listen for this.
 
 Rundown:
  - `part2-redirection` holds all the code.
- - `redirect.c/redir` is the routine you need to implement.
+ - `redirect.c:redir` is the routine you need to implement.
+ - `driver.c` is the test driver.
+
+You should test from easy to hard:
  - `make run`: tests that you can (1) read `stdout` and `stderr` from
  a subprocess and (2) your code exits when it does rather than hanging.
+
  - `make run.fake-pi`: checks that you correctly listen for shell 
   prompts.
- - `make run.pi`: checks that you can control your pi-shell.
+
+ - `make run.pi`: checks that you can control your pi-shell.  You pi should
+  be plugged in.
 
 ----------------------------------------------------------------------
 ## Part 3: Hook up the your pi-fs to the your pi-shell.
+
+Now you'll combine everything together.
+
+  1.  Copy all your code from part1 into this directory: (`cp ../part1-pi-fs/`\*.[ch] .`).
+
+  2. Implement the `do_echo`, `do_reboot`, `do_run`.
+
 
 Break this down into steps.
 
@@ -230,10 +250,14 @@ Break this down into steps.
   you can do multiple times.
   2. echo: `echo hello > ./pi/echo` should echo the output.  
   3. Get the console working.
-  4. Loading a program is a bit annoying.  We didn't think to put a size
-  field in the binary, so we don't actually know how big it is.  We assume
-  all the bytes are there for a write.  This is ridiculous, but works for
-  our simple program.
+  4. Loading a program is a bit annoying.  We didn't think to put a
+  size field in the binary, so we don't actually know how big it is.
+  We assume all the bytes are there for a write.  This is ridiculous,
+  but works for our simple program.  In addition, the shell takes a file
+  name to run rather than the bytes of code.  Our hack: write the bytes
+  to a file (e.g., `/tmp/hello.bin`) and send this to the pi.
+
+You are done!
 
 ----------------------------------------------------------------------
 ## Further background reading:

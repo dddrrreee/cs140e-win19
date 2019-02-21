@@ -10,7 +10,7 @@ CFLAGS = -O -Wall -g -std=gnu99 -D_FILE_OFFSET_BITS=64   -Wno-unused-function -W
 
 all: $(NAME) # test-redirect fuse-redirect # run
 
-run: 
+mount: 
 	mkdir -p $(WHERE)
 	./$(NAME) -f -d -s $(WHERE)
 
