@@ -1,4 +1,10 @@
-/* trivial file system that we are going to repurpose for the pi.  */
+/* 
+ * part1: trivial file system that we are going to repurpose for the pi.  
+ * 
+ * useful helper routines in pi-fs.h/pi-fs-support.c
+ *
+ * implement anything with unimplemented();
+ */
 
 #define FUSE_USE_VERSION 26
 #include <fuse.h>
@@ -12,15 +18,19 @@
 
 #include "pi-fs.h"
 
-/****************************************************************************
- * Fuse methods.
- */
+static int do_reboot(dirent_t *e, const char *path, const char *buf,
+                            size_t size, off_t offset, void *data);
+static int do_echo(dirent_t *e, const char *path, const char *buf,
+                            size_t size, off_t offset, void *data);
+static int do_run(dirent_t *e, const char *path, const char *buf,
+                            size_t size, off_t offset, void *data);
+
 
 // simple pi file system: no directories.
 static dirent_t root[] = {
-    { .name = "/echo.cmd", perm_rw, 0 },
-    { .name = "/reboot.cmd", perm_rw, 0},
-    { .name = "/run.cmd", perm_rw, 0},
+    { .name = "/echo.cmd", perm_rw, 0, .on_wr = do_echo },
+    { .name = "/reboot.cmd", perm_rw, 0, .on_wr = do_reboot},
+    { .name = "/run.cmd", perm_rw, 0, .on_wr = do_run},
     { .name = "/console", perm_rd, 0 },
     { 0 }
 };
@@ -112,6 +122,22 @@ static struct fuse_operations pi_oper = {
     .truncate = pi_truncate,
     .ftruncate = pi_ftruncate,
 };
+
+// not needed for this part.
+static int do_reboot(dirent_t *e, const char *path, const char *buf,
+                            size_t size, off_t offset, void *data) {
+    error("dont need for part1\n");
+}
+
+static int do_echo(dirent_t *e, const char *path, const char *buf,
+                            size_t size, off_t offset, void *data) {
+    error("dont need for part1\n");
+}
+
+static int do_run(dirent_t *e, const char *path, const char *buf,
+                            size_t size, off_t offset, void *data) {
+    error("dont need for part1\n");
+} 
 
 /*
     -d Enable debugging output (implies -f).

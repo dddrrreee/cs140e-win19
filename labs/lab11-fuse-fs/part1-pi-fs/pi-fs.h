@@ -1,5 +1,15 @@
 #ifndef __PI_FS_H__
 #define __PI_FS_H__
+#include <stdlib.h>
+
+struct dirent;
+typedef int (*on_write_fp)(struct dirent *e, const char *path, const char *buf,
+                            size_t size, off_t offset, void *data);
+
+// 0 = skip write to base file.  1 = do it.
+typedef int (*on_read_fp)(struct dirent *e, const char *path, char *buf,
+                            size_t size, off_t offset, void *data);
+
 
 // this way of creating a ramFS is not the right way to do things.
 // we use expedient hacks so we can strip the things down for a 
@@ -19,6 +29,10 @@ typedef struct dirent {
     char *name;
     int flags;
     file_t *f;
+
+    // allow user to extend each file/dir with actions.
+    on_write_fp on_wr;
+    on_read_fp on_rd;
 } dirent_t;
 
 /**********************************************************************
