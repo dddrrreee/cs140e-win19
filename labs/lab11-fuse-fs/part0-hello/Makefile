@@ -9,7 +9,7 @@ OBJS = $(NAME).o
 FUSE_CMD = ./$(NAME) -f -d -s $(WHERE)
 
 CC = gcc
-CFLAGS = -O -Wall -g -std=gnu99 -D_FILE_OFFSET_BITS=64   -Wno-unused-function   
+CFLAGS = -O -Wall -g -std=gnu99 -D_FILE_OFFSET_BITS=64   -Wno-unused-function     `pkg-config fuse --cflags --libs`
 
 all: $(NAME) 
 
@@ -43,7 +43,7 @@ $(NAME):  $(OBJS)
 #   sed:    strip leading spaces
 #   sed:    add trailing colons
 %.o: %.c
-	$(CC) -c $(CFLAGS) $*.c `pkg-config fuse --cflags --libs` -o $*.o
+	$(CC) -c $(CFLAGS) $*.c -o $*.o
 	$(CC) -MM $(CFLAGS) $*.c > $*.d
 	@mv -f $*.d $*.d.tmp
 	@sed -e 's|.*:|$*.o:|' < $*.d.tmp > $*.d
