@@ -5,6 +5,11 @@ NAME= pi-fs
 WHERE=./fake-pi
 OBJS = $(NAME).o  pi-fs-support.o ../part2-redirection/echo-until.o ../part2-redirection/redirect.o
 
+
+PI_SIDE_SHELL = ../../lab10-shell/shell-pi-side/pi-shell.bin
+UNIX_SIDE_SHELL = ../../lab10-shell/shell-unix-side/pi-shell
+FUSE_CMD = ./$(NAME) -f -d -s $(WHERE)
+
 CC = gcc
 CFLAGS = -O -Wall -g -std=gnu99 -D_FILE_OFFSET_BITS=64   -Wno-unused-function -Werror -I../part2-redirection -DPART3    `pkg-config fuse --cflags --libs`
 
@@ -16,7 +21,6 @@ ifeq ($(UNAME_S),Linux)
 else
     FUSE_UNMOUNT=umount
 endif
-
 
 
 
