@@ -1,0 +1,3 @@
+- copy your part1 *.c *.h files here.
+- copy Makefile.use to Makefile
+- implement the on_write methods.

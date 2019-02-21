@@ -123,22 +123,6 @@ static struct fuse_operations pi_oper = {
     .ftruncate = pi_ftruncate,
 };
 
-// not needed for this part.
-static int do_reboot(dirent_t *e, const char *path, const char *buf,
-                            size_t size, off_t offset, void *data) {
-    error("dont need for part1\n");
-}
-
-static int do_echo(dirent_t *e, const char *path, const char *buf,
-                            size_t size, off_t offset, void *data) {
-    error("dont need for part1\n");
-}
-
-static int do_run(dirent_t *e, const char *path, const char *buf,
-                            size_t size, off_t offset, void *data) {
-    error("dont need for part1\n");
-} 
-
 /*
     -d Enable debugging output (implies -f).
 
@@ -157,3 +141,19 @@ int main(int argc, char *argv[]) {
     assert(ent_lookup(root, "/run.cmd"));
     return fuse_main(argc, argv, &pi_oper, 0);
 }
+
+// not needed for this part.
+static int do_reboot(dirent_t *e, const char *path, const char *buf,
+                            size_t size, off_t offset, void *data) {
+    error("dont need for part1\n");
+}
+
+static int do_echo(dirent_t *e, const char *path, const char *buf,
+                            size_t size, off_t offset, void *data) {
+    error("dont need for part1\n");
+}
+
+static int do_run(dirent_t *e, const char *path, const char *buf,
+                            size_t size, off_t offset, void *data) {
+    error("dont need for part1\n");
+} 
