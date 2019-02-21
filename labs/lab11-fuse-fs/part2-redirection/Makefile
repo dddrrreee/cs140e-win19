@@ -4,7 +4,7 @@
 NAME= redirect
 WHERE=/tmp
 
-OBJS = $(NAME).o  echo-until.o
+OBJS = $(NAME).o  echo-until.o driver.o
 
 CC = gcc
 CFLAGS = -O -Wall -g -std=gnu99 -Wno-unused-function -Werror
