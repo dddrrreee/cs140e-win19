@@ -26,10 +26,10 @@ mount:
 unmount:
 	fusermount -uz $(WHERE)
 
+# LINUX_LIBS=-lfuse
 $(NAME):  $(OBJS) 
-	$(CC) $(CFLAGS) $^  -o $@ -lm 
+	$(CC) $(CFLAGS) $^ `pkg-config fuse --cflags --libs`  -o $@ -lm  $(LINUX_LIBS)
 
-#  -lfuse
 
 # pull in dependency info for *existing* .o files
 -include $(OBJS:.o=.d)
