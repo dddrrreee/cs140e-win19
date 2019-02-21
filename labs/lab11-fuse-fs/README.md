@@ -246,11 +246,11 @@ Now you'll combine everything together.
   3. You'll have to use `Makefile.use`
 
   4. Also, you'll need to replace your main with the code in `patch.c`.
-  The easiest way is to just do:
+  The easiest way is to put this in your `pi-fs.c`:
 
 
     #ifndef PART3
-       ... your original code....
+       ...your original main() code....
     #else
     #    include "patch.c"
     #endif
