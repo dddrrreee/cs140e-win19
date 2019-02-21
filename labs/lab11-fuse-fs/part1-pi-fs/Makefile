@@ -6,7 +6,8 @@ WHERE=./fake-pi
 OBJS = $(NAME).o  pi-fs-support.o
 
 CC = gcc
-CFLAGS = -O -Wall -g -std=gnu99 -D_FILE_OFFSET_BITS=64   -Wno-unused-function -Werror
+CFLAGS = -O -Wall -g -std=gnu99 -D_FILE_OFFSET_BITS=64   -Wno-unused-function 
+  `pkg-config fuse --cflags --libs`
 
 all: $(NAME) # test-redirect fuse-redirect # run
 
@@ -34,7 +35,7 @@ test:
 	echo 1 > $(WHERE)/reboot.cmd
 
 $(NAME):  $(OBJS) 
-	$(CC) $(CFLAGS) $^  -o $@ -lm -lfuse
+	$(CC) $(CFLAGS) $^ `pkg-config fuse --cflags --libs`  -o $@ -lm -lfuse
     
 
 # pull in dependency info for *existing* .o files
