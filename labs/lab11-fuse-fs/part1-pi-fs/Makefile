@@ -14,16 +14,17 @@ check_os:
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
 	LINUX_LIBS=-lfuse
+    FUSE_UNMOUNT=fusermount -uz
+else
+    FUSE_UNMOUNT=umount
 endif
-
-
 
 mount: 
 	mkdir -p $(WHERE)
 	./$(NAME) -f -d -s $(WHERE)
 
 unmount:
-	fusermount -uz $(WHERE)
+	$(FUSE_UNMOUNT) $(WHERE)
 
 test:
 	@ echo "----------start------------------------------"
