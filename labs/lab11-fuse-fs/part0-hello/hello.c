@@ -48,7 +48,7 @@ static int hello_getattr(const char *path, struct stat *stbuf) {
     return stbuf->st_nlink ? 0 : -ENOENT;
 }
 
-#define MIN(x,y) ((x)<(y) ? (x) : (y))
+#define XMIN(x,y) ((x)<(y) ? (x) : (y))
 
 static int hello_read(const char *path, char *buf, size_t size, 
                     off_t offset, struct fuse_file_info *fi) {
@@ -58,7 +58,7 @@ static int hello_read(const char *path, char *buf, size_t size,
         return -ENOENT;
     if (offset > len)
         return 0;
-    size = MIN(size, len - offset);
+    size = XMIN(size, len - offset);
     memcpy(buf, hello_str + offset, size);
     return size;
 }
