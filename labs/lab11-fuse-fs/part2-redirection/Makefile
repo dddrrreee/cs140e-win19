@@ -13,7 +13,7 @@ CFLAGS = -O -Wall -g -std=gnu99 -Wno-unused-function -Werror
 PI_SIDE_SHELL = ../../lab10-shell/shell-pi-side/pi-shell.bin
 UNIX_SIDE_SHELL = ../../lab10-shell/shell-unix-side/pi-shell
 
-all: test-redirect redirect test-pi-shell-redirect run run.fake-pi
+all: test-redirect redirect test-pi-shell-redirect # run run.fake-pi
 
 test-redirect: test-redirect.o
 	$(CC) $(CFLAGS) $^ -o $@ -lm
