@@ -185,7 +185,7 @@ You'll have to implement six methods:
    - `getattr` get attributes of the file: its size, permissions, and
    number of hardlinks to it.
 
-   - `open`: read fro the file at a `offset` of `size` bytes.
+   - `open`: I'd use `file_lookup` in `pi-fs-support.c`
 
    - `read`: read fro the file at a `offset` of `size` bytes.
 
