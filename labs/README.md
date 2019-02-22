@@ -72,6 +72,8 @@
   preemptive context switching.  Most people don't understand such things
   so, once again, you'll leave lab knowing something many do not.
 
+### Wrapping it all up: Shells, file systems, more.
+
   10. [lab10-shell](lab10-shell/): You'll write a simple shell that runs 
   on Unix and can:
       + Remotely execute a set of built-in commands (`reboot`, `echo`)
