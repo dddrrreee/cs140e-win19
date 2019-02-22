@@ -51,15 +51,16 @@
   self-contained implementation of pi interrupts (for timer-interrupts),
   kicking each line until you understand what, how, why.  You will
   use these to then implement a version of `gprof` (Unix statistical
-  profiler) in about 30 lines.<br></br> 
-  Perhaps the thing I love most
-  about this course is that because we write all the code ourselves, we
-  aren't constantly fighting some large, lumbering OS that can't get out
-  of its own way.  As a result, simple ideas only require simple code.
-  This lab is a great example: a simple idea, about twenty minutes of
-  code, an interesting result.  If we did on Unix could spend weeks or
-  more fighting various corner cases and have a result that is much much
-  much slower and, worse, in terms of insight.
+  profiler) in about 30 lines.
+
+     Perhaps the thing I love most about this course is that because we
+  write all the code ourselves, we aren't constantly fighting some
+  large, lumbering OS that can't get out of its own way.  As a result,
+  simple ideas only require simple code.  This lab is a great example:
+  a simple idea, about twenty minutes of code, an interesting result.
+  If we did on Unix could spend weeks or more fighting various corner
+  cases and have a result that is much much much slower and, worse,
+  in terms of insight.
 
   8. [lab8-sonar-int](lab8-sonar-int/): we take a bit of a fun break,
   and bang out a quick device driver for a simple sonar device. You
