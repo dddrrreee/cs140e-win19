@@ -88,6 +88,16 @@
       tricks) --- we're at the point in the quarter where you start to get
       some nice technological velocity because of how much you've done.
 
+  10. [lab11-fuse-fs](lab11-fuse-fs/): building a shell is illuminating,
+  but you'd like to have the pi more integrated into your computing,
+  versus having to use a special-purpose interface to talk to it.
+  In this lab you will use the FUSE file system to wrap up your pi
+  as a special file system and mount it on your laptop, where you can
+  use standard utilities (and your normal shell) to interact with it.
+  This lab is a great example of the power of Unix's simple, powerful
+  OO-interface that lets you package a variety of disparete things as
+  files, directories, links and interact with them using a uniform set
+  of verbs (e.g., `open()-read()-write()-close()`).
 
 ### Binary code:
 
