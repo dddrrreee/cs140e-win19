@@ -99,7 +99,7 @@
   Writes to special files (`/pi/reboot`, `/pi/run`) will take the place
   of built-in shell commands.  
 
-     This lab is a great example of the power of Unix's simple, powerful
+      This lab is a great example of the power of Unix's simple, powerful
   OO-interface that lets you package a variety of disparete things as
   files, directories, links and interact with them using a uniform set
   of verbs (e.g., `open()-read()-write()-close()`).
