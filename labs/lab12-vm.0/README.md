@@ -13,25 +13,26 @@ them seem scary.  Virtual memory is one of the best examples.
 Mechanically, all we want to do for virtual memory is to map integers
 (virtual addresses) to integers (physical addresses).   Most of the
 complication in VM boils down to the fact that there is no good way
-in general to construct a general integer function.  If we want to
-map arbitrary ints to ints, then we fundamentally have to use a brute
-force table.  (Quick proof: if the mapping is purely random, then its not
-compressible, and we need to record everything.  Also known as a table.)
+to construct a general integer function.  If we want to map arbitrary
+ints to ints, then we fundamentally have to use a brute force table.
+(Quick proof: if the mapping is purely random, then its not compressible,
+and we need to record everything.  Also known as a table.)
 
 One question is what granularity the function works on.  In the extreme
-we could map every byte in the virtual address space to any byte in the
-physical address space.  This is flexible, but very high overhead.
-For example, on the ARM, each page table entry (PTE) is 4 bytes, so 
-the page table would be 4x larger than the address space!  So we do
-what we normally do to reduce space overhead with functions: restrict
-flexibility and break the address space (physical and virtual) into
-fixed size ranges ("pages").  We allow any range to be mapped to any
-other range, so we still need a table for that: the page table now
-maps a virtual page number to a physical page number.  However, 
-all bytes within a range are just located with addition, which is fast
-and needs no table.  A 4096 page size will reduce our page table overhead
-by about 4096x and because of spatial locality not reduce our flexibility
-that much. 
+we could map every byte in the virtual address space to any byte in
+the physical address space.  This is flexible, but very high overhead.
+For example, on the ARM, each page table entry (PTE) is 4 bytes, so the
+page table would be 4x larger than the address space!  So we do what we
+often do in systems to reduce space overhead memory functions: restrict
+flexibility and use quantization.  Here we break the address space
+(physical and virtual) into fixed size ranges ("pages").  We allow any
+range to be mapped to any other range, so we still need a table for that:
+the page table now maps a virtual page number to a physical page number.
+However, all bytes within a virtual range are mapped to the byte at the
+same offset in its associated physical range.  I.e., we use the identity
+function, which is fast and needs no table.  A 4096 page size will reduce
+our page table overhead by about 4096x and because of spatial locality
+not reduce our flexibility that much.
 
 To make this concrete:  
  - For today's lab, we will just map 1MB regions at a time.  ARM calls
