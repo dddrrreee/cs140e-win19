@@ -44,12 +44,12 @@ Extensions:
    2. Catch segmentation faults.
 
 ----------------------------------------------------------------------
-#### Part 0: make sure you can run the simple hello program (5 minute).
+### Part 0: make sure you can run the simple hello program (5 minute).
 
 This is just a quick debug that your system is working fine.
 
 ----------------------------------------------------------------------
-#### Part 1: implement the code to setup page tables using 1MB sections (45 min)
+### Part 1: implement the code to setup page tables using 1MB sections (45 min)
 
 You'll write the code for `mmu_setup()`.
 
@@ -60,8 +60,14 @@ Once this is working you have legitimate virtual memory.
    2. Write a test case that maps an address range to a different 
    one and test that its working.
 
+The document you'll need for this part is:
+
+  * The annotated [B4 of the ARM manual](https://github.com/dddrrreee/cs140e-win19/blob/master/labs/lab12-vm.0/docs/armv6.b4-mmu.annot.pdf), which 
+   describes the page table format(s), and how to setup/manage hardware
+   state for page tables and the TLB.
+
 ----------------------------------------------------------------------
-#### Part 2: Handle initialization (45 min)
+### Part 2: Handle initialization (45 min)
 
 Weirdly, this is --- by far --- the hardest part to get right:
    1. One reason: if you get it wrong, your code may "work" fine.   
@@ -78,7 +84,7 @@ So for this part, like the `uart` lab, you're going to have to rely
 very strongly on the documents from ARM.
 
 -----------------------------------------------------------------------
-#### Further reading
+### Further reading
 
 To re-affirm your grasp of virtual memory, the slides from 
 [CS140 lecture notes](http://www.scs.stanford.edu/19wi-cs140/notes/) give
