@@ -138,6 +138,7 @@ The document you'll need for this part is:
 
 You'll do this in two steps:
 
+              =======================================
 ##### Part 1.A: define the page table entry structure.
 
 First, you should define a `struct first_level_descriptor` in file `vm.h`
@@ -160,7 +161,8 @@ based on the PTE layout given on B4-27 (screenshot below):
   <img src="images/part1-section.png"/>
 </td></tr></table>
 
-##### Part 1.A: implement `mmu_section`
+              =======================================
+##### Part 1.B: implement `mmu_section`
 
 Second, re-implement the `mmu_section` function we used in Part0.
 The code you wrote then should behave the same.  You'll want to 
@@ -176,6 +178,7 @@ Useful pages:
 
 The following screenshots are taken from the B4 section, but we inline
 them for easy reference:
+
 ----------------------------------------------------------------------
 ##### The definitions for `S`, `R`, `AXP`, `AP`:
 <table><tr><td>
