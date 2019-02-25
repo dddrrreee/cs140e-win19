@@ -64,19 +64,18 @@ The document you'll need for this part is:
   hardware state for page tables and the TLB.
 
 Useful pages:
-  - `S`, `R`, `AXP`, `AP` defined on B4-9.
-  - Domain permissions B4-10.
-  - `C`, `B`, `TEX` encodings B4-12.
-  - `nG`, `ASID`, `S`, 'XN`: B4-25.
-  - layout of "section" page table entry (PTE): B4-27. 
+  - layout of "section" page table entry (PTE): B4-27 (given below). 
+  - `S`, `R`, `AXP`, `AP` defined on B4-9 (given below).
+  - `C`, `B`, `TEX` encodings B4-12 (given below).
+  - `nG`, `ASID`, 'XN`: B4-25.
   - bit[18] (the IMP bit) `IMP = 0` for 1MB sections B4-28
+  - Domain permissions B4-10.
   - translation of a 1MB section: B4-29.
 
 We can break this down into two pieces:
   1. Write the page table format.
   2. Set the page table state.
   3. Swap.
-
 
 The following screenshots are taken from the B4 section, but we inline
 them for easy reference:
@@ -98,6 +97,7 @@ them for easy reference:
 <table><tr><td>
   <img src="images/part1-tex-C-B.png"/>
 </td></tr></table>
+
 
 
 ----------------------------------------------------------------------
