@@ -7,6 +7,67 @@ and make your system more real.
 
 #### The big picture
 
+Many things in systems are simple, but the terminology and details makes
+them seem scary.  Virtual memory is one of the best examples.  
+
+Mechanically, all we want to do for virtual memory is to map integers
+(virtual addresses) to integers (physical addresses).   Most of the
+complication in VM boils down to the fact that there is no good way
+in general to construct a general integer function.  If we want to
+map arbitrary ints to ints, then we fundamentally have to use a brute
+force table.  (Quick proof: if the mapping is purely random, then its not
+compressible, and we need to record everything.  Also known as a table.)
+
+One question is what granularity the function works on.  In the extreme
+we could map every byte in the virtual address space to any byte in the
+physical address space.  This is flexible, but very high overhead.
+For example, on the ARM, each page table entry (PTE) is 4 bytes, so 
+the page table would be 4x larger than the address space!  So we do
+what we normally do to reduce space overhead with functions: restrict
+flexibility and break the address space (physical and virtual) into
+fixed size ranges ("pages").  We allow any range to be mapped to any
+other range, so we still need a table for that: the page table now
+maps a virtual page number to a physical page number.  However, 
+all bytes within a range are just located with addition, which is fast
+and needs no table.  A 4096 page size will reduce our page table overhead
+by about 4096x and because of spatial locality not reduce our flexibility
+that much. 
+
+To make this concrete:  
+ - For today's lab, we will just map 1MB regions at a time.  ARM calls
+ these "segments".
+ - So the page table will map a virtual segment to a physical segment.
+ - Domain: The r/pi has a 32-bit address space, so that is 4096 
+ virtual segments.  Thus the function's domain is \[0..4096)`.
+ - Range: Not including GPIO, The r/pi has 512MB of memory, so 512
+ physical segments.  Thus the function's range is `\[0..512)\`.
+ - Thus, we are making a trivial integer function that will map
+ `\[0...4096) ==> \[0..512\)`
+
+(GPIO also adds some numbers to the range, but you get the idea.)
+
+This mapping (address translation) happens on every instruction, twice
+if the instruction is a load or store. Thus it must be fast.  So as you
+expect we'll have one or more caches to keep translations (confusingly
+called "translation lookaside buffers").  And, as you can figure out on
+your own, if we change the function mapping, these caches have to be updated.
+Keeping the contents of a table coherent coherent with a translation cache
+is alot of work, so machines generally (always?) punt on this, and it is
+up to the implementor to flush any needed cache entries when the mapping
+changes. (This flush must either only finish when everything is flushed,
+or the implementor must insert a barrier to wait).  
+
+Finally, as a detail, we have to tell the hardware where to find the
+translations for each different address space.  Typically there is a
+register you store a pointer to the table (or tables) in.
+
+The above is pretty much all we will do:
+  1. For each virtual address we want to map to a physical address, insert
+  the mapping into the table.
+  2. Each time we change a mapping, invalidate any cache affected.
+  3. When we start running a process, tell the hardware where to 
+  find its translations.
+
 #### Lab reading.
 
 This is one of those labs where I probably should have given your
@@ -33,30 +94,40 @@ should understand.  In the `./docs` directory for this lab:
 #### Check-off
 
 You need to show that:
-  1. You can replace the code to setup the page table with 1MB sections.
-  2. You can replace the code to synchronize the hardware state.
+  0. Part 0: you can do a test that checks that aliasing works and 
+  that you can say what the cache organization is.
+  1. Part 1: You can replace the code to setup the page table with 1MB sections.
+  2. Part 2: You can replace the code to synchronize the hardware state and
+  state what is going on and why.
 
 Extensions:
    1. Setup two-level paging.
    2. Catch segmentation faults.
 
 ----------------------------------------------------------------------
-### Part 0: make sure you can run the simple hello program (5 minute).
+### Part 0: make sure you can run the simple hello program (15 minute).
 
-This is just a quick debug that your system is working fine.
+These are a quick set of tests (0, ~5, ~5, ~10 lines of code
+respectively) to see that you have a crude picture of what is going on:
+
+  0. Compile and run the code provided.  This is just a quick debug that
+  your system is working fine.
+
+  1. Write a test case that shows you get a fault when you reference
+  unmapped memory.
+
+  2. Write a test case that maps an address range to a different 
+  one and test that its working.
+
+  3. Write a simple routine (in assembly: should be one instruction and
+  a return) to figure out if the TLB and caches are unified or separate.
+  You can use the co-processor 15 structure provided.
 
 ----------------------------------------------------------------------
 ### Part 1: implement the code to setup page tables using 1MB sections (45 min)
 
 You'll write the code for `mmu_setup()`.
 You'll use 1MB sections, these are described in:
-
-Once this is working you have legitimate virtual memory.
-  1. Write a test case that shows you get a fault when you reference
-  unmapped memory.
-
-  2. Write a test case that maps an address range to a different 
-  one and test that its working.
 
 The document you'll need for this part is:
   * The annotated B4 of the ARM manual `docs/armv6.b4-mmu.annot.pdf`,
@@ -98,8 +169,6 @@ them for easy reference:
   <img src="images/part1-tex-C-B.png"/>
 </td></tr></table>
 
-
-
 ----------------------------------------------------------------------
 ### Part 2: Handle initialization (45 min)
 
@@ -127,8 +196,38 @@ Mostly you'll find these in:
    describing memory ordering requirements --- what you have to do when
    you update the page table, the page table registers, etc.
 
+
+DSB as a superset of DMB:
+
+https://community.arm.com/processors/f/discussions/3287/questions-regarding-dmb-dsb-and-isb
+
+
+Errata for icache flushing from linux:
+
+        @ https://elixir.bootlin.com/linux/latest/source/arch/arm/mm/cache-v6.S
+        mov r0, #0
+        mcr p15, 0, r0, c7, c5, 0       @ invalidate entire I-cache
+        mcr p15, 0, r0, c7, c5, 0       @ invalidate entire I-cache
+        mcr p15, 0, r0, c7, c5, 0       @ invalidate entire I-cache
+        mcr p15, 0, r0, c7, c5, 0       @ invalidate entire I-cache
+        msr cpsr_cx, r1         @ restore interrupts
+        .rept   11              @ ARM Ltd recommends at least
+        nop                 @ 11 NOPs
+
+
+TODO: 
+    - get snapshots of B6.
 -----------------------------------------------------------------------
 ### Further reading
+
+As an alternative to our lab writeup:
+ * [Concise, concrete pi MMU]((https://github.com/naums/raspberrypi/blob/master/mmu/README.md)
+
+Useful code (use to double-check understanding):
+ - [Linux TLB code for V6](https://elixir.bootlin.com/linux/latest/source/arch/arm/mm/tlb-v6.S).
+ - [Linux cache code for V6](https://elixir.bootlin.com/linux/latest/source/arch/arm/mm/cache-v6.S).
+ - [MMU code for vmwos](https://github.com/deater/vmwos/blob/master/kernel/memory/arm1176-mmu.c)
+ - [PiOS source](https://www.stefannaumann.de/git/snaums/PiOS/src/branch/master/source)
 
 To re-affirm your grasp of virtual memory, the slides from 
 [CS140 lecture notes](http://www.scs.stanford.edu/19wi-cs140/notes/) give
