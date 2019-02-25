@@ -49,25 +49,53 @@ This is just a quick debug that your system is working fine.
 ### Part 1: implement the code to setup page tables using 1MB sections (45 min)
 
 You'll write the code for `mmu_setup()`.
+You'll use 1MB sections, these are described in:
 
 Once this is working you have legitimate virtual memory.
-   1. Write a test case that shows you get a fault when you reference
-   unmapped memory.
+  1. Write a test case that shows you get a fault when you reference
+  unmapped memory.
 
-   2. Write a test case that maps an address range to a different 
-   one and test that its working.
+  2. Write a test case that maps an address range to a different 
+  one and test that its working.
 
 The document you'll need for this part is:
   * The annotated B4 of the ARM manual `docs/armv6.b4-mmu.annot.pdf`,
   which describes the page table format(s), and how to setup/manage
   hardware state for page tables and the TLB.
 
+Useful pages:
+  - `S`, `R`, `AXP`, `AP` defined on B4-9.
+  - Domain permissions B4-10.
+  - `C`, `B`, `TEX` encodings B4-12.
+  - `nG`, `ASID`, `S`, 'XN`: B4-25.
+  - layout of "section" page table entry (PTE): B4-27. 
+  - bit[18] (the IMP bit) `IMP = 0` for 1MB sections B4-28
+  - translation of a 1MB section: B4-29.
+
 We can break this down into two pieces:
   1. Write the page table format.
   2. Set the page table state.
   3. Swap.
 
-You'll use 1MB sections, these are described in:
+
+The following screenshots are taken from the B4 section, but we inline
+them for easy reference:
+
+The PTE for 1MB sections document:
+<table><tr><td>
+  <img src="images/part1-section.png"/>
+</td></tr></table>
+
+The definitions for `S`, `R`, `AXP`, `AP`:
+<table><tr><td>
+  <img src="images/part1-s-r-axp-p.png"/>
+</td></tr></table>
+
+The definitions for `TEX`, `C`, `B`:
+<table><tr><td>
+  <img src="images/part1-tex-C-B.png"/>
+</td></tr></table>
+
 
 ----------------------------------------------------------------------
 ### Part 2: Handle initialization (45 min)
@@ -104,7 +132,6 @@ To re-affirm your grasp of virtual memory, the slides from
  a big picture overview:
   1. [Virtual memory hardware](http://www.scs.stanford.edu/19wi-cs140/notes/vm_hardware-print.pdf).
   2. [Virtual memory OS](http://www.scs.stanford.edu/19wi-cs140/notes/vm_os-print.pdf)
-
 
 And for more detail, the book [Operating systems in three easy pieces](http://pages.cs.wisc.edu/~remzi/OSTEP/) provides chapters online.  You want to look at:
   1. [Address spaces](http://pages.cs.wisc.edu/~remzi/OSTEP/vm-intro.pdf).
