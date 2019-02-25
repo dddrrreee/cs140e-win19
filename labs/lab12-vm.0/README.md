@@ -39,11 +39,11 @@ To make this concrete:
  these "segments".
  - So the page table will map a virtual segment to a physical segment.
  - Our function's Domain: The r/pi has a 32-bit address space, so that
- is 4096 virtual segments.  Thus the function's domain is \[0..4096)`.
+ is 4096 virtual segments.  Thus the function's domain is `[0..4096)`.
  - Our function's Range: Not including GPIO, The r/pi has 512MB of memory,
- so 512 physical segments.  Thus the function's range is `\[0..512)\`.
+ so 512 physical segments.  Thus the function's range is `[0..512)`.
  - Thus, we are making a trivial integer function that will map
- `\[0...4096) ==> \[0..512\)`.  (GPIO also adds some numbers to the
+ `[0...4096) ==> [0..512)`.  (GPIO also adds some numbers to the
  range, but you get the idea.)  You built fancier functions in your
  intro programming class.  The only tricky thing here is that we need
  ours to be very fast.
@@ -140,21 +140,19 @@ You'll do this in two steps:
 
 ##### Part 1.A: define the page table entry structure.
 
-First, you should define a `struct first_level_descriptor` 
+First, you should define a `struct first_level_descriptor` in file `vm.h`
 based on the PTE layout given on B4-27 (screenshot below):
   -  You'll defined fields for the section base address, `nG`, `S`,
   `APX`, `TEX`, `AP`, `IMP`, `Domain`, `XN`, `C`, `B`, and the tag.
   - You should look at the structure `struct control_reg1` given in
   `vm.h` to see how to use bitfields in C.
-  - NOTE: it is very easy to make mistakes. Thus, write a function to check
-  your structure modeled on how `check_control_reg` checks its structure
-  layout, by using the `check_bitfield` macro to check that a field is at
-  a desired bit offset, with a desired bit width.
-  - `AssertNow` will do a compile-time assert.
-  - HINT: the first field is at offset 0.  
-
-Get this working first.  Make a `fld_print` function and a `fld_check`
-funcion.
+  - It is very easy to make mistakes. You will write a function
+  `fld\_check()` modeled on `check_control_reg()` that uses the
+  `check_bitfield` macro to verify that each field is at its correct
+   bit offset, with its correct bit width.
+  - Write a function `fld_print` to print all the fields in your structure.
+  - HINT: the first field is at offset 0 and the `AssertNow` uses tricks
+  to do a compile-time assert.
 
 ----------------------------------------------------------------------
 ##### The PTE for 1MB sections document:
@@ -169,13 +167,12 @@ The code you wrote then should behave the same.  You'll want to
 figure out what all the bits do.  (Hint: most will be set to 0s.)
 
 Useful pages:
-  - layout of "section" page table entry (PTE): B4-27 (given below). 
-  - `S`, `R`, `AXP`, `AP` defined on B4-9 (given below).
-  - `C`, `B`, `TEX` encodings B4-12 (given below).
-  - `nG`, `ASID`, 'XN`: B4-25.
-  - bit[18] (the IMP bit) `IMP = 0` for 1MB sections B4-28
-  - Domain permissions B4-10.
-  - translation of a 1MB section: B4-29.
+  - B4-9: `S`, `R`, `AXP`, `AP` (given below).
+  - B4-12: `C`, `B`, `TEX` (given below).
+  - B4-25: `nG`, `ASID`, 'XN`.
+  - B4-28: bit[18] (the IMP bit) `IMP = 0` for 1MB sections.
+  - B4-10: Domain permissions.
+  - B4-29: translation of a 1MB section.
 
 The following screenshots are taken from the B4 section, but we inline
 them for easy reference:
@@ -191,23 +188,22 @@ them for easy reference:
   <img src="images/part1-tex-C-B.png"/>
 </td></tr></table>
 
-
 ----------------------------------------------------------------------
 ### Part 2: Handle initialization (45 min)
 
 Weirdly, this is --- by far --- the hardest part to get right:
-  1. One reason: if you get it wrong, your code may "work" fine. We are 
-  running with caches disabled, no branch prediction, and strongly-ordered
-  memory accesses so many of the gotcha's can't come up.  However, later,
-  they will.  And since at that point there will be more going on, it
-  will be hard to figure out WTH is going wrong.
+  1. If you get it wrong, your code may "work" fine. We are running with
+  caches disabled, no branch prediction, and strongly-ordered memory
+  accesses so many of the gotcha's can't come up.  However, later,
+  they will.  And since at that point there will be more going on,
+  it will be hard to figure out WTH is going wrong.
 
   2. Because flaws relate to memory --- what values are returned from
   a read, or what values are written --- they give "impossible" bugs
-  (e.g., a write to a location disappears despite you staring right at
-  the store that does it, a branch is followed the wrong way despite
-  its condition being true).  They are the ultimate memory corruption,
-  but much fancier.
+  that you won't even be checking for, so won't see.  (E.g., a write to a
+  location disappears despite you staring right at the store that does it,
+  a branch is followed the wrong way despite its condition being true).
+  They are the ultimate memory corruption, but much fancier.
 
 So for this part, like the `uart` lab, you're going to have to rely very
 strongly on the documents from ARM and find the exact prose that states
@@ -219,11 +215,9 @@ Mostly you'll find these in:
    describing memory ordering requirements --- what you have to do when
    you update the page table, the page table registers, etc.
 
-
 DSB as a superset of DMB:
 
 https://community.arm.com/processors/f/discussions/3287/questions-regarding-dmb-dsb-and-isb
-
 
 Errata for icache flushing from linux:
 
@@ -244,7 +238,7 @@ TODO:
 ### Further reading
 
 As an alternative to our lab writeup:
- * [Concise, concrete pi MMU]((https://github.com/naums/raspberrypi/blob/master/mmu/README.md)
+ * [Concise, concrete pi MMU](https://github.com/naums/raspberrypi/blob/master/mmu/README.md)
 
 Useful code (use to double-check understanding):
  - [Linux TLB code for V6](https://elixir.bootlin.com/linux/latest/source/arch/arm/mm/tlb-v6.S).
