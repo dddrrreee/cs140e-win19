@@ -204,15 +204,15 @@ Here you'll write assembly helper routines to (put them in `vm-asm.s`):
 
   1. Each page table entry above is tagged with one of the 16 ARM "domains".
   You have to specify the permissions of any used domains.  For 
-  simplicity set all 16 domains to "all access" (`0b11`).
+  simplicity set all 16 domains to "all access" (`0b11`).  (See below)
   2. The hardware has to be able to find the page table when there is
   a TLB miss.  Write the address of the page table to the page table
-  register `ttbr0`.  Note the alignment restriction!
+  register `ttbr0`.  Note the alignment restriction!  (See below)
   3. The ARM allows each TLB entry to be tagged with an address space
   identifier so you don't have to flush when you switch address spaces.
   Set the current address space identifier (pick a number between 
   `1..63`).
-  4. Turn on the MMU.  Things should work as before.
+  4. Turn on the MMU.  Things should work as before. (See below)
 
 After each operation, call the macro `FLUSH_MMU` to flush all operations.
 This is overkill.  The next part makes it better.
@@ -241,7 +241,7 @@ I've inlined useful snapshots below:
 </td></tr></table>
 
 ----------------------------------------------------------------------
-## Part 3: Handle initialization (45 min)
+## Part 3: Flush stale state. (30 minutes)
 
 Weirdly, this is --- by far --- the hardest part to get right:
   1. If you get it wrong, your code may "work" fine. We are running with
@@ -270,7 +270,41 @@ Mostly you'll find these in:
 Useful pages:
   - B2-23: how to flush after changing a PTE.
   - B2-24: must flush after a CP15.
-  - B2-25: how to change the address space identifier (ASID).
+  - B2-25: how to change the address space identifier (ASID). 
+
+----------------------------------------------------------------------
+##### When do you need to flush 
+
+<table><tr><td>
+  <img src="images/part3-tlb-maintenance.png"/>
+</td></tr></table>
+
+
+----------------------------------------------------------------------
+##### Sync ASID
+
+<table><tr><td>
+  <img src="images/part3-sync-asid.png"/>
+</td></tr></table>
+
+----------------------------------------------------------------------
+##### When to flush BTB
+
+<table><tr><td>
+  <img src="images/part3-flush-btb.png"/>
+</td></tr></table>
+
+----------------------------------------------------------------------
+##### How to invalidate after a PTE change
+
+<table><tr><td>
+  <img src="images/part3-invalidate-pte.png"/>
+</td></tr></table>
+
+
+----------------------------------------------------------------------
+##### Invalidate TLB
+
 
 ----------------------------------------------------------------------
 ##### Invalidate TLB
