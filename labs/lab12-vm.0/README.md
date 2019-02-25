@@ -81,17 +81,20 @@ We can break this down into two pieces:
 The following screenshots are taken from the B4 section, but we inline
 them for easy reference:
 
-The PTE for 1MB sections document:
+----------------------------------------------------------------------
+#### The PTE for 1MB sections document:
 <table><tr><td>
   <img src="images/part1-section.png"/>
 </td></tr></table>
 
-The definitions for `S`, `R`, `AXP`, `AP`:
+----------------------------------------------------------------------
+#### The definitions for `S`, `R`, `AXP`, `AP`:
 <table><tr><td>
   <img src="images/part1-s-r-axp-p.png"/>
 </td></tr></table>
 
-The definitions for `TEX`, `C`, `B`:
+----------------------------------------------------------------------
+#### The definitions for `TEX`, `C`, `B`:
 <table><tr><td>
   <img src="images/part1-tex-C-B.png"/>
 </td></tr></table>
