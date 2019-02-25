@@ -107,7 +107,7 @@ Extensions:
    2. Catch segmentation faults.
 
 ----------------------------------------------------------------------
-### Part 0: make sure you can run the simple hello program (15 minute).
+## Part 0: make sure you can run the simple hello program (15 minute).
 
 These are a quick set of tests (0, ~5, ~5, ~10 lines of code
 respectively) to see that you have a crude picture of what is going on:
@@ -126,7 +126,7 @@ respectively) to see that you have a crude picture of what is going on:
   You can use the co-processor 15 structure provided.
 
 ----------------------------------------------------------------------
-### Part 1: implement the code to setup page tables using 1MB sections (45 min)
+## Part 1: implement the code to setup page tables using 1MB sections (45 min)
 
 You'll write the code to fill in the page table assuming the use of
 1MB sections.
@@ -139,7 +139,7 @@ The document you'll need for this part is:
 You'll do this in two steps:
 
               =======================================
-##### Part 1.A: define the page table entry structure.
+#### Part 1.A: define the page table entry structure.
 
 First, you should define a `struct first_level_descriptor` in file `vm.h`
 based on the PTE layout given on B4-27 (screenshot below):
@@ -161,8 +161,8 @@ based on the PTE layout given on B4-27 (screenshot below):
   <img src="images/part1-section.png"/>
 </td></tr></table>
 
-              =======================================
-##### Part 1.B: implement `mmu_section`
+----------------------------------------------------------------------
+#### Part 1.B: implement `mmu_section`
 
 Second, re-implement the `mmu_section` function we used in Part0.
 The code you wrote then should behave the same.  You'll want to 
@@ -199,7 +199,8 @@ them for easy reference:
 </td></tr></table>
 
 ----------------------------------------------------------------------
-### Part 2: Handle initialization (45 min)
+----------------------------------------------------------------------
+## Part 2: Handle initialization (45 min)
 
 Weirdly, this is --- by far --- the hardest part to get right:
   1. If you get it wrong, your code may "work" fine. We are running with
