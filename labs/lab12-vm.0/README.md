@@ -301,17 +301,28 @@ Useful pages:
   <img src="images/part3-invalidate-pte.png"/>
 </td></tr></table>
 
-
 ----------------------------------------------------------------------
-##### Invalidate TLB
-
-
-----------------------------------------------------------------------
-##### Invalidate TLB
+##### Invalidate TLB instruction
 
 <table><tr><td>
   <img src="images/part2-inv-tlb.png"/>
 </td></tr></table>
+
+----------------------------------------------------------------------
+##### DSB, DMB instruction
+
+<table><tr><td>
+  <img src="images/part3-dsb-dmb.png"/>
+</td></tr></table>
+
+
+----------------------------------------------------------------------
+##### Flush prefetch buffer and others
+
+<table><tr><td>
+  <img src="images/part3-flushprefetch.png"/>
+</td></tr></table>
+
 
 -----------------------------------------------------------------------
 ### Further reading
