@@ -217,13 +217,14 @@ Here you'll write assembly helper routines to (put them in `vm-asm.s`):
 After each operation, call the macro `FLUSH_MMU` to flush all operations.
 This is overkill.  The next part makes it better.
 
-I've inlined useful snapshots below.
+I've inlined useful snapshots below:
+
 ----------------------------------------------------------------------
 ##### Bits to set in Domain
-
 <table><tr><td>
-  <img src="images/part2-control-reg1.png"/>
+  <img src="images/part2-domain.png"/>
 </td></tr></table>
+
 
 ----------------------------------------------------------------------
 ##### Setting page table pointer.
