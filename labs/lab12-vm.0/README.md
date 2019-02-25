@@ -18,7 +18,6 @@ The main thing you'll need for this lab: I've gone through about 100
 pages of the ARM manual and annotated it.  No guarantee that these
 are all the annotations necessary, but they definitely cover stuff you
 should understand.  In the `./docs` directory for this lab:
-
    1. `armv6.b2-memory.annot.pdf`: section B2 of the ARM manual, 
    describing memory ordering requirements ---
    what you have to do when you update the page table, the page table
@@ -34,12 +33,10 @@ should understand.  In the `./docs` directory for this lab:
 #### Check-off
 
 You need to show that:
-
   1. You can replace the code to setup the page table with 1MB sections.
   2. You can replace the code to synchronize the hardware state.
 
 Extensions:
-
    1. Setup two-level paging.
    2. Catch segmentation faults.
 
@@ -61,13 +58,11 @@ Once this is working you have legitimate virtual memory.
    one and test that its working.
 
 The document you'll need for this part is:
-
   * The annotated B4 of the ARM manual `docs/armv6.b4-mmu.annot.pdf`,
   which describes the page table format(s), and how to setup/manage
   hardware state for page tables and the TLB.
 
 We can break this down into two pieces:
-
   1. Write the page table format.
   2. Set the page table state.
   3. Swap.
@@ -89,7 +84,7 @@ Weirdly, this is --- by far --- the hardest part to get right:
   (e.g., a write to a location disappears despite you staring right at
   the store that does it, a branch is followed the wrong way despite
   its condition being true).  They are the ultimate memory corruption,
-  but are also much fancier.
+  but much fancier.
 
 So for this part, like the `uart` lab, you're going to have to rely very
 strongly on the documents from ARM and find the exact prose that states
@@ -107,14 +102,11 @@ Mostly you'll find these in:
 To re-affirm your grasp of virtual memory, the slides from 
 [CS140 lecture notes](http://www.scs.stanford.edu/19wi-cs140/notes/) give
  a big picture overview:
- 
   1. [Virtual memory hardware](http://www.scs.stanford.edu/19wi-cs140/notes/vm_hardware-print.pdf).
-
   2. [Virtual memory OS](http://www.scs.stanford.edu/19wi-cs140/notes/vm_os-print.pdf)
 
 
 And for more detail, the book [Operating systems in three easy pieces](http://pages.cs.wisc.edu/~remzi/OSTEP/) provides chapters online.  You want to look at:
-
   1. [Address spaces](http://pages.cs.wisc.edu/~remzi/OSTEP/vm-intro.pdf).
   2. [Address translation](http://pages.cs.wisc.edu/~remzi/OSTEP/vm-mechanism.pdf).
   3. [Translation lookaside buffers](http://pages.cs.wisc.edu/~remzi/OSTEP/vm-tlbs.pdf).
