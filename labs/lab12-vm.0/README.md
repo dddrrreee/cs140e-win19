@@ -121,10 +121,18 @@ respectively) to see that you have a crude picture of what is going on:
   2. Write a test case that maps an address range to a different 
   one and test that its working.
 
-  3. Write a simple routine (in assembly: should be one instruction and
-  a return) to figure out if the TLB and caches are unified or separate.
-  You can use the co-processor 15 structure provided.
+  3. Write a simple routine (in assembly: should be one instruction and a
+  return) to figure out what type of cache your pi has.  The instruction
+  you need and its result are on B6-13 of the `armv6.annot.pdf` (see below).
 
+----------------------------------------------------------------------
+##### The cache configuration register
+
+<table><tr><td>
+  <img src="images/part0-cache-config.png"/>
+</td></tr></table>
+
+----------------------------------------------------------------------
 ----------------------------------------------------------------------
 ## Part 1: implement the code to setup page tables using 1MB sections (45 min)
 
@@ -268,6 +276,8 @@ Mostly you'll find these in:
    you update the page table, the page table registers, etc.
 
 Useful pages:
+  - B6-22: all the different ways to flush caches, memory barriers (various
+    snapshots below).
   - B2-23: how to flush after changing a PTE.
   - B2-24: must flush after a CP15.
   - B2-25: how to change the address space identifier (ASID). 
