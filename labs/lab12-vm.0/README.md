@@ -189,6 +189,13 @@ them for easy reference:
 </td></tr></table>
 
 ----------------------------------------------------------------------
+##### Description of `XN`, `XP`, etc.
+
+<table><tr><td>
+  <img src="images/part1-xp-xn-axp-tex.png"/>
+</td></tr></table>
+
+----------------------------------------------------------------------
 ### Part 2: Handle initialization (45 min)
 
 Weirdly, this is --- by far --- the hardest part to get right:
@@ -215,25 +222,39 @@ Mostly you'll find these in:
    describing memory ordering requirements --- what you have to do when
    you update the page table, the page table registers, etc.
 
-DSB as a superset of DMB:
+Useful pages:
+  - B2-23: how to flush after changing a PTE.
+  - B2-24: must flush after a CP15.
+  - B2-25: how to change the address space identifier (ASID).
 
-https://community.arm.com/processors/f/discussions/3287/questions-regarding-dmb-dsb-and-isb
+----------------------------------------------------------------------
+##### How to turn on MMU
 
-Errata for icache flushing from linux:
+<table><tr><td>
+  <img src="images/part2-control-reg1.png"/>
+</td></tr></table>
 
-        @ https://elixir.bootlin.com/linux/latest/source/arch/arm/mm/cache-v6.S
-        mov r0, #0
-        mcr p15, 0, r0, c7, c5, 0       @ invalidate entire I-cache
-        mcr p15, 0, r0, c7, c5, 0       @ invalidate entire I-cache
-        mcr p15, 0, r0, c7, c5, 0       @ invalidate entire I-cache
-        mcr p15, 0, r0, c7, c5, 0       @ invalidate entire I-cache
-        msr cpsr_cx, r1         @ restore interrupts
-        .rept   11              @ ARM Ltd recommends at least
-        nop                 @ 11 NOPs
+----------------------------------------------------------------------
+##### Bits to set in Domain
 
+<table><tr><td>
+  <img src="images/part2-control-reg1.png"/>
+</td></tr></table>
 
-TODO: 
-    - get snapshots of B6.
+----------------------------------------------------------------------
+##### Setting page table pointer.
+
+<table><tr><td>
+  <img src="images/part2-control-reg2-ttbr0.png"/>
+</td></tr></table>
+
+----------------------------------------------------------------------
+##### Invalidate TLB
+
+<table><tr><td>
+  <img src="images/part2-inv-tlb.png"/>
+</td></tr></table>
+
 -----------------------------------------------------------------------
 ### Further reading
 
@@ -257,4 +278,8 @@ And for more detail, the book [Operating systems in three easy pieces](http://pa
   2. [Address translation](http://pages.cs.wisc.edu/~remzi/OSTEP/vm-mechanism.pdf).
   3. [Translation lookaside buffers](http://pages.cs.wisc.edu/~remzi/OSTEP/vm-tlbs.pdf).
   4. [Complete VM systems](http://pages.cs.wisc.edu/~remzi/OSTEP/vm-complete.pdf).
+
+
+DSB as a superset of DMB:
+https://community.arm.com/processors/f/discussions/3287/questions-regarding-dmb-dsb-and-isb
 
