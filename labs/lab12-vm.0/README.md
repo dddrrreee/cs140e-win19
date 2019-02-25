@@ -5,9 +5,7 @@ This and the SD card file system are the biggest unknowns in our universe,
 so we'll bang out quick versions of each, and then circle back around
 and make your system more real.
 
-#### The big picture
-
-
+### The big picture
 
 ### Lab reading.
 
@@ -33,7 +31,6 @@ should understand.  In the `./docs` directory for this lab:
    the page table format(s), and how to setup/manage hardware state for
    page tables and the TLB.
 
-
 ### Check-off
 
 You need to show that:
@@ -47,12 +44,12 @@ Extensions:
    2. Catch segmentation faults.
 
 ----------------------------------------------------------------------
-## Part 0: make sure you can run the simple hello program (1 minute).
+### Part 0: make sure you can run the simple hello program (5 minute).
 
 This is just a quick debug that your system is working fine.
 
 ----------------------------------------------------------------------
-## Part 1: implement the code to setup page tables using 1MB sections.
+### Part 1: implement the code to setup page tables using 1MB sections (45 min)
 
 You'll write the code for `mmu_setup()`.
 
@@ -63,9 +60,8 @@ Once this is working you have legitimate virtual memory.
    2. Write a test case that maps an address range to a different 
    one and test that its working.
 
-
 ----------------------------------------------------------------------
-## Part 2: Handle initialization.
+### Part 2: Handle initialization (45 min)
 
 Weirdly, this is --- by far --- the hardest part to get right:
    1. One reason: if you get it wrong, your code may "work" fine.   
@@ -82,8 +78,7 @@ So for this part, like the `uart` lab, you're going to have to rely
 very strongly on the documents from ARM.
 
 -----------------------------------------------------------------------
-#### Further reading
-
+### Further reading
 
 To re-affirm your grasp of virtual memory, the slides from 
 [CS140 lecture notes](http://www.scs.stanford.edu/19wi-cs140/notes/) give
