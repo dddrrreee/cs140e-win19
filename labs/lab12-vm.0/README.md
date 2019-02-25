@@ -62,26 +62,44 @@ Once this is working you have legitimate virtual memory.
 
 The document you'll need for this part is:
 
-  * The annotated [B4 of the ARM manual](https://github.com/dddrrreee/cs140e-win19/blob/master/labs/lab12-vm.0/docs/armv6.b4-mmu.annot.pdf), which 
-   describes the page table format(s), and how to setup/manage hardware
-   state for page tables and the TLB.
+  * The annotated B4 of the ARM manual `docs/armv6.b4-mmu.annot.pdf`,
+  which describes the page table format(s), and how to setup/manage
+  hardware state for page tables and the TLB.
+
+We can break this down into two pieces:
+
+  1. Write the page table format.
+  2. Set the page table state.
+  3. Swap.
+
+You'll use 1MB sections, these are described in:
 
 ----------------------------------------------------------------------
 ### Part 2: Handle initialization (45 min)
 
 Weirdly, this is --- by far --- the hardest part to get right:
-   1. One reason: if you get it wrong, your code may "work" fine.   
-   It's only later that the flaws will show up;
+  1. One reason: if you get it wrong, your code may "work" fine. We are 
+  running with caches disabled, no branch prediction, and strongly-ordered
+  memory accesses so many of the gotcha's can't come up.  However, later,
+  they will.  And since at that point there will be more going on, it
+  will be hard to figure out WTH is going wrong.
 
-   2. Because flaws relate to memory --- what values are returned from
-   a read, or what values are written --- they give results that appear
-   "impossible" and so are easy to miss.  They are the ultimate memory
-   corruption, but are also much fancier.  The flaws will result in
-   "impossible" bugs (e.g., a write to a location disappears, a branch
-   is followed the wrong way despite its condition being true).
+  2. Because flaws relate to memory --- what values are returned from
+  a read, or what values are written --- they give "impossible" bugs
+  (e.g., a write to a location disappears despite you staring right at
+  the store that does it, a branch is followed the wrong way despite
+  its condition being true).  They are the ultimate memory corruption,
+  but are also much fancier.
 
-So for this part, like the `uart` lab, you're going to have to rely 
-very strongly on the documents from ARM.
+So for this part, like the `uart` lab, you're going to have to rely very
+strongly on the documents from ARM and find the exact prose that states
+the exact sequence of (oft non-intuitive) actions you have to do.
+
+Mostly you'll find these in:
+
+   * Section B2 of the ARM manual (`docs/armv6.b2-memory.annot.pdf`)
+   describing memory ordering requirements --- what you have to do when
+   you update the page table, the page table registers, etc.
 
 -----------------------------------------------------------------------
 ### Further reading
