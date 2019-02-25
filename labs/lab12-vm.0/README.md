@@ -136,9 +136,8 @@ The document you'll need for this part is:
   which describes the page table format(s), and how to setup/manage
   hardware state for page tables and the TLB.
 
-You'll do this in two steps:
+You'll do this in two steps:  Part 1.A and Part 1.B.
 
-              =======================================
 #### Part 1.A: define the page table entry structure.
 
 First, you should define a `struct first_level_descriptor` in file `vm.h`
@@ -199,8 +198,49 @@ them for easy reference:
 </td></tr></table>
 
 ----------------------------------------------------------------------
+## Part 2: Write hardware state.
+
+Here you'll write assembly helper routines to (put them in `vm-asm.s`):
+
+  1. Each page table entry above is tagged with one of the 16 ARM "domains".
+  You have to specify the permissions of any used domains.  For 
+  simplicity set all 16 domains to "all access" (`0b11`).
+  2. The hardware has to be able to find the page table when there is
+  a TLB miss.  Write the address of the page table to the page table
+  register `ttbr0`.  Note the alignment restriction!
+  3. The ARM allows each TLB entry to be tagged with an address space
+  identifier so you don't have to flush when you switch address spaces.
+  Set the current address space identifier (pick a number between 
+  `1..63`).
+  4. Turn on the MMU.  Things should work as before.
+
+After each operation, call the macro `FLUSH_MMU` to flush all operations.
+This is overkill.  The next part makes it better.
+
+I've inlined useful snapshots below.
 ----------------------------------------------------------------------
-## Part 2: Handle initialization (45 min)
+##### Bits to set in Domain
+
+<table><tr><td>
+  <img src="images/part2-control-reg1.png"/>
+</td></tr></table>
+
+----------------------------------------------------------------------
+##### Setting page table pointer.
+
+<table><tr><td>
+  <img src="images/part2-control-reg2-ttbr0.png"/>
+</td></tr></table>
+
+----------------------------------------------------------------------
+##### How to turn on MMU
+
+<table><tr><td>
+  <img src="images/part2-control-reg1.png"/>
+</td></tr></table>
+
+----------------------------------------------------------------------
+## Part 3: Handle initialization (45 min)
 
 Weirdly, this is --- by far --- the hardest part to get right:
   1. If you get it wrong, your code may "work" fine. We are running with
@@ -230,27 +270,6 @@ Useful pages:
   - B2-23: how to flush after changing a PTE.
   - B2-24: must flush after a CP15.
   - B2-25: how to change the address space identifier (ASID).
-
-----------------------------------------------------------------------
-##### How to turn on MMU
-
-<table><tr><td>
-  <img src="images/part2-control-reg1.png"/>
-</td></tr></table>
-
-----------------------------------------------------------------------
-##### Bits to set in Domain
-
-<table><tr><td>
-  <img src="images/part2-control-reg1.png"/>
-</td></tr></table>
-
-----------------------------------------------------------------------
-##### Setting page table pointer.
-
-<table><tr><td>
-  <img src="images/part2-control-reg2-ttbr0.png"/>
-</td></tr></table>
 
 ----------------------------------------------------------------------
 ##### Invalidate TLB
