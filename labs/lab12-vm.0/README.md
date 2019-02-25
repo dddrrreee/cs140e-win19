@@ -21,34 +21,35 @@ and we need to record everything.  Also known as a table.)
 One question is what granularity the function works on.  In the extreme
 we could map every byte in the virtual address space to any byte in
 the physical address space.  This is flexible, but very high overhead.
-For example, on the ARM, each page table entry (PTE) is 4 bytes, so the
-page table would be 4x larger than the address space!  So we do what we
-often do in systems to reduce space overhead memory functions: restrict
-flexibility and use quantization.  Here we break the address space
-(physical and virtual) into fixed size ranges ("pages").  We allow any
-range to be mapped to any other range, so we still need a table for that:
-the page table now maps a virtual page number to a physical page number.
-However, all bytes within a virtual range are mapped to the byte at the
-same offset in its associated physical range.  I.e., we use the identity
-function, which is fast and needs no table.  A 4096 page size will reduce
-our page table overhead by about 4096x and because of spatial locality
-not reduce our flexibility that much.
+For example, on the ARM, each page table entry (PTE) is 4 bytes, so
+the page table would be 4x larger than the address space!  So we do
+what we often do in systems to reduce the overhead of memory functions:
+restrict flexibility and use quantization.  Here we break the address
+space (physical and virtual) into fixed size ranges ("pages").  We allow
+any virtual range to be mapped to any physical range, so we still need
+a table for that: the page table now maps a virtual page number to a
+physical page number.  However, all bytes within a virtual range are
+mapped to the byte at the same offset in its associated physical range.
+I.e., we use the identity function, which is fast and needs no table.
+A 4096 page size will reduce our page table overhead by about 4096x and
+because of spatial locality not reduce our flexibility that much.
 
 To make this concrete:  
  - For today's lab, we will just map 1MB regions at a time.  ARM calls
  these "segments".
  - So the page table will map a virtual segment to a physical segment.
- - Domain: The r/pi has a 32-bit address space, so that is 4096 
- virtual segments.  Thus the function's domain is \[0..4096)`.
- - Range: Not including GPIO, The r/pi has 512MB of memory, so 512
- physical segments.  Thus the function's range is `\[0..512)\`.
+ - Our function's Domain: The r/pi has a 32-bit address space, so that
+ is 4096 virtual segments.  Thus the function's domain is \[0..4096)`.
+ - Our function's Range: Not including GPIO, The r/pi has 512MB of memory,
+ so 512 physical segments.  Thus the function's range is `\[0..512)\`.
  - Thus, we are making a trivial integer function that will map
- `\[0...4096) ==> \[0..512\)`
-
-(GPIO also adds some numbers to the range, but you get the idea.)
+ `\[0...4096) ==> \[0..512\)`.  (GPIO also adds some numbers to the
+ range, but you get the idea.)  You built fancier functions in your
+ intro programming class.  The only tricky thing here is that we need
+ ours to be very fast.
 
 This mapping (address translation) happens on every instruction, twice
-if the instruction is a load or store. Thus it must be fast.  So as you
+if the instruction is a load or store.  Thus it must be fast.  So as you
 expect we'll have one or more caches to keep translations (confusingly
 called "translation lookaside buffers").  And, as you can figure out on
 your own, if we change the function mapping, these caches have to be updated.
@@ -127,13 +128,45 @@ respectively) to see that you have a crude picture of what is going on:
 ----------------------------------------------------------------------
 ### Part 1: implement the code to setup page tables using 1MB sections (45 min)
 
-You'll write the code for `mmu_setup()`.
-You'll use 1MB sections, these are described in:
+You'll write the code to fill in the page table assuming the use of
+1MB sections.
 
 The document you'll need for this part is:
   * The annotated B4 of the ARM manual `docs/armv6.b4-mmu.annot.pdf`,
   which describes the page table format(s), and how to setup/manage
   hardware state for page tables and the TLB.
+
+You'll do this in two steps:
+
+##### Part 1.A: define the page table entry structure.
+
+First, you should define a `struct first_level_descriptor` 
+based on the PTE layout given on B4-27 (screenshot below):
+  -  You'll defined fields for the section base address, `nG`, `S`,
+  `APX`, `TEX`, `AP`, `IMP`, `Domain`, `XN`, `C`, `B`, and the tag.
+  - You should look at the structure `struct control_reg1` given in
+  `vm.h` to see how to use bitfields in C.
+  - NOTE: it is very easy to make mistakes. Thus, write a function to check
+  your structure modeled on how `check_control_reg` checks its structure
+  layout, by using the `check_bitfield` macro to check that a field is at
+  a desired bit offset, with a desired bit width.
+  - `AssertNow` will do a compile-time assert.
+  - HINT: the first field is at offset 0.  
+
+Get this working first.  Make a `fld_print` function and a `fld_check`
+funcion.
+
+----------------------------------------------------------------------
+##### The PTE for 1MB sections document:
+<table><tr><td>
+  <img src="images/part1-section.png"/>
+</td></tr></table>
+
+##### Part 1.A: implement `mmu_section`
+
+Second, re-implement the `mmu_section` function we used in Part0.
+The code you wrote then should behave the same.  You'll want to 
+figure out what all the bits do.  (Hint: most will be set to 0s.)
 
 Useful pages:
   - layout of "section" page table entry (PTE): B4-27 (given below). 
@@ -144,31 +177,20 @@ Useful pages:
   - Domain permissions B4-10.
   - translation of a 1MB section: B4-29.
 
-We can break this down into two pieces:
-  1. Write the page table format.
-  2. Set the page table state.
-  3. Swap.
-
 The following screenshots are taken from the B4 section, but we inline
 them for easy reference:
-
 ----------------------------------------------------------------------
-#### The PTE for 1MB sections document:
-<table><tr><td>
-  <img src="images/part1-section.png"/>
-</td></tr></table>
-
-----------------------------------------------------------------------
-#### The definitions for `S`, `R`, `AXP`, `AP`:
+##### The definitions for `S`, `R`, `AXP`, `AP`:
 <table><tr><td>
   <img src="images/part1-s-r-axp-p.png"/>
 </td></tr></table>
 
 ----------------------------------------------------------------------
-#### The definitions for `TEX`, `C`, `B`:
+##### The definitions for `TEX`, `C`, `B`:
 <table><tr><td>
   <img src="images/part1-tex-C-B.png"/>
 </td></tr></table>
+
 
 ----------------------------------------------------------------------
 ### Part 2: Handle initialization (45 min)
