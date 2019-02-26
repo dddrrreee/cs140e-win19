@@ -220,7 +220,8 @@ Here you'll write assembly helper routines to (put them in `vm-asm.s`):
   identifier so you don't have to flush when you switch address spaces.
   Set the current address space identifier (pick a number between 
   `1..63`).
-  4. Turn on the MMU.  Things should work as before. (See below)
+  4. Turn on the MMU.  The exact sequence is given below.
+  (See below)
 
 After each operation, call the macro `FLUSH_MMU` to flush all operations.
 This is overkill.  The next part makes it better.
@@ -228,11 +229,17 @@ This is overkill.  The next part makes it better.
 I've inlined useful snapshots below:
 
 ----------------------------------------------------------------------
+##### Protocol for turning on MMU.
+
+<table><tr><td>
+  <img src="images/part2-enable-mmu.png"/>
+</td></tr></table>
+
+----------------------------------------------------------------------
 ##### Bits to set in Domain
 <table><tr><td>
   <img src="images/part2-domain.png"/>
 </td></tr></table>
-
 
 ----------------------------------------------------------------------
 ##### Setting page table pointer.
@@ -242,7 +249,7 @@ I've inlined useful snapshots below:
 </td></tr></table>
 
 ----------------------------------------------------------------------
-##### How to turn on MMU
+##### Bits to set to turn on MMU
 
 <table><tr><td>
   <img src="images/part2-control-reg1.png"/>
