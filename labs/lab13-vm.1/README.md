@@ -1,90 +1,25 @@
-## Simple virtual memory.
+## Hooking translation up to hardware
 
-Today you'll get a simple "hello world" version of virtual memory working.
-This and the SD card file system are the biggest unknowns in our universe,
-so we'll bang out quick versions of each, and then circle back around
-and make your system more real.
+Last lab we did the page table, the main noun of the VM universe.  This
+lab we do the main gerunds needed to hook it up to the hardware: 
 
-#### The big picture
+ - setting up domains.
+ - setting up the page table register and ASID.
+ - making sure the state is coherent.  
 
-Many things in systems are simple, but the terminology and details makes
-them seem scary.  Virtual memory is one of the best examples.  
-
-Mechanically, all we want to do for virtual memory is to map integers
-(virtual addresses) to integers (physical addresses).   Most of the
-complication in VM boils down to the fact that there is no good way
-to construct a general integer function.  If we want to map arbitrary
-ints to ints, then we fundamentally have to use a brute force table.
-(Quick proof: if the mapping is purely random, then its not compressible,
-and we need to record everything.  Also known as a table.)
-
-One question is what granularity the function works on.  In the extreme
-we could map every byte in the virtual address space to any byte in
-the physical address space.  This is flexible, but very high overhead.
-For example, on the ARM, each page table entry (PTE) is 4 bytes, so
-the page table would be 4x larger than the address space!  So we do
-what we often do in systems to reduce the overhead of memory functions:
-restrict flexibility and use quantization.  Here we break the address
-space (physical and virtual) into fixed size ranges ("pages").  We allow
-any virtual range to be mapped to any physical range, so we still need
-a table for that: the page table now maps a virtual page number to a
-physical page number.  However, all bytes within a virtual range are
-mapped to the byte at the same offset in its associated physical range.
-I.e., we use the identity function, which is fast and needs no table.
-A 4096 page size will reduce our page table overhead by about 4096x and
-because of spatial locality not reduce our flexibility that much.
-
-To make this concrete:  
- - For today's lab, we will just map 1MB regions at a time.  ARM calls
- these "segments".
- - So the page table will map a virtual segment to a physical segment.
- - Our function's Domain: The r/pi has a 32-bit address space, so that
- is 4096 virtual segments.  Thus the function's domain is `[0..4096)`.
- - Our function's Range: Not including GPIO, The r/pi has 512MB of memory,
- so 512 physical segments.  Thus the function's range is `[0..512)`.
- - Thus, we are making a trivial integer function that will map
- `[0...4096) ==> [0..512)`.  (GPIO also adds some numbers to the
- range, but you get the idea.)  You built fancier functions in your
- intro programming class.  The only tricky thing here is that we need
- ours to be very fast.
-
-This mapping (address translation) happens on every instruction, twice
-if the instruction is a load or store.  Thus it must be fast.  So as you
-expect we'll have one or more caches to keep translations (confusingly
-called "translation lookaside buffers").  And, as you can figure out on
-your own, if we change the function mapping, these caches have to be updated.
-Keeping the contents of a table coherent coherent with a translation cache
-is alot of work, so machines generally (always?) punt on this, and it is
-up to the implementor to flush any needed cache entries when the mapping
-changes. (This flush must either only finish when everything is flushed,
-or the implementor must insert a barrier to wait).  
-
-Finally, as a detail, we have to tell the hardware where to find the
-translations for each different address space.  Typically there is a
-register you store a pointer to the table (or tables) in.
-
-The above is pretty much all we will do:
-  1. For each virtual address we want to map to a physical address, insert
-  the mapping into the table.
-  2. Each time we change a mapping, invalidate any cache affected.
-  3. When we start running a process, tell the hardware where to 
-  find its translations.
+You'll write assembly helper routines implement these (put them
+in `vm-asm.s`).  Mechanically, you will go through, one-at-a-time
+and replace every function prefixed with `our_` to be our own code.
+The code is setup so that you can knock these off one at a time, making
+sure that things work after each modification.
 
 #### Lab reading.
 
-This is one of those labs where I probably should have given your
-pre-lab reading, but we'll see if we can get through this without it.
-The fundamental thing we are doing is not that complicated; though there
-are a fair number of details.
+The main documents in the `docs/` directory:
 
-The main thing you'll need for this lab: I've gone through about 100
-pages of the ARM manual and annotated it.  No guarantee that these
-are all the annotations necessary, but they definitely cover stuff you
-should understand.  In the `./docs` directory for this lab:
-   1. `armv6.b2-memory.annot.pdf`: section B2 of the ARM manual, 
-   describing memory ordering requirements ---
-   what you have to do when you update the page table, the page table
-   registers, etc.
+   1. `armv6.b2-memory.annot.pdf`: section B2 of the ARM manual,
+   describing memory ordering requirements --- what you have to do when
+   you update the page table, the page table registers, etc.
 
    2. `armv6.b3-coprocessor.annot.pdf`: section B3 of the ARM manual,
    describing the different co-processor options.
@@ -96,147 +31,82 @@ should understand.  In the `./docs` directory for this lab:
 #### Check-off
 
 You need to show that:
-  0. Part 0: you can do a test that checks that aliasing works and 
-  that you can say what the cache organization is.
-  1. Part 1: You can replace the code to setup the page table with 1MB sections.
-  2. Part 2: You can replace the code to synchronize the hardware state and
-  state what is going on and why.
+  - Part 0: you can set up domains.  You handle flushing correctly
+  (with page table citations).  You can make execution fault when you
+  write to a read-only address.
+  - Part 1: you can switch the ASID and page-table pointer.  You handle
+  coherence correctly (with page number citations). 
+  - Part 2: turn on/turn off the MMU.  You handle coherence / flushing
+  corectly (with page number citations).  You should extend this to handle
+  caching.
+  - Delete all of our files and starter code (remove references from the
+  `Makefile`).  At this point, all code is written by you!
 
 Extensions:
-   1. Setup two-level paging.
-   2. Catch segmentation faults.
+   0. Figure out how to enable `XN` checking.
+   1. Set-up two-level paging.
+   2. Set-up 16MB paging.
+
 
 ----------------------------------------------------------------------
 ## Part 0: make sure you can run the simple hello program (15 minute).
 
-These are a quick set of tests (0, ~5, ~5, ~10 lines of code
-respectively) to see that you have a crude picture of what is going on:
+Each page table entry above is tagged with one of the 16 ARM "domains".
+You have to specify the permissions of any used domains.  For simplicity
+we initially set all 16 domains to "all access" (`0b11`).  (See below)
 
-  0. Compile and run the code provided.  This is just a quick debug that
-  your system is working fine.
+  1. You should replace `our_write_domain_access_ctrl` with yours.
+  Make sure you obey any requirements for coherence stated in Chapter B2.
 
-  1. Write a test case that shows you get a fault when you reference
-  unmapped memory.
-
-  2. Write a test case that maps an address range to a different 
-  one and test that its working.
-
-  3. Write a simple routine (in assembly: should be one instruction and a
-  return) to figure out what type of cache your pi has.  The instruction
-  you need and its result are on B6-13 of the `armv6.annot.pdf` (see below).
+  2. Change the domain call so that permission checking works.
+  (See Figure X in B4)
 
 ----------------------------------------------------------------------
-##### The cache configuration register
-
+##### Bits to set in Domain
 <table><tr><td>
-  <img src="images/part0-cache-config.png"/>
+  <img src="images/part2-domain.png"/>
 </td></tr></table>
 
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
-## Part 1: implement the code to setup page tables using 1MB sections (45 min)
+## Part 1: Implement `set_procid_ttbr0`
 
-You'll write the code to fill in the page table assuming the use of
-1MB sections.
+You will setup the page table pointer and address space identifier:
 
-The document you'll need for this part is:
-  * The annotated B4 of the ARM manual `docs/armv6.b4-mmu.annot.pdf`,
-  which describes the page table format(s), and how to setup/manage
-  hardware state for page tables and the TLB.
+  1. The hardware has to be able to find the page table when there is
+  a TLB miss.  You will write the address of the page table to the page
+  table register `ttbr0`.  Note the alignment restriction!
 
-You'll do this in two steps:  Part 1.A and Part 1.B.
-
-#### Part 1.A: define the page table entry structure.
-
-First, you should define a `struct first_level_descriptor` in file `vm.h`
-based on the PTE layout given on B4-27 (screenshot below):
-  -  You'll defined fields for the section base address, `nG`, `S`,
-  `APX`, `TEX`, `AP`, `IMP`, `Domain`, `XN`, `C`, `B`, and the tag.
-  - You should look at the structure `struct control_reg1` given in
-  `vm.h` to see how to use bitfields in C.
-  - It is very easy to make mistakes. You will write a function
-  `fld\_check()` modeled on `check_control_reg()` that uses the
-  `check_bitfield` macro to verify that each field is at its correct
-   bit offset, with its correct bit width.
-  - Write a function `fld_print` to print all the fields in your structure.
-  - HINT: the first field is at offset 0 and the `AssertNow` uses tricks
-  to do a compile-time assert.
-
-----------------------------------------------------------------------
-##### The PTE for 1MB sections document:
-<table><tr><td>
-  <img src="images/part1-section.png"/>
-</td></tr></table>
-
-----------------------------------------------------------------------
-#### Part 1.B: implement `mmu_section`
-
-Second, re-implement the `mmu_section` function we used in Part0.
-The code you wrote then should behave the same.  You'll want to 
-figure out what all the bits do.  (Hint: most will be set to 0s.)
-
-Useful pages:
-  - B4-9: `S`, `R`, `AXP`, `AP` (given below).
-  - B4-12: `C`, `B`, `TEX` (given below).
-  - B4-25: `nG`, `ASID`, 'XN`.
-  - B4-28: bit[18] (the IMP bit) `IMP = 0` for 1MB sections.
-  - B4-10: Domain permissions.
-  - B4-29: translation of a 1MB section.
-
-The following screenshots are taken from the B4 section, but we inline
-them for easy reference:
-
-----------------------------------------------------------------------
-##### The definitions for `S`, `R`, `AXP`, `AP`:
-<table><tr><td>
-  <img src="images/part1-s-r-axp-p.png"/>
-</td></tr></table>
-
-----------------------------------------------------------------------
-##### The definitions for `TEX`, `C`, `B`:
-<table><tr><td>
-  <img src="images/part1-tex-C-B.png"/>
-</td></tr></table>
-
-----------------------------------------------------------------------
-##### Description of `XN`, `XP`, etc.
-
-<table><tr><td>
-  <img src="images/part1-xp-xn-axp-tex.png"/>
-</td></tr></table>
-
-----------------------------------------------------------------------
-## Part 2: Write hardware state.
-
-Here you'll write assembly helper routines to (put them in `vm-asm.s`).
-Mechanically, you will go through, one-at-a-time and replace every
-function prefixed with "our_" to be our own code.  The code is setup
-so that you can knock these off one at a time, making sure that things
-work after each modification.
-
-  1. Each page table entry above is tagged with one of the 16 ARM "domains".
-  You have to specify the permissions of any used domains.  For 
-  simplicity set all 16 domains to "all access" (`0b11`).  (See below)
-  You should replace `our_write_domain_access_ctrl` with yours.
-
-  2. The hardware has to be able to find the page table when there is
-  a TLB miss.  Write the address of the page table to the page table
-  register `ttbr0`.  Note the alignment restriction!  (See below)
-  You will need to implement the code 
-  `our_set_procid_ttbr0` for this, which also sets the ASID (next 
-  bullet).
-
-  3. The ARM allows each TLB entry to be tagged with an address space
+  2.  The ARM allows each TLB entry to be tagged with an address space
   identifier so you don't have to flush when you switch address spaces.
-  Set the current address space identifier (pick a number between 
-  `1..63`).  
+  Set the current address space identifier (pick a number between
+  `1..63`).
 
-  4. Turn on the MMU.  The exact sequence is given below.  (See below)
-  Your code should be `our_mmu_enable`.  You will have to also: flush
-  the D/I cache, the TLB, the prefetch buffer, and the wait for everything.
-  You'll have to look at Part 3 for the description.  Sorry!
+  3. You need to read B2 to see the coherence requirements for both.  It's
+  not trivial.
 
-I've inlined useful snapshots below:
+  4. Replace `our_set_procid_ttbr0` with yours.  Make sure you can switch
+  between multiple address spaces.
+
+----------------------------------------------------------------------
+##### Setting page table pointer.
+
+<table><tr><td>
+  <img src="images/part2-control-reg2-ttbr0.png"/>
+</td></tr></table>
+
+
+
+----------------------------------------------------------------------
+----------------------------------------------------------------------
+## Part 2: implement `mmu_enable` and `mmu_disable`
+
+Now you can write the code to turn the MMU on/off.
+
+The exact sequence is given below.  (See below) Your code should be
+`mmu_enable`.  You will have to also: flush the D/I cache, the TLB,
+the prefetch buffer, and the wait for everything.  You'll have to look
+at Part 3 for the description.  Sorry!
 
 ----------------------------------------------------------------------
 ##### Protocol for turning on MMU.
@@ -246,24 +116,12 @@ I've inlined useful snapshots below:
 </td></tr></table>
 
 ----------------------------------------------------------------------
-##### Bits to set in Domain
-<table><tr><td>
-  <img src="images/part2-domain.png"/>
-</td></tr></table>
-
-----------------------------------------------------------------------
-##### Setting page table pointer.
-
-<table><tr><td>
-  <img src="images/part2-control-reg2-ttbr0.png"/>
-</td></tr></table>
-
-----------------------------------------------------------------------
 ##### Bits to set to turn on MMU
 
 <table><tr><td>
   <img src="images/part2-control-reg1.png"/>
 </td></tr></table>
+
 
 ----------------------------------------------------------------------
 ## Part 3: Flush stale state. (30 minutes)
