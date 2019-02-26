@@ -99,12 +99,12 @@ You need to show that:
   0. Part 0: you can do a test that checks that aliasing works and 
   that you can say what the cache organization is.
   1. Part 1: You can replace the code to setup the page table with 1MB sections.
-  2. Part 2: You can replace the code to synchronize the hardware state and
-  state what is going on and why.
+  2. You can show that dereferencing the byte at `0x100000-1` works (why?)
+   but at `0x100000` does not (why?).
 
-Extensions:
-   1. Setup two-level paging.
-   2. Catch segmentation faults.
+Editorial: I mistakenly checked in code to do much of part 1 for you,
+so it's easier than it should be --- make sure you can figure out what
+bits are, and what the fields do.
 
 ----------------------------------------------------------------------
 ## Part 0: make sure you can run the simple hello program (15 minute).
@@ -205,155 +205,6 @@ them for easy reference:
   <img src="images/part1-xp-xn-axp-tex.png"/>
 </td></tr></table>
 
-----------------------------------------------------------------------
-## Part 2: Write hardware state.
-
-Here you'll write assembly helper routines to (put them in `vm-asm.s`).
-Mechanically, you will go through, one-at-a-time and replace every
-function prefixed with "our_" to be our own code.  The code is setup
-so that you can knock these off one at a time, making sure that things
-work after each modification.
-
-  1. Each page table entry above is tagged with one of the 16 ARM "domains".
-  You have to specify the permissions of any used domains.  For 
-  simplicity set all 16 domains to "all access" (`0b11`).  (See below)
-  You should replace `our_write_domain_access_ctrl` with yours.
-
-  2. The hardware has to be able to find the page table when there is
-  a TLB miss.  Write the address of the page table to the page table
-  register `ttbr0`.  Note the alignment restriction!  (See below)
-  You will need to implement the code 
-  `our_set_procid_ttbr0` for this, which also sets the ASID (next 
-  bullet).
-
-  3. The ARM allows each TLB entry to be tagged with an address space
-  identifier so you don't have to flush when you switch address spaces.
-  Set the current address space identifier (pick a number between 
-  `1..63`).  
-
-  4. Turn on the MMU.  The exact sequence is given below.  (See below)
-  Your code should be `our_mmu_enable`.  You will have to also: flush
-  the D/I cache, the TLB, the prefetch buffer, and the wait for everything.
-  You'll have to look at Part 3 for the description.  Sorry!
-
-I've inlined useful snapshots below:
-
-----------------------------------------------------------------------
-##### Protocol for turning on MMU.
-
-<table><tr><td>
-  <img src="images/part2-enable-mmu.png"/>
-</td></tr></table>
-
-----------------------------------------------------------------------
-##### Bits to set in Domain
-<table><tr><td>
-  <img src="images/part2-domain.png"/>
-</td></tr></table>
-
-----------------------------------------------------------------------
-##### Setting page table pointer.
-
-<table><tr><td>
-  <img src="images/part2-control-reg2-ttbr0.png"/>
-</td></tr></table>
-
-----------------------------------------------------------------------
-##### Bits to set to turn on MMU
-
-<table><tr><td>
-  <img src="images/part2-control-reg1.png"/>
-</td></tr></table>
-
-----------------------------------------------------------------------
-## Part 3: Flush stale state. (30 minutes)
-
-The previous code (hopefully) works, but is actually incorrect.  We are
-getting away with the fact that we are not running uncached, and we
-haven't been switching between address spaces.
-
-Weirdly, this is --- by far --- the hardest part to get right:
-  1. If you get it wrong, your code may "work" fine. We are running with
-  caches disabled, no branch prediction, and strongly-ordered memory
-  accesses so many of the gotcha's can't come up.  However, later,
-  they will.  And since at that point there will be more going on,
-  it will be hard to figure out WTH is going wrong.
-
-  2. Because flaws relate to memory --- what values are returned from
-  a read, or what values are written --- they give "impossible" bugs
-  that you won't even be checking for, so won't see.  (E.g., a write to a
-  location disappears despite you staring right at the store that does it,
-  a branch is followed the wrong way despite its condition being true).
-  They are the ultimate memory corruption, but much fancier.
-
-So for this part, like the `uart` lab, you're going to have to rely very
-strongly on the documents from ARM and find the exact prose that states
-the exact sequence of (oft non-intuitive) actions you have to do.
-
-Mostly you'll find these in:
-
-   * Section B2 of the ARM manual (`docs/armv6.b2-memory.annot.pdf`)
-   describing memory ordering requirements --- what you have to do when
-   you update the page table, the page table registers, etc.
-
-Useful pages:
-  - B6-22: all the different ways to flush caches, memory barriers (various
-    snapshots below).
-  - B2-23: how to flush after changing a PTE.
-  - B2-24: must flush after a CP15.
-  - B2-25: how to change the address space identifier (ASID). 
-
-----------------------------------------------------------------------
-##### When do you need to flush 
-
-<table><tr><td>
-  <img src="images/part3-tlb-maintenance.png"/>
-</td></tr></table>
-
-
-----------------------------------------------------------------------
-##### Sync ASID
-
-<table><tr><td>
-  <img src="images/part3-sync-asid.png"/>
-</td></tr></table>
-
-----------------------------------------------------------------------
-##### When to flush BTB
-
-<table><tr><td>
-  <img src="images/part3-flush-btb.png"/>
-</td></tr></table>
-
-----------------------------------------------------------------------
-##### How to invalidate after a PTE change
-
-<table><tr><td>
-  <img src="images/part3-invalidate-pte.png"/>
-</td></tr></table>
-
-----------------------------------------------------------------------
-##### Invalidate TLB instruction
-
-<table><tr><td>
-  <img src="images/part2-inv-tlb.png"/>
-</td></tr></table>
-
-----------------------------------------------------------------------
-##### DSB, DMB instruction
-
-<table><tr><td>
-  <img src="images/part3-dsb-dmb.png"/>
-</td></tr></table>
-
-
-----------------------------------------------------------------------
-##### Flush prefetch buffer and others
-
-<table><tr><td>
-  <img src="images/part3-flushprefetch.png"/>
-</td></tr></table>
-
 
 -----------------------------------------------------------------------
 ### Further reading
@@ -378,8 +229,3 @@ And for more detail, the book [Operating systems in three easy pieces](http://pa
   2. [Address translation](http://pages.cs.wisc.edu/~remzi/OSTEP/vm-mechanism.pdf).
   3. [Translation lookaside buffers](http://pages.cs.wisc.edu/~remzi/OSTEP/vm-tlbs.pdf).
   4. [Complete VM systems](http://pages.cs.wisc.edu/~remzi/OSTEP/vm-complete.pdf).
-
-
-DSB as a superset of DMB:
-https://community.arm.com/processors/f/discussions/3287/questions-regarding-dmb-dsb-and-isb
-
