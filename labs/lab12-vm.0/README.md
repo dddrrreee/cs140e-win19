@@ -208,23 +208,33 @@ them for easy reference:
 ----------------------------------------------------------------------
 ## Part 2: Write hardware state.
 
-Here you'll write assembly helper routines to (put them in `vm-asm.s`):
+Here you'll write assembly helper routines to (put them in `vm-asm.s`).
+Mechanically, you will go through, one-at-a-time and replace every
+function prefixed with "our_" to be our own code.  The code is setup
+so that you can knock these off one at a time, making sure that things
+work after each modification.
 
   1. Each page table entry above is tagged with one of the 16 ARM "domains".
   You have to specify the permissions of any used domains.  For 
   simplicity set all 16 domains to "all access" (`0b11`).  (See below)
+  You should replace `our_write_domain_access_ctrl` with yours.
+
   2. The hardware has to be able to find the page table when there is
   a TLB miss.  Write the address of the page table to the page table
   register `ttbr0`.  Note the alignment restriction!  (See below)
+  You will need to implement the code 
+  `our_set_procid_ttbr0` for this, which also sets the ASID (next 
+  bullet).
+
   3. The ARM allows each TLB entry to be tagged with an address space
   identifier so you don't have to flush when you switch address spaces.
   Set the current address space identifier (pick a number between 
-  `1..63`).
-  4. Turn on the MMU.  The exact sequence is given below.
-  (See below)
+  `1..63`).  
 
-After each operation, call the macro `FLUSH_MMU` to flush all operations.
-This is overkill.  The next part makes it better.
+  4. Turn on the MMU.  The exact sequence is given below.  (See below)
+  Your code should be `our_mmu_enable`.  You will have to also: flush
+  the D/I cache, the TLB, the prefetch buffer, and the wait for everything.
+  You'll have to look at Part 3 for the description.  Sorry!
 
 I've inlined useful snapshots below:
 
@@ -257,6 +267,10 @@ I've inlined useful snapshots below:
 
 ----------------------------------------------------------------------
 ## Part 3: Flush stale state. (30 minutes)
+
+The previous code (hopefully) works, but is actually incorrect.  We are
+getting away with the fact that we are not running uncached, and we
+haven't been switching between address spaces.
 
 Weirdly, this is --- by far --- the hardest part to get right:
   1. If you get it wrong, your code may "work" fine. We are running with
