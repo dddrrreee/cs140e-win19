@@ -2,7 +2,7 @@
 # 	http://scottmcpeak.com/autodepend/autodepend.html
 
 NAME=vm
-OBJS = $(NAME).o  our-vm-asm.o your-vm-asm.o
+OBJS = $(NAME).o  our-vm-asm.o your-vm-asm.o our-vm.o
 
 ifndef LIBPI_PATH
 $(error LIBPI_PATH is not set: this should contain the absolute path to where this directory is.  Define it in your shell's initialiation.  For example, .tcshrc for tcsh or .bashrc for bash)
