@@ -61,7 +61,7 @@ struct control_reg1 control_reg1_mk(void) {
 }
 
 void check_control_reg1(void) {
-    AssertNow(sizeof(struct control_reg1) == 4);
+    assert(sizeof(struct control_reg1) == 4);
     check_bitfield(struct control_reg1, MMU_enabled,        0,      1);
     check_bitfield(struct control_reg1, A_alignment,        1,      1);
     check_bitfield(struct control_reg1, C_unified_enable,   2,      1);
@@ -136,7 +136,7 @@ void control_reg1_print(struct control_reg1 *r) {
  * tlb config: b4-39
  */
 static void check_tlb_config(void) { 
-    AssertNow(sizeof(struct tlb_config) == 4);
+    assert(sizeof(struct tlb_config) == 4);
     check_bitfield(struct tlb_config, unified_p,    0,      1);
     check_bitfield(struct tlb_config, n_d_lock,     8,      8);
     check_bitfield(struct tlb_config, n_i_lock,    16,      8);
@@ -273,7 +273,7 @@ void fld_check(void) {
     fld_t f = fld_mk();
     fld_check_valid(&f);
 
-    AssertNow(sizeof f == 4);
+    assert(sizeof f == 4);
 
     //                    field     offset  nbits
     check_bitfield(fld_t, tag,      0,      2);
