@@ -446,12 +446,12 @@ void part1(void) {
     printk("******** part 1! ************\n");
     unsigned base = 0x100000;
 
-    fld_t *pt = mmu_init(base);
+    fld_t *pt = our_mmu_init(base);
 
     // only mapping a single section: do more.
-    mmu_map_section(pt, 0x0, 0x0);
-    mmu_map_section(pt, 0x20000000, 0x20000000);
-    mmu_map_section(pt, 0x20200000, 0x20200000);
+    our_mmu_map_section(pt, 0x0, 0x0);
+    our_mmu_map_section(pt, 0x20000000, 0x20000000);
+    our_mmu_map_section(pt, 0x20200000, 0x20200000);
 
     // this should be wrapped up neater.  broken down so can replace 
     // one by one.
