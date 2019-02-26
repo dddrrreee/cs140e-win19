@@ -91,7 +91,7 @@
       tricks) --- we're at the point in the quarter where you start to get
       some nice technological velocity because of how much you've done.
 
-  10. [lab11-fuse-fs](lab11-fuse-fs/): while building a shell is
+  11. [lab11-fuse-fs](lab11-fuse-fs/): while building a shell is
   illuminating, you'd like to have the pi more integrated into your
   computing, versus having to use a special-purpose interface to talk
   to it.  In this lab you will use the FUSE file system to wrap up your
@@ -104,6 +104,24 @@
   OO-interface that lets you package a variety of disparete things as
   files, directories, links and interact with them using a uniform set
   of verbs (e.g., `open()-read()-write()-close()`).
+
+### Virtual Memory
+
+  12. [lab12-vm.0](lab12-vm.0/): Virtual memory and the SD card file
+  system are the biggest unknowns in our universe, so we'll bang out
+  quick versions of each, and then circle back around and make your
+  system more real.  This lab is a semi-lecture on the big picture of
+  virtual memory, then you take a working VM system and replace its page
+  table manipulation with your own.
+
+  13. [lab13-vm.1](lab13-vm.1/): The previous lab defined the main noun
+  in the virtual memory universe (the page table); this lab does the main
+  verbs used to set up the VM hardware, including how to synchronize
+  hardware, translation, and page table state (more subtle than it
+  sounds).  At the end you should be able to delete all our starter code.
+
+  14. TBD: you will do the final piece of VM: setting up protection and
+  handling faults.  We will do a cute hack using this ability.
 
 ### Binary code:
 
@@ -120,11 +138,6 @@ TBD:
   - Implement a statistical version of Valgrind and Eraser using pc-sampling
   and instruction decoding.
 
-### Virtual Memory
-
-TBD:
-
-  - Simple virtual memory, user-level processes.
 
 ### File system / SD Card.
 
