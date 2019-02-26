@@ -62,22 +62,22 @@ void clean_inv_caches(void);
 // on pi: organized from 0 to high.
 typedef struct first_level_descriptor {
     unsigned
-        tag:2,      // 0-1:2    should be 0b10
-        B:1,        // 2:1      set to 0
-        C:1,        // 3:1      set to 0
-        XN:1,       // 4:1      1 = execute never, 0 = can execute
-        domain:4,   // 5-8:4    b4-10: 0b11 = manager, 0b01 checked perms
-        IMP:1,      // 9:1      should be set to 0 unless imp-defined 
-                    //          functionality is needed.
+        tag, 
+        C,   
+        B,   
+        XN,  
+        domain,
+        IMP,   
+               
 
-        AP:2,       // 10-11:2  permissions, see b4-8/9
-        TEX:3,      // 12-14:3
-        APX:1,      // 15:1     
-        S:1,        // 16:1     set=0, deprecated.
-        nG:1,       // 17:1     nG=0 ==> global mapping, =1 ==> process specific
-        super:1,    // 18:1     selects between section and supersection (0)
-        _sbz1:1,    // 19:1     sbz
-        sec_base_addr:12; // 20-31.  must be aligned.
+        AP,   
+        TEX,  
+        APX,  
+        S,    
+        nG,   
+        super,
+        _sbz1,
+        sec_base_addr; 
 } fld_t;
 
 
