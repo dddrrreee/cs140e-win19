@@ -16,15 +16,15 @@ sure that things work after each modification.
 #### Check-off
 
 You need to show that:
-  - Part 0: you can set up domains.  You handle flushing correctly
+  1. you can set up domains.  You handle flushing correctly
   (with page table citations).  You can make execution fault when you
   write to a read-only address.
-  - Part 1: you can switch the ASID and page-table pointer.  You handle
+  2. you can switch the ASID and page-table pointer.  You handle
   coherence correctly (with page number citations). 
-  - Part 2: turn on/turn off the MMU.  You handle coherence / flushing
+  3. turn on/turn off the MMU.  You handle coherence / flushing
   corectly (with page number citations).  You should extend this to handle
   caching.
-  - Delete all of our files and starter code (remove references from the
+  4. Delete all of our files and starter code (remove references from the
   `Makefile`).  At this point, all code is written by you!
 
 Extensions:
@@ -41,16 +41,17 @@ Deliverables:
   Make sure you obey any requirements for coherence stated in Chapter B2,
   specifically B2-24.  Make sure the code still works!
 
-  2. Change the domain call so that permission checking works and that
-  we now get a failt when we write to a location we do not want to allow
-  code to (1) execute (see the XN bit) or (2) write to.
+  2. Change the domain call so that permission checking works (why did
+  it not work before?) and that code now crashes when it (1) executes a
+  location we do not allow execution of, (2) writes to a location that
+  has writes disabled.
 
 Useful pages:
   - B4-10: what the bit values mean for the `domain` field.
+  - B4-15: how addresses are translated and checked for faults.
   - B4-27: the location / size of the `domain` field in the segment 
   page table entry.
   - B4-42: setting the domain register.
-
 
 #### Some intuition and background on domains.
 
@@ -60,23 +61,29 @@ However, it gives you a way to quickly disable these restrictions in a
 fine-grained way through the use of domains.
 
 Mechanically it works as follows.
-  - each page-table entry (PTE) has a domain that the entry belongs to.
+  - each page-table entry (PTE) has a 4-bit field stating which single 
+  domain the entry belongs to.
 
-  - the sytem control register (CP15) has a domain register (`c3`, page
-  B4-42) that states whether each of the 16 domains is:
+  - the sytem control register (CP15) has a 32-bit domain register (`c3`,
+  page B4-42) that contains 2-bits for each of the 16 domains stating
+  what mode each the domain is in.  
+    - no-access (`0b00`): no load or store can be done to any virtual
+    address belonging to the domain;
 
-    - no-access (`0b00`): cannot load or store to any virtual address
-    controlled by the PTE;
-
-    - a "client" (`0b01`): all accesses must be consistent with PTE
-    permissions;
+    - a "client" (`0b01`): all accesses must be consistent with the
+    permissions in their associated PTE;
 
     - a "manager" (`0b11`): no permission checks are done, can read or
     write any virtual address in the PTE region.
 
+  - B4-15: On each memory reference, the hardware looks up the page
+  table entry (in reality: the cached TLB entry) for the virtual address,
+  gets the domain number, looks up the 2-bit state of the domain in the
+  domain register checks if it is allowed.
+
 As a result, you can quickly do a combination of both removing all access
-to a set of regions, and give all access to others by simply writing a
-32-bit value to a single coprocessor register.
+to a set of regions, and granting all access to others by simply writing
+a 32-bit value to a single coprocessor register.
 
 To see how these pieces play together, consider an example where code
 with more privileges (e.g., the OS) wants to run code that has less
@@ -109,11 +116,17 @@ In terms of our data structures:
   register 3 of CP15.   I.e., domain 2 is in client mode, all other
   domains (`0, 1, 3..15`) are in no-access mode.
 
-
 ----------------------------------------------------------------------
-##### Bits to set in Domain
+##### Part 1: Bits to set in Domain
 <table><tr><td>
   <img src="images/part2-domain.png"/>
+</td></tr></table>
+
+----------------------------------------------------------------------
+##### Part 1 (and later): Flush prefetch buffer and others
+
+<table><tr><td>
+  <img src="images/part3-flushprefetch.png"/>
 </td></tr></table>
 
 ----------------------------------------------------------------------
@@ -143,8 +156,6 @@ You will setup the page table pointer and address space identifier:
 <table><tr><td>
   <img src="images/part2-control-reg2-ttbr0.png"/>
 </td></tr></table>
-
-
 
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
@@ -253,14 +264,6 @@ Useful pages:
 <table><tr><td>
   <img src="images/part3-dsb-dmb.png"/>
 </td></tr></table>
-
-----------------------------------------------------------------------
-##### Flush prefetch buffer and others
-
-<table><tr><td>
-  <img src="images/part3-flushprefetch.png"/>
-</td></tr></table>
-
 
 -----------------------------------------------------------------------
 #### Lab reading.
