@@ -5,6 +5,7 @@ lab we do the main gerunds needed to hook it up to the hardware:
 
  - setting up domains.
  - setting up the page table register and ASID.
+ - turning on the MMU.
  - making sure the state is coherent.  
 
 You'll write assembly helper routines implement these (put them
@@ -55,7 +56,6 @@ you have one today, you will never track it down before the quarter ends.
 So for this part, like the `uart` lab, you're going to have to rely very
 strongly on the documents from ARM and find the exact prose that states
 the exact sequence of (oft non-intuitive) actions you have to do.
-
 Mostly you'll find these in:
 
    * Section B2 of the ARM manual (`docs/armv6.b2-memory.annot.pdf`)
@@ -72,21 +72,27 @@ Useful pages:
 
 #### Check-off
 
-You need to show that:
-  1. you can set up domains.  You handle flushing correctly
-  (with page table citations).  You can make execution fault when you
-  write to a read-only address.
-  2. you can switch the ASID and page-table pointer.  You handle
-  coherence correctly (with page number citations). 
-  3. turn on/turn off the MMU.  You handle coherence / flushing
-  corectly (with page number citations).  You should extend this to handle
-  caching.
+You're going to write a tiny amount of code (< 10 lines for each part),
+but it has to be the right code.  You will:
+
+  1. Set up domains.  You must put in barriers correctly (give the page
+  number and what the ARM requires).  Show the code faults when you
+  (1) run code where execution is disabled, (2) write to memory that
+  is read-only.
+
+  2. Switch the ASID and page-table pointer.  You handle coherence
+  correctly and the cookbook from ARM on how to do this (give with page
+  number citations, succinct intuition).
+
+  3. Turn on/turn off the MMU.  You must handle coherence / flushing
+  corectly (with page number citations).  You should extend this to
+  handle caching.
+
   4. Delete all of our files and starter code (remove references from the
   `Makefile`).  At this point, all code is written by you!
 
 Extensions:
 
-  0. Figure out how to enable `XN` checking.
   1. Set-up two-level paging.
   2. Set-up 16MB paging.
 
@@ -187,31 +193,66 @@ In terms of our data structures:
 </td></tr></table>
 
 ----------------------------------------------------------------------
+##### B6-22: DSB, DMB instruction
+
+<table><tr><td>
+  <img src="images/part3-dsb-dmb.png"/>
+</td></tr></table>
+
+----------------------------------------------------------------------
 ----------------------------------------------------------------------
 ## Part 1: Implement `set_procid_ttbr0`
 
-You will setup the page table pointer and address space identifier:
+You will setup the page table pointer and address space identifier by
+replacing `our_set_procid_ttbr0` with yours.  Make sure you can switch
+between multiple address spaces.  Where and what:
 
-  1. The hardware has to be able to find the page table when there is
-  a TLB miss.  You will write the address of the page table to the page
-  table register `ttbr0`.  Note the alignment restriction!
+  1. B4-41: The hardware has to be able to find the page table when
+  there is a TLB miss.  You will write the address of the page table to
+  the page table register `ttbr0`, set both `TTBR1` and `TTBRD` to `0`.
+  Note the alignment restriction!
 
-  2.  The ARM allows each TLB entry to be tagged with an address space
-  identifier so you don't have to flush when you switch address spaces.
-  Set the current address space identifier (pick a number between
+  2.  B4-52: The ARM allows each TLB entry to be tagged with an address
+  space identifier so you don't have to flush when you switch address
+  spaces.  Set the current address space identifier (pick a number between
   `1..63`).
 
-  3. You need to read B2 to see the coherence requirements for both.  It's
-  not trivial.
-
-  4. Replace `our_set_procid_ttbr0` with yours.  Make sure you can switch
-  between multiple address spaces.
+  3. Coherence requirements: B2-21, B2-22, B2-23, B2-24 rules for changing
+  page table register. And B2-25 the cookbook for changing an `ASID`.
 
 ----------------------------------------------------------------------
-##### B4-43: Setting page table pointer.
+##### B4-41: Setting page table pointer.
 
 <table><tr><td>
   <img src="images/part2-control-reg2-ttbr0.png"/>
+</td></tr></table>
+
+----------------------------------------------------------------------
+##### B2-25: Sync ASID
+
+<table><tr><td>
+  <img src="images/part3-sync-asid.png"/>
+</td></tr></table>
+
+----------------------------------------------------------------------
+##### B2-22: When do you need to flush 
+
+<table><tr><td>
+  <img src="images/part3-tlb-maintenance.png"/>
+</td></tr></table>
+
+----------------------------------------------------------------------
+##### B2-23 How to invalidate after a PTE change
+
+<table><tr><td>
+  <img src="images/part3-invalidate-pte.png"/>
+</td></tr></table>
+
+----------------------------------------------------------------------
+##### When to flush BTB
+
+<table><tr><td>
+  <img src="images/part3-flush-btb.png"/>
 </td></tr></table>
 
 ----------------------------------------------------------------------
@@ -240,46 +281,12 @@ at Part 3 for the description.  Sorry!
 </td></tr></table>
 
 ----------------------------------------------------------------------
-##### When do you need to flush 
-
-<table><tr><td>
-  <img src="images/part3-tlb-maintenance.png"/>
-</td></tr></table>
-
-----------------------------------------------------------------------
-##### Sync ASID
-
-<table><tr><td>
-  <img src="images/part3-sync-asid.png"/>
-</td></tr></table>
-
-----------------------------------------------------------------------
-##### When to flush BTB
-
-<table><tr><td>
-  <img src="images/part3-flush-btb.png"/>
-</td></tr></table>
-
-----------------------------------------------------------------------
-##### How to invalidate after a PTE change
-
-<table><tr><td>
-  <img src="images/part3-invalidate-pte.png"/>
-</td></tr></table>
-
-----------------------------------------------------------------------
 ##### Invalidate TLB instruction
 
 <table><tr><td>
   <img src="images/part2-inv-tlb.png"/>
 </td></tr></table>
 
-----------------------------------------------------------------------
-##### DSB, DMB instruction
-
-<table><tr><td>
-  <img src="images/part3-dsb-dmb.png"/>
-</td></tr></table>
 
 -----------------------------------------------------------------------
 #### Lab reading.
