@@ -9,24 +9,9 @@ lab we do the main gerunds needed to hook it up to the hardware:
 
 You'll write assembly helper routines implement these (put them
 in `vm-asm.s`).  Mechanically, you will go through, one-at-a-time
-and replace every function prefixed with `our_` to be our own code.
+and replace every function prefixed with `our_` to be your own code.
 The code is setup so that you can knock these off one at a time, making
 sure that things work after each modification.
-
-#### Lab reading.
-
-The main documents in the `docs/` directory:
-
-   1. `armv6.b2-memory.annot.pdf`: section B2 of the ARM manual,
-   describing memory ordering requirements --- what you have to do when
-   you update the page table, the page table registers, etc.
-
-   2. `armv6.b3-coprocessor.annot.pdf`: section B3 of the ARM manual,
-   describing the different co-processor options.
-
-   3. `armv6.b4-mmu.annot.pdf`: section B4 of the ARM manual, describing
-   the page table format(s), and how to setup/manage hardware state for
-   page tables and the TLB.
 
 #### Check-off
 
@@ -43,9 +28,10 @@ You need to show that:
   `Makefile`).  At this point, all code is written by you!
 
 Extensions:
-   0. Figure out how to enable `XN` checking.
-   1. Set-up two-level paging.
-   2. Set-up 16MB paging.
+
+  0. Figure out how to enable `XN` checking.
+  1. Set-up two-level paging.
+  2. Set-up 16MB paging.
 
 ----------------------------------------------------------------------
 ## Part 1: setting up domains.
@@ -277,6 +263,21 @@ Useful pages:
 
 
 -----------------------------------------------------------------------
+#### Lab reading.
+
+The main documents in the `docs/` directory:
+
+   1. `armv6.b2-memory.annot.pdf`: section B2 of the ARM manual,
+   describing memory ordering requirements --- what you have to do when
+   you update the page table, the page table registers, etc.
+
+   2. `armv6.b3-coprocessor.annot.pdf`: section B3 of the ARM manual,
+   describing the different co-processor options.
+
+   3. `armv6.b4-mmu.annot.pdf`: section B4 of the ARM manual, describing
+   the page table format(s), and how to setup/manage hardware state for
+   page tables and the TLB.
+
 ### Further reading
 
 As an alternative to our lab writeup:
@@ -300,7 +301,4 @@ And for more detail, the book [Operating systems in three easy pieces](http://pa
   3. [Translation lookaside buffers](http://pages.cs.wisc.edu/~remzi/OSTEP/vm-tlbs.pdf).
   4. [Complete VM systems](http://pages.cs.wisc.edu/~remzi/OSTEP/vm-complete.pdf).
 
-
-DSB as a superset of DMB:
-https://community.arm.com/processors/f/discussions/3287/questions-regarding-dmb-dsb-and-isb
 
