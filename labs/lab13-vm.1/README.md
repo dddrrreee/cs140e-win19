@@ -13,6 +13,63 @@ and replace every function prefixed with `our_` to be your own code.
 The code is setup so that you can knock these off one at a time, making
 sure that things work after each modification.
 
+#### Flushing stale state.
+
+The trickiest part of this lab is not figuring out the instructions 
+to change the state we need, but is making sure you do --- exactly ---
+the operations needed to flush all stale state throughout the machine. 
+As mentioned in the previous lab, the hardware caches:
+  - Page table entries (in the TLB) --- if you change the page table,
+  you need to flush the ones affected.
+  - Memory (in data, and instruction caches): if you change a mapping
+  or switch which address space you are running, you need to flush
+  all affected entries.
+  - Similarly, the ARM optionally caches branch targets so that it
+  can predict execution paths better.  These entries are not tagged,
+  so you need to flush.
+  - Further, ARM prefetches instructions: if you change a translation
+  or change the address space you are in, the instructions in the 
+  buffer are then almost certainly wrong, and you need to flush the
+  prefetch buffer.
+  - Finally, when you flush a cache or modify ARM co-processor state,
+  there is often no guarantee that the operation has completed when
+  the instruction finishes!  So you need to insert
+  barriers.
+
+Mistakes in the above are incredibly, incredibly nasty.  I believe if
+you have one today, you will never track it down before the quarter ends.
+
+  1. If you get it wrong, your code may "work" fine. We are running with
+  caches disabled, no branch prediction, and strongly-ordered memory
+  accesses so many of the gotcha's can't come up.  However, later,
+  they will.  And since at that point there will be more going on,
+  it will be hard to figure out WTH is going wrong.
+
+  2. Because flaws relate to memory --- what values are returned from
+  a read, or what values are written --- they give "impossible" bugs
+  that you won't even be looking for, so won't see.  (E.g., a write to a
+  location disappears despite you staring right at the store that does it,
+  a branch is followed the wrong way despite its condition being true).
+  They are the ultimate memory corruption, but much fancier.
+
+So for this part, like the `uart` lab, you're going to have to rely very
+strongly on the documents from ARM and find the exact prose that states
+the exact sequence of (oft non-intuitive) actions you have to do.
+
+Mostly you'll find these in:
+
+   * Section B2 of the ARM manual (`docs/armv6.b2-memory.annot.pdf`)
+   describing memory ordering requirements --- what you have to do when
+   you update the page table, the page table registers, etc.
+
+Useful pages:
+  - B2-25: how to change the address space identifier (ASID). 
+  - B6-22: all the different ways to flush caches, memory barriers (various
+    snapshots below).  As you figured out in the previous lab, the r/pi A+
+    we use has split instruction and data caches.
+  - B2-23: how to flush after changing a PTE.
+  - B2-24: must flush after a CP15.
+
 #### Check-off
 
 You need to show that:
@@ -117,13 +174,13 @@ In terms of our data structures:
   domains (`0, 1, 3..15`) are in no-access mode.
 
 ----------------------------------------------------------------------
-##### Part 1: Bits to set in Domain
+##### B4-32: Bits to set in Domain
 <table><tr><td>
   <img src="images/part2-domain.png"/>
 </td></tr></table>
 
 ----------------------------------------------------------------------
-##### Part 1 (and later): Flush prefetch buffer and others
+##### B6-21: Flush prefetch buffer and tricks.
 
 <table><tr><td>
   <img src="images/part3-flushprefetch.png"/>
@@ -151,7 +208,7 @@ You will setup the page table pointer and address space identifier:
   between multiple address spaces.
 
 ----------------------------------------------------------------------
-##### Setting page table pointer.
+##### B4-43: Setting page table pointer.
 
 <table><tr><td>
   <img src="images/part2-control-reg2-ttbr0.png"/>
@@ -159,7 +216,7 @@ You will setup the page table pointer and address space identifier:
 
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
-## Part 2: implement `mmu_enable` and `mmu_disable`
+## Part 3: implement `mmu_enable` and `mmu_disable`
 
 Now you can write the code to turn the MMU on/off.
 
@@ -181,47 +238,6 @@ at Part 3 for the description.  Sorry!
 <table><tr><td>
   <img src="images/part2-control-reg1.png"/>
 </td></tr></table>
-
-
-----------------------------------------------------------------------
-
-## Part 3: Flush stale state. (30 minutes)
-
-The previous code (hopefully) works, but is actually incorrect.  We are
-getting away with the fact that we are not running uncached, and we
-haven't been switching between address spaces.
-
-Weirdly, this is --- by far --- the hardest part to get right:
-  1. If you get it wrong, your code may "work" fine. We are running with
-  caches disabled, no branch prediction, and strongly-ordered memory
-  accesses so many of the gotcha's can't come up.  However, later,
-  they will.  And since at that point there will be more going on,
-  it will be hard to figure out WTH is going wrong.
-
-  2. Because flaws relate to memory --- what values are returned from
-  a read, or what values are written --- they give "impossible" bugs
-  that you won't even be checking for, so won't see.  (E.g., a write to a
-  location disappears despite you staring right at the store that does it,
-  a branch is followed the wrong way despite its condition being true).
-  They are the ultimate memory corruption, but much fancier.
-
-So for this part, like the `uart` lab, you're going to have to rely very
-strongly on the documents from ARM and find the exact prose that states
-the exact sequence of (oft non-intuitive) actions you have to do.
-
-Mostly you'll find these in:
-
-   * Section B2 of the ARM manual (`docs/armv6.b2-memory.annot.pdf`)
-   describing memory ordering requirements --- what you have to do when
-   you update the page table, the page table registers, etc.
-
-Useful pages:
-  - B6-22: all the different ways to flush caches, memory barriers (various
-    snapshots below).  As you figured out in the previous lab, the r/pi A+
-    we use has split instruction and data caches.
-  - B2-23: how to flush after changing a PTE.
-  - B2-24: must flush after a CP15.
-  - B2-25: how to change the address space identifier (ASID). 
 
 ----------------------------------------------------------------------
 ##### When do you need to flush 
@@ -303,5 +319,3 @@ And for more detail, the book [Operating systems in three easy pieces](http://pa
   2. [Address translation](http://pages.cs.wisc.edu/~remzi/OSTEP/vm-mechanism.pdf).
   3. [Translation lookaside buffers](http://pages.cs.wisc.edu/~remzi/OSTEP/vm-tlbs.pdf).
   4. [Complete VM systems](http://pages.cs.wisc.edu/~remzi/OSTEP/vm-complete.pdf).
-
-
