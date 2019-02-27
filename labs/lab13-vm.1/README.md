@@ -47,19 +47,82 @@ Extensions:
    1. Set-up two-level paging.
    2. Set-up 16MB paging.
 
-
 ----------------------------------------------------------------------
-## Part 0: make sure you can run the simple hello program (15 minute).
+## Part 1: setting up domains.
 
-Each page table entry above is tagged with one of the 16 ARM "domains".
-You have to specify the permissions of any used domains.  For simplicity
-we initially set all 16 domains to "all access" (`0b11`).  (See below)
-
+Deliverables:
   1. You should replace `our_write_domain_access_ctrl` with yours.
-  Make sure you obey any requirements for coherence stated in Chapter B2.
+  Make sure you obey any requirements for coherence stated in Chapter B2,
+  specifically B2-24.  Make sure the code still works!
 
-  2. Change the domain call so that permission checking works.
-  (See Figure X in B4)
+  2. Change the domain call so that permission checking works and that
+  we now get a failt when we write to a location we do not want to allow
+  code to (1) execute (see the XN bit) or (2) write to.
+
+Useful pages:
+  - B4-10: what the bit values mean for the `domain` field.
+  - B4-27: the location / size of the `domain` field in the segment 
+  page table entry.
+  - B4-42: setting the domain register.
+
+
+#### Some intuition and background on domains.
+
+ARM has an interesting take on protection.  Like most modern architectures
+it allows you to mark pages as invalid, read-only, read-write, executable.
+However, it gives you a way to quickly disable these restrictions in a
+fine-grained way through the use of domains.
+
+Mechanically it works as follows.
+  - each page-table entry (PTE) has a domain that the entry belongs to.
+
+  - the sytem control register (CP15) has a domain register (`c3`, page
+  B4-42) that states whether each of the 16 domains is:
+
+    - no-access (`0b00`): cannot load or store to any virtual address
+    controlled by the PTE;
+
+    - a "client" (`0b01`): all accesses must be consistent with PTE
+    permissions;
+
+    - a "manager" (`0b11`): no permission checks are done, can read or
+    write any virtual address in the PTE region.
+
+As a result, you can quickly do a combination of both removing all access
+to a set of regions, and give all access to others by simply writing a
+32-bit value to a single coprocessor register.
+
+To see how these pieces play together, consider an example where code
+with more privileges (e.g., the OS) wants to run code that has less
+privileges using the same address translations (e.g., a device driver
+it doesn't trust).
+   - The OS assigns the device driver a unique domain id (e.g., `2`).
+   - The OS tags all PTE entries the driver is allowed to touch with `2`
+   in the `domain` field.
+   - When the OS is running it sets all domains to manager (`0b11`) mode
+   so that it can read and write all memory.
+   - When the OS wants to call the device driver, it switches the state of
+   domain `2` to be a client (`0b01`) and all other domains as no-access
+   (`0b00`).
+
+Result:
+  1. When the driver code runs, it cannot corrupt any other kernel memory.
+  2. Switching domains is fast compared to switching page tables (the
+  typical approach).  
+  3. As a nice bonus: All the addresses are the same in both pieces of
+  code, which makes many things easier.
+
+In terms of our data structures: 
+  - Assume we gave the driver access to the single virtual segment range
+  `[0x100000, 0x20000)`, which is segment 1 (`0x100000 >> 20 = 1`).
+  
+  - We would set the `domain` field for the associated page table entry 
+  containing the first level descriptor to `2`: i.e., `pt[1].domain = 2`.
+
+  - Before starting the device driver we would write `0b01 << 2` into
+  register 3 of CP15.   I.e., domain 2 is in client mode, all other
+  domains (`0, 1, 3..15`) are in no-access mode.
+
 
 ----------------------------------------------------------------------
 ##### Bits to set in Domain
@@ -124,6 +187,7 @@ at Part 3 for the description.  Sorry!
 
 
 ----------------------------------------------------------------------
+
 ## Part 3: Flush stale state. (30 minutes)
 
 The previous code (hopefully) works, but is actually incorrect.  We are
@@ -156,7 +220,8 @@ Mostly you'll find these in:
 
 Useful pages:
   - B6-22: all the different ways to flush caches, memory barriers (various
-    snapshots below).
+    snapshots below).  As you figured out in the previous lab, the r/pi A+
+    we use has split instruction and data caches.
   - B2-23: how to flush after changing a PTE.
   - B2-24: must flush after a CP15.
   - B2-25: how to change the address space identifier (ASID). 
@@ -167,7 +232,6 @@ Useful pages:
 <table><tr><td>
   <img src="images/part3-tlb-maintenance.png"/>
 </td></tr></table>
-
 
 ----------------------------------------------------------------------
 ##### Sync ASID
@@ -203,7 +267,6 @@ Useful pages:
 <table><tr><td>
   <img src="images/part3-dsb-dmb.png"/>
 </td></tr></table>
-
 
 ----------------------------------------------------------------------
 ##### Flush prefetch buffer and others
