@@ -301,7 +301,7 @@ are correct.
 </td></tr></table>
 
 ----------------------------------------------------------------------
-##### B6-21: Invalidate TLB instruction
+##### B6-21: Various invalidation instructions
 
 <table><tr><td>
   <img src="images/part2-inv-tlb.png"/>
