@@ -150,6 +150,7 @@ Mechanically it works as follows.
   gets the domain number, looks up the 2-bit state of the domain in the
   domain register checks if it is allowed.
 
+
 As a result, you can quickly do a combination of both removing all access
 to a set of regions, and granting all access to others by simply writing
 a 32-bit value to a single coprocessor register.
