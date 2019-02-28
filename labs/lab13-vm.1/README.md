@@ -84,7 +84,7 @@ but it has to be the right code.  You will:
   intuition).
 
   3. Turn on/turn off the MMU.  As in (2) you must handle coherence /
-  flushing corectly (with page number citations).
+  flushing correctly (with page number citations).
 
   4. Delete our files and starter code (remove references from the
   `Makefile`).  At this point, all code is written by you!
@@ -133,7 +133,7 @@ Mechanically it works as follows.
   - each page-table entry (PTE) has a 4-bit field stating which single 
   domain the entry belongs to.
 
-  - the sytem control register (CP15) has a 32-bit domain register (`c3`,
+  - the system control register (CP15) has a 32-bit domain register (`c3`,
   page B4-42) that contains 2-bits for each of the 16 domains stating
   what mode each the domain is in.  
     - no-access (`0b00`): no load or store can be done to any virtual
