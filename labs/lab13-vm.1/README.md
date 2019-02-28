@@ -97,6 +97,9 @@ Extensions:
 
   1. Set-up two-level paging.
   2. Set-up 16MB paging.
+  3. Set up code so that it cleans the cache rather than just invalidates.
+  4. Write code to make it easy to look up a PTE (`mmu_lookup_pte(void *addr)`)
+  and change permissions, write-buffer, etc.
 
 ----------------------------------------------------------------------
 ## Part 1: setting up domains.
@@ -209,7 +212,7 @@ In terms of our data structures:
 
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
-## Part 1: Implement `set_procid_ttbr0`
+## Part 2: Implement `set_procid_ttbr0`
 
 You will setup the page table pointer and address space identifier by
 replacing `our_set_procid_ttbr0` with yours.  Make sure you can switch
@@ -305,3 +308,10 @@ are correct.
 <table><tr><td>
   <img src="images/part2-inv-tlb.png"/>
 </td></tr></table>
+
+----------------------------------------------------------------------
+----------------------------------------------------------------------
+## Part 4: Get rid of our code.
+
+You should go through and delete all of our files, changing the `Makefile`
+to remove references to them.
