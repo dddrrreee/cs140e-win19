@@ -53,18 +53,14 @@ could such bugs):
   that you won't even be looking for, so won't see.  (E.g., a write to a
   location disappears despite you staring right at the store that does it,
   a branch is followed the wrong way despite its condition being true).
-  They are the ultimate memory corruption, but much fancier.
+  They are the ultimate, Godzilla-level memory corruption.
 
-So for this part, like the `uart` lab, you're going to have to rely very
-strongly on the documents from ARM and find the exact prose that states
-the exact sequence of (oft non-intuitive) actions you have to do.
-Mostly you'll find these in:
+Thus, as in the `uart` lab, you're going to have to rely very strongly
+on the documents from ARM and find the exact prose that states the exact
+sequence of (oft non-intuitive) actions you have to do.  
 
-   * Section B2 of the ARM manual (`docs/armv6.b2-memory.annot.pdf`)
-   describing memory ordering requirements --- what you have to do when
-   you update the page table, the page table registers, etc.
-
-Useful pages:
+These advices are consolidated towards the end of Section B2 of the
+ARMv6 manual (`docs/armv6.b2-memory.annot.pdf`).  Useful pages:
   - B2-25: how to change the address space identifier (ASID). 
   - B6-22: all the different ways to flush caches, memory barriers (various
     snapshots below).  As you figured out in the previous lab, the r/pi A+
@@ -79,27 +75,26 @@ but it has to be the right code.  You will:
 
   1. Set up domains.  You must put in barriers correctly (give the page
   number and what the ARM requires).  Show the code faults when you
-  (1) run code where execution is disabled, (2) write to memory that
-  is read-only.
+  (1) run code for memory that has the "execute never" bit set, (2)
+  write to memory that is read-only.
 
-  2. Switch the ASID and page-table pointer.  You handle coherence
-  correctly and the cookbook from ARM on how to do this (give with page
-  number citations, succinct intuition).
+  2. Set the ASID and page-table pointer.  You must handle coherence
+  correctly, using the ARM provided instruction sequence to switch
+  `ASID`s (your comments should state page number citations and succinct
+  intuition).
 
-  3. Turn on/turn off the MMU.  You must handle coherence / flushing
-  corectly (with page number citations).  You should extend this to
-  handle caching.
+  3. Turn on/turn off the MMU.  As in (2) you must handle coherence /
+  flushing corectly (with page number citations).
 
-  4. Delete all of our files and starter code (remove references from the
+  4. Delete our files and starter code (remove references from the
   `Makefile`).  At this point, all code is written by you!
 
 Extensions:
-
-  1. Set-up two-level paging.
-  2. Set-up 16MB paging.
-  3. Set up code so that it cleans the cache rather than just invalidates.
-  4. Write code to make it easy to look up a PTE (`mmu_lookup_pte(void *addr)`)
+  1. Set up code so that it cleans the cache rather than just invalidates.
+  2. Write code to make it easy to look up a PTE (`mmu_lookup_pte(void *addr)`)
   and change permissions, write-buffer, etc.
+  3. Set-up two-level paging.
+  4. Set-up 16MB paging.
 
 ----------------------------------------------------------------------
 ## Part 1: setting up domains.
@@ -214,9 +209,12 @@ In terms of our data structures:
 ----------------------------------------------------------------------
 ## Part 2: Implement `set_procid_ttbr0`
 
-You will setup the page table pointer and address space identifier by
-replacing `our_set_procid_ttbr0` with yours.  Make sure you can switch
-between multiple address spaces.  Where and what:
+Deliverable:
+   - Set the page table pointer and address space identifier by replacing
+   `our_set_procid_ttbr0` with yours.  Make sure you can switch between
+   multiple address spaces.
+
+Where and what:
 
   1. B4-41: The hardware has to be able to find the page table when
   there is a TLB miss.  You will write the address of the page table to
@@ -271,11 +269,11 @@ between multiple address spaces.  Where and what:
 ## Part 3: implement `mmu_enable` and `mmu_disable`
 
 Now you can write the code to turn the MMU on/off:
-  - `mmu_enable`
-  - `mmu_disable`
+  - `mmu_enable()`
+  - `mmu_disable()`
 
-The high-level sequence is given on page 6-9 of the
-`arm1176.pdf` document (screen shot below).  You will also have to flush:
+The high-level sequence is given on page 6-9 of the `arm1176.pdf` document
+(screen shot below).  You will also have to flush:
    - all caches (D/I cache, the I/D TLBs)
    - PrefetchBuffer.
    - BTB
@@ -314,4 +312,4 @@ are correct.
 ## Part 4: Get rid of our code.
 
 You should go through and delete all of our files, changing the `Makefile`
-to remove references to them.
+to remove references to them.  At this point, all code is written by you!
