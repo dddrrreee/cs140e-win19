@@ -54,35 +54,37 @@ something more full-features:
     your laptop and pi.
 
   - Make a clean system that can sensibly blend pre-emptive, cooperative,
-  and deadline-based run-to-completion threads (which do not need
-  context switching)
+    and deadline-based run-to-completion threads (which do not need
+    context switching)
 
   - Rewrite the interrupt / exception handling to be much more efficient
-  and extensible.  Rip the code down to the bare minimum, enable icache,
-  dcache, BTB, any other tuning you can.  See how much faster you can
-  make it compared to where we started.  Take micro-benchmarks from
-  the literature and see how much you can beat them by (how fast you
-  can ping-pong bytes between threads, take a protection fault, etc).
-  If you beat linux/macos by 50x I wouldn't be surprised.
+    and extensible.  Rip the code down to the bare minimum, enable icache,
+    dcache, BTB, any other tuning you can.  See how much faster you can
+    make it compared to where we started.  
+    
+    Take micro-benchmarks from the literature and see how much you can
+    beat them by (how fast you can ping-pong bytes between threads,
+    take a protection fault, etc).  If you beat linux/macos by 50x I
+    wouldn't be surprised.
 
 ### Build a Tool
 
   - Volatile cross-checking.  A very common, nasty problem in embedded
-  is that the code uses pointers to manipulate device memory, but either
-  the programmer does not use `volatile` correctly or the compiler has
-  a bug.  We can detect such things with a simple hack: 
+    is that the code uses pointers to manipulate device memory, but
+    either the programmer does not use `volatile` correctly or the
+    compiler has a bug.  We can detect such things with a simple hack:
 
     - We know that device references should remain the same no matter 
-    how the code is compiled.  
+      how the code is compiled.  
     - So compile a piece of code multiple ways: with no optimization, `-O`,
     `-O2`, with fancier flags, etc.  
     - Then run each different version, using ARM domain tricks to trace 
-    all address / values that are read and written.  
+      all address / values that are read and written.  
     - Compare these: any difference signals a bug.  
 
-  This is basically your second lab, with some high-end tricks.  It would
-  have caught many errors we made when designing cs107e; some of them
-  took days to track down.
+    This is basically your second lab, with some high-end tricks.
+    It would have caught many errors we made when designing cs107e;
+    some of them took days to track down.
 
   - Build a debugger that can run over the UART.  Insert breakpoints to
   stop execution.  Use the special ARM hardware to do data watch-points.
@@ -91,16 +93,17 @@ something more full-features:
   You'll likely have to add interrupts to the UART.
 
   - Do a trap-based valgrind/purify so you can detect memory corruption.
-  Valgrind checks every load and store to see if you are writing outside of
-  an object's boundary.  It does so by dynamically rewriting the executable
-  code.  This is hard.  Instead you can use your virtual memory system to:
+    Valgrind checks every load and store to see if you are writing outside
+    of an object's boundary.  It does so by dynamically rewriting the
+    executable code.  This is hard.  Instead you can use your virtual
+    memory system to:
     1. Mark all heap memory as unavailable.
     2. In the trap handler, determine if the faulting address is in bounds.
     3. If so: do the load or store and return.
     4. If not: give an error.
   
-  Given how fast our traps are, and how slow valgrind is, your approach
-  might actually be faster.
+    Given how fast our traps are, and how slow valgrind is, your approach
+    might actually be faster.
 
   - Do a trap-based race detector: similar to valgrind above, Eraser
   is a well known (but dead) tool for finding race conditions that worked
