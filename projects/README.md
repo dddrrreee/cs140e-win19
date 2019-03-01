@@ -10,33 +10,67 @@ Final projects:
 You can always devise your own final project but I've typed out some
 possible options. 
 
-### Porting
+### Do more OS
 
-We use the `r/pi A`+, put there are many little boards out there. 
-An interesting project is porting a bunch of the different code we've
-built to another system.  
+We've done a bunch of hello-world level hacks: you could build them into
+something more full-features:
 
-I have the following boards available:
-  - [Teensy 2.8, 3.2](https://www.sparkfun.com/products/13736): fast, small
-  - [pocketbeagle](https://beagleboard.org/pocket): smaller than the pi!
-  - various [esp8266 boards](https://www.sparkfun.com/products/13678): 
-  a low-cost, wifi capable system.
-  - [pi zero](https://www.adafruit.com/product/2885): a smaller pi. 
-
-### Other projects
-
-Various short options:
   - Add networking to the pi.  One option is to hook it up to the 
   [esp9266](https://www.sparkfun.com/products/13678) via the uart and
   communicate that way.  Another is to use xbee's.
 
   - Develop the virtual memory system into one that is full featured, able
   to handle the different page sizes, the different protection bits, etc.
+  Have it correctly catch when code references beyond the end of the heap,
+  dereferences null, and needs to dynamically grow the stack.
 
   - Do a simple `FAT32` file system so sensors can write data to the sd
   card and keep it around; make this available using FUSE so your laptop
   can access.  Cooler: use the wireless above to export the SD's FAT32
   file system to your computer remotely using FUSE.
+
+  - We use the `r/pi A`+, put there are many little boards out there. 
+  An interesting project is porting a bunch of the different code we've
+  built to another system.  
+
+  I have the following boards available:
+    - [Teensy 2.8, 3.2](https://www.sparkfun.com/products/13736): fast, small
+    - [pocketbeagle](https://beagleboard.org/pocket): smaller than the pi!
+    - various [esp8266 boards](https://www.sparkfun.com/products/13678): 
+    a low-cost, wifi capable system.
+    - [pi zero](https://www.adafruit.com/product/2885): a smaller pi. 
+
+  - Assemble all the different pieces you've built into a complete, 
+  small, embedded OS.   I'd suggest domains, threads, some support 
+  for deadlines, and channels (pipes) to communicate.
+
+  - Extend your FUSE file system into a full-fledged way to interact
+  with the pi.  Have a method to mount devices into the file system,
+  push results to the device and back, and in general have a way to share
+  traffic over the UART.  You will also certainly have to add interrupts
+  to handle the UART (recall it has an 8-byte queue for transmit and
+  receive, so can easily drop bytes) as well as having a more efficient
+  approach to sending communication back/forth between your laptop and pi.
+
+  - Make a clean system that can sensibly blend pre-emptive, cooperative,
+  and deadline-based run-to-completion threads (which do not need
+  context switching)
+
+  - Rewrite the interrupt / exception handling to be much more efficient
+  and extensible.  Rip the code down to the bare minimum, enable icache,
+  dcache, BTB, any other tuning you can.  See how much faster you can
+  make it compared to where we started.  Take micro-benchmarks from
+  the literature and see how much you can beat them by (how fast you
+  can ping-pong bytes between threads, take a protection fault, etc).
+  If you beat linux/macos by 50x I wouldn't be surprised.
+
+### Build a Tool
+
+  - Build a debugger that can run over the UART.  Insert breakpoints to
+  stop execution.  Use the special ARM hardware to do data watch-points.
+  Figure out how to do a backtrace and to match up instruction program
+  counter values to the C code (not hard if you use the `.list` files).  
+  You'll likely have to add interrupts to the UART.
 
   - Do a trap-based valgrind/purify so you can detect memory corruption.
   Valgrind checks every load and store to see if you are writing outside of
@@ -62,6 +96,11 @@ Various short options:
   handler, do the check above.  It may miss errors, but will be very fast.
 
 
+  - Write cooperative thread checkers that detect when you run too long
+  with interrupts disabled, too long without yielding, in a deadlock,
+  spinning on a condition that cannot change, extend past the end of
+  the stack, have priority inversion, starvation, missed deadlines,
+  lock queues that are too long, or critical sections that are too long.
 
 ### Stupid domain tricks
 
@@ -70,7 +109,7 @@ permissions for a set of pages.    It'd be interesting to use this
 ability for various things.  One possibility: use it to make embedded
 development less dangerous.  
 
-#### Protected subsystems.
+##### Protected subsystems.
 
 As you probably noticed, we have no protection against memory corruption.
 As your system gets bigger, it becomes much much harder to track down which
@@ -88,14 +127,14 @@ ARM do to a lighter weight method:
 This method is much faster than switching between processes: we don't
 have to flush the TLB, caches, or page table.
 
-##### Lightweight protection domains
+###### Lightweight protection domains
 
 As a lighter-weight intermediate hack: if we want to proect one thread
 from another, we usually throw it in a different address space.  This can
 be a lot of overhead.  Instad, tag its memory with a seperate domain ID
 and do what we do above.
 
-##### Subpage-protection
+###### Subpage-protection
 
 If we have some code that is causing corruption but we can't fiure out,
 use domains to quickly turn off/on write-permissions for all memory
