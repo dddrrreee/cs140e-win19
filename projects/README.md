@@ -97,10 +97,10 @@ something more full-features:
     of an object's boundary.  It does so by dynamically rewriting the
     executable code.  This is hard.  Instead you can use your virtual
     memory system to:
-    1. Mark all heap memory as unavailable.
-    2. In the trap handler, determine if the faulting address is in bounds.
-    3. If so: do the load or store and return.
-    4. If not: give an error.
+    - Mark all heap memory as unavailable.
+    - In the trap handler, determine if the faulting address is in bounds.
+    - If so: do the load or store and return.
+    - If not: give an error.
   
     Given how fast our traps are, and how slow valgrind is, your approach
     might actually be faster.
@@ -113,8 +113,10 @@ something more full-features:
   the locks the current thread holds are consistent.
 
   - Do a statistical version of either the race detector or memory
-  checker above: set your timing interrupts to be very frequent and in the
-  handler, do the check above.  It may miss errors, but will be very fast.
+  checker above: set your timing interrupts to be very frequent and
+  in the handler, do the check above.  It may miss errors, but will be
+  very fast and should do a reasonable job, given a long enough run and
+  a fine-enough window.
 
   - Write cooperative thread checkers that detect when you run too long
   with interrupts disabled, too long without yielding, in a deadlock,
@@ -129,18 +131,19 @@ something more full-features:
   You're in a good position to find some.
 
   - ARM code is not that hard to parse (at least compared to x86).  We can
-  use this ability to make a effective, but hopefully simple lock-free
-  algorithm checker.   Given a set of functions that purport to run
-  correctly (either with or without locks) we can:
-    1. disassemble them.
-    2. at each load or store, insert a call to a context switch.
-    3. run the code with two threads.   
-    4. first test that they give the same result as two sequential calls
-    if we do a single context switch at each possible point, then two 
-    context switches, etc.
-  To be really fancy, we can buffer up the stores that are done and then
-  try all possible legal orders of them when the other thread does a load.
-  This checker should find a lot of bugs.
+    use this ability to make a effective, but hopefully simple lock-free
+    algorithm checker.   Given a set of functions that purport to run
+    correctly (either with or without locks) we can:
+    - disassemble them.
+    - at each load or store, insert a call to a context switch.
+    - run the code with two threads.   
+    - first test that they give the same result as two sequential calls
+      if we do a single context switch at each possible point, then two 
+      context switches, etc.
+
+    To be really fancy, we can buffer up the stores that are done and then
+    try all possible legal orders of them when the other thread does a load.
+    This checker should find a lot of bugs.
 
 ### Stupid domain tricks
 
