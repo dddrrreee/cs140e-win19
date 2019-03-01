@@ -34,6 +34,7 @@ something more full-features:
   built to another system.  
 
   I have the following boards available:
+
     - [Teensy 2.8, 3.2](https://www.sparkfun.com/products/13736): fast, small
     - [pocketbeagle](https://beagleboard.org/pocket): smaller than the pi!
     - various [esp8266 boards](https://www.sparkfun.com/products/13678): 
@@ -70,6 +71,7 @@ something more full-features:
   is that the code uses pointers to manipulate device memory, but either
   the programmer does not use `volatile` correctly or the compiler has
   a bug.  We can detect such things with a simple hack: 
+
     - We know that device references should remain the same no matter 
     how the code is compiled.  
     - So compile a piece of code multiple ways: with no optimization, `-O`,
