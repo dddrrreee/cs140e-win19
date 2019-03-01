@@ -41,16 +41,17 @@ something more full-features:
     - [pi zero](https://www.adafruit.com/product/2885): a smaller pi. 
 
   - Assemble all the different pieces you've built into a complete, 
-  small, embedded OS.   I'd suggest domains, threads, some support 
-  for deadlines, and channels (pipes) to communicate.
+    small, embedded OS.   I'd suggest domains, threads, some support 
+    for deadlines, and channels (pipes) to communicate.
 
   - Extend your FUSE file system into a full-fledged way to interact
-  with the pi.  Have a method to mount devices into the file system,
-  push results to the device and back, and in general have a way to share
-  traffic over the UART.  You will also certainly have to add interrupts
-  to handle the UART (recall it has an 8-byte queue for transmit and
-  receive, so can easily drop bytes) as well as having a more efficient
-  approach to sending communication back/forth between your laptop and pi.
+    with the pi.  Have a method to mount devices into the file system,
+    push results to the device and back, and in general have a way to
+    share traffic over the UART.  You will also certainly have to add
+    interrupts to handle the UART (recall it has an 8-byte queue for
+    transmit and receive, so can easily drop bytes) as well as having a
+    more efficient approach to sending communication back/forth between
+    your laptop and pi.
 
   - Make a clean system that can sensibly blend pre-emptive, cooperative,
   and deadline-based run-to-completion threads (which do not need
