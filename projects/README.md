@@ -66,6 +66,22 @@ something more full-features:
 
 ### Build a Tool
 
+  - Volatile cross-checking.  A very common, nasty problem in embedded
+  is that the code uses pointers to manipulate device memory, but either
+  the programmer does not use `volatile` correctly or the compiler has
+  a bug.  We can detect such things with a simple hack: 
+    - We know that device references should remain the same no matter 
+    how the code is compiled.  
+    - So compile a piece of code multiple ways: with no optimization, `-O`,
+    `-O2`, with fancier flags, etc.  
+    - Then run each different version, using ARM domain tricks to trace 
+    all address / values that are read and written.  
+    - Compare these: any difference signals a bug.  
+
+  This is basically your second lab, with some high-end tricks.  It would
+  have caught many errors we made when designing cs107e; some of them
+  took days to track down.
+
   - Build a debugger that can run over the UART.  Insert breakpoints to
   stop execution.  Use the special ARM hardware to do data watch-points.
   Figure out how to do a backtrace and to match up instruction program
@@ -95,12 +111,31 @@ something more full-features:
   checker above: set your timing interrupts to be very frequent and in the
   handler, do the check above.  It may miss errors, but will be very fast.
 
-
   - Write cooperative thread checkers that detect when you run too long
   with interrupts disabled, too long without yielding, in a deadlock,
   spinning on a condition that cannot change, extend past the end of
   the stack, have priority inversion, starvation, missed deadlines,
   lock queues that are too long, or critical sections that are too long.
+
+  - Extend your bootloader checker to check other network / distributed
+  systems protocols.  (This is likely only feasible if you've taken a
+  distributed system or networking clas.)   These protocols do not get
+  exhaustively tested for every possible failure, so often have subtle flaws.
+  You're in a good position to find some.
+
+  - ARM code is not that hard to parse (at least compared to x86).  We can
+  use this ability to make a effective, but hopefully simple lock-free
+  algorithm checker.   Given a set of functions that purport to run
+  correctly (either with or without locks) we can:
+    1. disassemble them.
+    2. at each load or store, insert a call to a context switch.
+    3. run the code with two threads.   
+    4. first test that they give the same result as two sequential calls
+    if we do a single context switch at each possible point, then two 
+    context switches, etc.
+  To be really fancy, we can buffer up the stores that are done and then
+  try all possible legal orders of them when the other thread does a load.
+  This checker should find a lot of bugs.
 
 ### Stupid domain tricks
 
