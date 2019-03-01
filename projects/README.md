@@ -29,12 +29,11 @@ something more full-features:
   can access.  Cooler: use the wireless above to export the SD's FAT32
   file system to your computer remotely using FUSE.
 
-  - We use the `r/pi A`+, put there are many little boards out there. 
-  An interesting project is porting a bunch of the different code we've
-  built to another system.  
+  - We use the `r/pi A`+, put there are many little boards out there.
+    An interesting project is porting a bunch of the different code
+    we've built to another system.
 
-  I have the following boards available:
-
+    I have the following boards available:
     - [Teensy 2.8, 3.2](https://www.sparkfun.com/products/13736): fast, small
     - [pocketbeagle](https://beagleboard.org/pocket): smaller than the pi!
     - various [esp8266 boards](https://www.sparkfun.com/products/13678): 
