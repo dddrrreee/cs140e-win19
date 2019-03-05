@@ -120,7 +120,25 @@
   hardware, translation, and page table state (more subtle than it
   sounds).  At the end you should be able to delete all our starter code.
 
-  14. TBD: you will do the final piece of VM: setting up protection and
+
+### Project lab
+
+  14. This is a light lab so you can kick-start your final project:
+      brainstorm, write some initial code, look through the devices we have
+      to place some orders for some others.  However, since this is cs140e,
+      we will still write some code and have a checkoff.  
+
+      You'll build a tool `cmd-watch` that will run any command (given as
+      command line arguments) if any source file in the current directory
+      changes.  This should help you the rest of your coding career
+      since it allows you to script an entire sequence of operations
+      that happen immediately and automatically as soon as you save any
+      file you are working on.
+
+
+### Project lab
+
+  15. TBD: you will do the final piece of VM: setting up protection and
   handling faults.  We will do a cute hack using this ability.
 
 ### Binary code:
