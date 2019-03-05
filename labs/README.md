@@ -135,52 +135,16 @@
       that happen immediately and automatically as soon as you save any
       file you are working on.
 
+### Final labs.
 
-### Project lab
-
-  15. TBD: you will do the final piece of VM: setting up protection and
+  15. you will do the final piece of VM: setting up protection and
   handling faults.  We will do a cute hack using this ability.
-
-### Binary code:
-
-TBD:
-
-  - Implement a domain-specific, simple visual programming language
-  for specifing binary formats.  You will use it to make it much
-  easier to implement subsequent labs, since it greatly aids specifing
-  virtual memory (page table entry, register layout), , machine code
-  encoding/decoding.
-
-  - Runtime code generation, using your language.
-
-  - Implement a statistical version of Valgrind and Eraser using pc-sampling
-  and instruction decoding.
-
 
 ### File system / SD Card.
 
-TBD:
-
-  - Implement a simple FAT32 file system using an SD card driver so you
+  16. Implement a simple FAT32 file system using an SD card driver so you
   can read/write files to the SD card.
 
-### Devices
+  17. Free-form lab work on final project.
 
-TBD:
-  
-   - You'll implement the widely-used I2C protocol using the broadcom 
-   documents
-
-   - Implement a gyroscope / accelerometer using your protocol.
-
-### Final projects.
-
-Multiple options:
-
-  - Extend your OS to do tricks in more advanced ways.
-
-  - You'll have an expense account at sparkfun/adafruit.  You can buy
-  whatever device you need and write the code to have your OS control
-  it to do interesting things.
-
-  - ? 
+  18. Final project presentations.
