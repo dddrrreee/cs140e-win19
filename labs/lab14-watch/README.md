@@ -14,12 +14,14 @@ Today is a light lab.
 IMO `sublime` and other IDE's have  crippled how people code --- after
 saving a file, often there's 30-60seconds of switching screens, mouse
 clicks, etc before you actually get a compile and edit done.  I'd assert
-that you're more likely to stay in a flow state if after you save code,
+that you're more likely to stay in a flow state as soon as you save code, 
 all the compile-run happens automatically and immediately.  
 
 So we are going to build a simple tool that that lets you do so.  It works as follows.
   1. You invoke it:
+
           cmd-watch ./program-name arg1 arg2 
+
   2. `cmd-watch` will monitor all the `.c`, `.h`, `.S`, `.s` files in the current
      directory and if they are modified, execute the command `./program-name` with
      the arguments `arg1`, `arg2`, etc.
