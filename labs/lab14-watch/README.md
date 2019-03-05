@@ -30,27 +30,28 @@ So we are going to build a simple tool that that lets you do so.  It works as fo
           cmd-watch make
      will run `make` if any of the files `*.[chsS]` change in the current directory.
 
-This means you can be editing however, save the file, and then without moving a finger
-the code will be compiled and (depending on your makefile) run.  Everything you do
-often should either require one keystroke or zero, so this is a good way to start going
-in that direction.
+This means you can be editing any file, save it, and then --- without
+moving a finger --- the code will be compiled and (depending on your
+makefile) run.  IMO, the best coders have everything they do either
+require one keystroke or (better) zero.  This is a good step in that
+direction.
 
-It will work as follows:
-  1. It uses `opendir` to open the current directory and scan all 
+You can implement `cmd-watch` as follows:
+  1. Uses `opendir` to open the current directory and scan all 
   entries using `readdir`.
-  2. For any entry that has the suffix we are looking for, it uses `stat` 
-  (`man 2 stat`) to get the `stat` structure associated with that entry and checks
+  2. For any entry that has the suffix we are looking for, uses `stat` 
+  (`man 2 stat`) to get the `stat` structure associated with that entry and check
   the modification time (`s.st_mtime`).
-  3. If the modification time is more recent than the last change in the directory, it 
-  will do a `fork-execvp` of the command-line arguments passed to `cmd-watch`.
-  4. The parent will do a `waitpid` etc to wait for the child to finish and also
-  get its status.  It will print if it exited with an error.
+  3. If the modification time is more recent than the last change in the directory, 
+  do a `fork-execvp` of the command-line arguments passed to `cmd-watch`.
+  4. Have the parent process use `waitpid` to wait for the child to finish and also
+  get its status.  The parent will print if the child exited with an error.
 
 Some gotcha's
-  - If nothing changed, go to sleep for a human-scale amount.  The claim
+  - If nothing changed, go to sleep for a human-scale amount,  otherwise
+  you'll burn up a lot of CPU time waiting for some entry to change.  The claim
   is that people can't notice below 100ms, so you could sleep for 250ms
-  without too much trouble.  Otherwise you'll burn up a lot of CPU time
-  waiting for some entry to change.
+  without too much trouble.
 
   - Make sure you close the directory (`closedir`) otherwise you'll run
   out of file descriptors.
