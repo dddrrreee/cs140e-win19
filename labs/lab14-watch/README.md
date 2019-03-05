@@ -28,8 +28,7 @@ So we are going to build a simple tool that that lets you do so.  It works as fo
   3. For example:
 
           cmd-watch make
-
-     will run make if any of the files `*.[chsS]` change in the current directory.
+     will run `make` if any of the files `*.[chsS]` change in the current directory.
 
 This means you can be editing however, save the file, and then without moving a finger
 the code will be compiled and (depending on your makefile) run.  Everything you do
