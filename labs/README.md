@@ -140,8 +140,6 @@
   15. you will do the final piece of VM: setting up protection and
   handling faults.  We will do a cute hack using this ability.
 
-### File system / SD Card.
-
   16. Implement a simple FAT32 file system using an SD card driver so you
   can read/write files to the SD card.
 
