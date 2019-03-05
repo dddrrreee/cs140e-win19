@@ -123,10 +123,11 @@
 
 ### Project lab
 
-  14. This is a light lab so you can kick-start your final project:
-      brainstorm, write some initial code, look through the devices we have
-      to place some orders for some others.  However, since this is cs140e,
-      we will still write some code and have a checkoff.  
+  14. [lab14-watch](lab14-watch/): This is a light lab so you can
+      kick-start your final project: brainstorm, write some initial code,
+      look through the devices we have to place some orders for some others.
+      However, since this is cs140e, we will still write some code and have
+      a checkoff.
 
       You'll build a tool `cmd-watch` that will run any command (given as
       command line arguments) if any source file in the current directory
