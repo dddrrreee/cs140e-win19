@@ -26,7 +26,9 @@ So we are going to build a simple tool that that lets you do so.  It works as fo
      directory and if they are modified, execute the command `./program-name` with
      the arguments `arg1`, `arg2`, etc.
   3. For example:
+
           cmd-watch make
+
      will run make if any of the files `*.[chsS]` change in the current directory.
 
 This means you can be editing however, save the file, and then without moving a finger
