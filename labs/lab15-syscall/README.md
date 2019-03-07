@@ -16,7 +16,8 @@ Checkoffs:
   1. Show that you can handle a system call without virtual memory enabled.
   2. Show that you can handle a system call with virtual memory enabled.
   3. Show that you can add a new system call.
-  4. Tune your implementation so its fast.
+  4. Tune your implementation so it's fast: you should get a 10x speedup with
+     a few changes.
 
 ### Part0: System calls.
 
@@ -74,4 +75,6 @@ time on.  For this part, tune you system call implementation.
   2. cut out any extra instructions.
   3. start enabling different caches.
 
-I'd not be surprised if you get at least an order of magnitude speed improvement.
+If you don't see a 10x performance improvement, something is wrong, so think about
+your code (a few people time the MMU setup or `printk` routines, neither of which
+can see much speedup). 
