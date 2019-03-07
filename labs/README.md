@@ -136,10 +136,18 @@
       that happen immediately and automatically as soon as you save any
       file you are working on.
 
-### Final labs.
+  15. [lab15-syscall](lab15-syscall): Today is a relatively light lab
+      so you have more time for projects.  We're going to build a
+      simple system call.  Once we have this in place, we can then make
+      user-level processes --- without it, they would not even be able
+      to call `exit()`.
 
-  15. you will do the final piece of VM: setting up protection and
-  handling faults.  We will do a cute hack using this ability.
+      As a secondary purpose, this lab will get you more comfortable
+      with interrupts since it will require you do invasive surgery on the
+      timer-interrupt code from `lab7-interrupts` in order to repurpose it
+      to support system calls.
+
+### Final labs.
 
   16. Implement a simple FAT32 file system using an SD card driver so you
   can read/write files to the SD card.
