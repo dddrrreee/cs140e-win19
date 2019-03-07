@@ -1,9 +1,12 @@
 #include "rpi.h"
+#include "bvec.h"
 
+#if 0
 typedef struct {
     uint32_t n_tot, n_left;
     uint32_t *elm;
 } bvec_t;
+#endif
 
 uint32_t bvec_alloc(bvec_t *b) {
     if(b->n_left == 0)
