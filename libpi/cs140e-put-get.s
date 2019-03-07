@@ -38,7 +38,3 @@ GETPC:
 .globl dummy
 dummy:
     bx lr
-
-.globl BRANCHTO
-BRANCHTO:
-    bx r0
