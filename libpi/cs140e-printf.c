@@ -245,6 +245,10 @@ int printk(const char *fmt, ...) {
 }
 
 
+int uart_hex(unsigned h) {
+    printk("%x");
+}
+
 // needs a newline, right?
 int putk(const char *p) {
 	for(; *p; p++)
