@@ -91,14 +91,15 @@ Further reading --- the first three are good summaries, the latter have more det
   5. [linux source](https://elixir.bootlin.com/linux/latest/source/fs/fat/dir.c).
 
 #### Checkoff
-  
-Checkoffs:
+
+
   1. A working sdcard driver that you steal from somewhere else and adapt.
   2. Read and echo the contents of `config.txt` on your SD card.
-  3. Link in and run `hello.bin`.
+  3. Read in an jumped to a `hello.bin` program (used the ones from the shell lab).
 
 Extensions:
-  1. Make multiple drivers work and cross check they do the same reads
+  1. Run the `hello` program in a virtual address range using the last lab.
+  2. Make multiple drivers work and cross check they do the same reads
   and writes when you run them (as we did in lab3).
 
 ### Part 1: An SD card driver.
