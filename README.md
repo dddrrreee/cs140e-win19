@@ -1,3 +1,6 @@
+***NOTE: this class is being heavily reworked (pretty much strictly for the better).
+I would recommend you use [the new version](https://github.com/dddrrreee/cs140e-20win)***
+
 This is a lab-based class.  We will do two 3-hour labs each week.
 You should be able to complete almost all of the lab in one sitting.
 
