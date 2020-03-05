@@ -132,6 +132,9 @@ Troubleshooting:
   1. `sudo pip install {pyserial,xmodem,serial}`
   2. If you use a different serial adaptor, you will have to change the 
    code in rpi-install.py to recognize it.    There are some comments to help.
+  3. On Linux, check that your user has read permissions on the USB device.
+    You may have to add yourself to the `dialout` group:
+   `$ sudo usermod -a -G dialout $USER`
 
 #### 4.  Make sure your r/pi toolchain is working.
 
