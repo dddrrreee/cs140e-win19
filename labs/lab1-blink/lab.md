@@ -78,7 +78,7 @@ Pick up:
 
   Mechanically:
   1. Unplug the USB-TTY.
-  2. Plug SD card into your computer and figure out where it's mounted.
+  2. Plug SD card into your computer and figure out where it's mounted (on Mac /Volumes/Untitled).
   3. Copy all the files from the `firmware/` directory onto the SD card.
   4. copy `part1/blink-pin20.bin` to the SD card as `kernel.img`.
   5. unmount the SD card (don't just pull it out!  data may not be written out.)
